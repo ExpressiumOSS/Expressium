@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0E109134-9CAC-4923-B795-98E597788242}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Expressium.Configurations", "Expressium.Configurations\Expressium.Configurations.csproj", "{6BBD814C-9562-49C5-9F49-2F1172062B03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Expressium.ObjectRepositories", "Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj", "{5CA9355B-245B-4DED-9092-635EE6D8BA8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BBD814C-9562-49C5-9F49-2F1172062B03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BBD814C-9562-49C5-9F49-2F1172062B03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BBD814C-9562-49C5-9F49-2F1172062B03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BBD814C-9562-49C5-9F49-2F1172062B03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CA9355B-245B-4DED-9092-635EE6D8BA8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CA9355B-245B-4DED-9092-635EE6D8BA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CA9355B-245B-4DED-9092-635EE6D8BA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CA9355B-245B-4DED-9092-635EE6D8BA8F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ADF3A4B9-6DC0-4D7E-B69D-8C765B36DDD8}
+	EndGlobalSection
+EndGlobal
