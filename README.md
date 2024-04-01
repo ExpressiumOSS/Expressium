@@ -27,4 +27,4 @@ Expressium will boost the establishment of a Selenium test automation framework 
 * Chrome / Edge / Firefox
 
 ## Documentation
-**Web:** https://expressium.dev
+**Web:** https://expressium.dev/
