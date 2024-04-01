@@ -1,0 +1,25 @@
+﻿using NUnit.Framework;
+
+namespace CompanyName.ProjectName.Web.API.Tests
+{
+    public class BaseTest : BaseTestFixture
+    {
+        [OneTimeSetUp]
+        protected void InitializeTestcase()
+        {
+            logger.InfoFormat("// Initialize Testcase");
+        }
+
+        public void InitializeBrowserWithLogin()
+        {
+            InitializeBrowser();
+
+            // TODO - Implement potential missing login sequence...
+
+            // var loginPage = new LoginPage(logger, driver);
+            // loginPage.SetUsername(configuration.Username);
+            // loginPage.SetPassword(configuration.Password);
+            // loginPage.ClickLogin();
+        }
+    }
+}

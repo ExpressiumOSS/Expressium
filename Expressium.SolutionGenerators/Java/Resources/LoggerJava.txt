@@ -1,0 +1,31 @@
+﻿package Bases;
+
+import org.apache.log4j.*;
+
+public class Logger {
+    public static void initialize(String filePath) {
+        Hierarchy hierarchy = (Hierarchy) LogManager.getLoggerRepository();
+
+        PatternLayout patternLayout = new PatternLayout();
+        patternLayout.setConversionPattern("%d{HH:mm:ss} %p %C # %m%n");
+        patternLayout.activateOptions();
+
+        ConsoleAppender console = new ConsoleAppender();
+        console.setLayout(patternLayout);
+        console.setThreshold(Level.ALL);
+        console.activateOptions();
+
+        RollingFileAppender roller = new RollingFileAppender();
+        roller.setAppend(false);
+        roller.setFile(filePath);
+        roller.setLayout(patternLayout);
+        roller.setThreshold(Level.ALL);
+        roller.setMaxBackupIndex(0);
+        roller.setMaxFileSize("1GB");
+        roller.activateOptions();
+
+        hierarchy.getRootLogger().removeAllAppenders();
+        hierarchy.getRootLogger().addAppender(console);
+        hierarchy.getRootLogger().addAppender(roller);
+    }
+}

@@ -1,0 +1,52 @@
+﻿package Bases;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+
+public class WebDrivers {
+    public enum BrowserTypes {
+        Chrome,
+        Firefox
+    }
+
+    public static WebDriver getWebDriver(String browser, boolean headless) {
+        if (browser.equals(BrowserTypes.Chrome.toString())) {
+            WebDriverManager.chromedriver().setup();
+
+            ChromeOptions options = new ChromeOptions();
+            //options.addArguments("--lang=da");
+            options.addArguments("--disable-notifications");
+
+            if (headless) {
+                options.addArguments("--headless");
+                options.addArguments("--window-size=1920,1080");
+            }
+
+            return new ChromeDriver(options);
+        } else if (browser.equals(BrowserTypes.Firefox.toString())) {
+            WebDriverManager.firefoxdriver().setup();
+
+            FirefoxProfile profile = new FirefoxProfile();
+            //profile.setPreference("intl.accept_languages", "da");
+
+            FirefoxOptions options = new FirefoxOptions().setProfile(profile);
+
+            if (headless) {
+                options.addArguments("--headless");
+                options.addArguments("--width=1920");
+                options.addArguments("--height=1080");
+            }
+
+            return new FirefoxDriver(options);
+        } else {
+            throw new IllegalArgumentException("WebDriver browser option '" + browser + "' is invalid...");
+        }
+    }
+}

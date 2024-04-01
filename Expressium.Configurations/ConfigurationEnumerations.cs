@@ -21,7 +21,7 @@ namespace Expressium.Configurations
         ByLocators
     }
 
-    public enum EnrollerActionTypes
+    public enum ControlTypes
     {
         Element,
         Link,
@@ -31,11 +31,11 @@ namespace Expressium.Configurations
         ListBox,
         RadioButton,
         CheckBox,
-        Heading,
+        Text,
         Table
     }
 
-    public enum EnrollerActionHows
+    public enum ControlHows
     {
         Id,
         Name,
@@ -43,6 +43,37 @@ namespace Expressium.Configurations
         CssSelector,
         XPath,
         LinkText,
-        PartialLinkText
+        PartialLinkText,
+        TagName
+    }
+
+    public enum SynchronizerTypes
+    {
+        WaitForPageTitleEquals,
+        WaitForPageTitleContains,
+        WaitForPageUrlEquals,
+        WaitForPageUrlContains,
+        WaitForPageElementIsVisible,
+        WaitForPageElementIsEnabled
+    }
+
+    public enum BrowserTypes
+    {
+        Chrome,
+        Edge,
+        Firefox
+    }
+
+    public enum CodeFolders
+    {
+        Models,
+        Pages
+    }
+
+    public enum TestFolders
+    {
+        Factories,
+        UITests,
+        BusinessTests
     }
 }

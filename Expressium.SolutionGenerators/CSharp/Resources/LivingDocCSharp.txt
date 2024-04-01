@@ -1,0 +1,11 @@
+﻿echo Runnning LivingDoc Documentation...
+
+cd .\CompanyName.ProjectName.Web.API.Tests\bin\Debug\net6.0
+
+livingdoc test-assembly CompanyName.ProjectName.Web.API.Tests.dll -t TestExecution.json
+
+mkdir TestResults
+
+move LivingDoc.html .\TestResults\LivingDoc.html
+
+start .\TestResults\LivingDoc.html

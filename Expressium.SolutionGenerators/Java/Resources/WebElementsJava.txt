@@ -1,0 +1,383 @@
+package Bases;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.*;
+
+import java.time.Duration;
+import java.util.List;
+
+public class WebElements {
+    private static Logger logger = Logger.getLogger(WebElements.class);
+
+    public static long elementWaitTimeOut;
+
+    public static boolean highlight;
+    public static int highlightTimeOut;
+    public static int highlightWidth;
+    public static String highlightActionColor;
+    public static String highlightValidationColor;
+    public static String highlightFailureColor;
+    public static String highlightStyle;
+
+    static {
+        elementWaitTimeOut = 10;
+
+        highlight = false;
+        highlightTimeOut = 500;
+        highlightWidth = 2;
+        highlightActionColor = "orange";
+        highlightValidationColor = "mediumseagreen";
+        highlightFailureColor = "darkred";
+        highlightStyle = "dashed";
+    }
+
+    public static void click(WebDriver driver, WebElement element) throws Exception {
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+        highlightClear(driver, element);
+
+        element.click();
+    }
+
+    public static void clickLink(WebDriver driver, WebElement element) throws Exception {
+        click(driver, element);
+    }
+
+    public static void clickButton(WebDriver driver, WebElement element) throws Exception {
+        click(driver, element);
+    }
+
+    public static void setCheckBox(WebDriver driver, WebElement element, boolean value) throws Exception {
+        waitForElementIsEnabled(driver, element);
+
+        if ((!element.isSelected() && value) || (element.isSelected() && !value)) {
+            highlightAction(driver, element);
+
+            element.click();
+
+            highlightClear(driver, element);
+        }
+    }
+
+    public static boolean getCheckBox(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        return element.isSelected();
+    }
+
+    public static void setRadioButton(WebDriver driver, WebElement element, boolean value) throws Exception {
+        waitForElementIsEnabled(driver, element);
+
+        if ((!element.isSelected() && value)) {
+            highlightAction(driver, element);
+
+            element.click();
+
+            highlightClear(driver, element);
+        }
+    }
+
+    public static boolean getRadioButton(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        return element.isSelected();
+    }
+
+    public static void setComboBox(WebDriver driver, WebElement element, String value) throws Exception {
+        setComboBoxByText(driver, element, value);
+    }
+
+    public static void setListBox(WebDriver driver, WebElement element, String value) throws Exception {
+        setComboBoxByText(driver, element, value);
+    }
+
+    public static void setComboBoxByText(WebDriver driver, WebElement element, String value) throws Exception {
+        if (value == null)
+            return;
+
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+
+        Select select = new Select(element);
+        waitForSelectOptionIsPopulated(driver, element, value);
+        select.selectByVisibleText(value);
+
+        highlightClear(driver, element);
+    }
+
+    public static void setComboBoxByIndex(WebDriver driver, WebElement element, int value) throws Exception {
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+
+        Select select = new Select(element);
+        select.selectByIndex(value);
+
+        highlightClear(driver, element);
+    }
+
+    public static void setComboBoxByValue(WebDriver driver, WebElement element, String value) throws Exception {
+        if (value == null)
+            return;
+
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+
+        Select select = new Select(element);
+        select.selectByValue(value);
+
+        highlightClear(driver, element);
+    }
+
+    public static void setComboBoxByPartialText(WebDriver driver, WebElement element, String value) throws Exception {
+        if (value == null)
+            return;
+
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+
+        Select select = new Select(element);
+        List<WebElement> optionElements = element.findElements(By.tagName("option"));
+        for (WebElement optionElement : optionElements) {
+            if (optionElement.getText().contains(value)) {
+                String optionIndex = optionElement.getAttribute("index");
+                select.selectByIndex(Integer.parseInt(optionIndex));
+                break;
+            }
+        }
+
+        highlightClear(driver, element);
+    }
+
+    public static String getComboBox(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        Select select = new Select(element);
+        WebElement option = select.getFirstSelectedOption();
+
+        return option.getText().trim();
+    }
+
+    public static void setTextBox(WebDriver driver, WebElement element, String value) throws Exception {
+        if (value == null)
+            return;
+
+        waitForElementIsEnabled(driver, element);
+
+        highlightAction(driver, element);
+
+        element.clear();
+        element.sendKeys(value);
+
+        highlightClear(driver, element);
+    }
+
+    public static String getTextBox(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        return element.getAttribute("value").trim();
+    }
+
+    public static String getText(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        return element.getText().trim();
+    }
+
+    public static boolean isEnabled(WebDriver driver, WebElement element) {
+        waitForElementIsVisible(driver, element);
+
+        highlightValidation(driver, element);
+
+        if (element.isEnabled())
+            return true;
+
+        return false;
+    }
+
+    public static boolean isVisible(WebElement element) {
+        try {
+            if (!element.getTagName().isEmpty()) {
+                if (element.isDisplayed())
+                    return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public static boolean isPresent(WebElement element) {
+        try {
+            if (!element.getTagName().isEmpty()) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public static void highlightAction(WebDriver driver, WebElement element) {
+        if (highlight) {
+            try {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, String.format("outline: %dpx %s %s; outline-offset: -1px;", highlightWidth, highlightStyle, highlightActionColor));
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void highlightValidation(WebDriver driver, WebElement element) {
+        if (highlight) {
+            try {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                if (!element.isDisplayed())
+                    js.executeScript("arguments[0].setAttribute('style', arguments[1]);", getParent(element), String.format("outline: %dpx %s %s; outline-offset: -1px;", highlightWidth, highlightStyle, highlightValidationColor));
+                else
+                    js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, String.format("outline: %dpx %s %s; outline-offset: -1px;", highlightWidth, highlightStyle, highlightValidationColor));
+
+                Thread.sleep(highlightTimeOut);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void highlightFailure(WebDriver driver, WebElement element) {
+        if (highlight) {
+            try {
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                if (!element.isDisplayed())
+                    js.executeScript("arguments[0].setAttribute('style', arguments[1]);", getParent(element), String.format("outline: %dpx %s %s; outline-offset: -1px;", highlightWidth, highlightStyle, highlightFailureColor));
+                else
+                    js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, String.format("outline: %dpx %s %s; outline-offset: -1px;", highlightWidth, highlightStyle, highlightFailureColor));
+                Thread.sleep(highlightTimeOut);
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void highlightClear(WebDriver driver, WebElement element) throws InterruptedException {
+        if (highlight) {
+            try {
+                Thread.sleep(highlightTimeOut);
+                JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public WebElement getWebElement(WebDriver driver, By locator) {
+        waitForElementExists(driver, locator);
+
+        return driver.findElement(locator);
+    }
+
+    public static void scrollIntoView(WebDriver driver, WebElement element) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(false);", element);
+    }
+
+    public static void moveToElement(WebDriver driver, WebElement element) {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(element).build().perform();
+    }
+
+    public static WebElement getParent(WebElement element) {
+        return element.findElement(By.xpath(".."));
+    }
+
+    public static void waitForElementExists(WebElement element) {
+        try {
+            String tagName = element.getTagName();
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element '%s' does not exist...", element.toString()));
+            throw exception;
+        }
+    }
+
+    public static void waitForElementExists(WebDriver driver, By locator) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element was not found within %d seconds...", elementWaitTimeOut));
+            throw exception;
+        }
+    }
+
+    public static void waitForElementIsVisible(WebDriver driver, By locator) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element was not visible within %d seconds...", elementWaitTimeOut));
+            throw exception;
+        }
+    }
+
+    public static void waitForElementIsEnabled(WebDriver driver, By locator) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.elementToBeClickable(locator));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element was not enabled within %d seconds...", elementWaitTimeOut));
+            throw exception;
+        }
+    }
+
+    public static void waitForElementIsVisible(WebDriver driver, WebElement element) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element was not visible within %d seconds...", elementWaitTimeOut));
+            throw exception;
+        }
+    }
+
+    public static void waitForElementIsEnabled(WebDriver driver, WebElement element) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element was not enabled within %d seconds...", elementWaitTimeOut));
+            throw exception;
+        }
+    }
+
+    public static void waitForSelectOptionIsPopulated(WebDriver driver, WebElement element, String value) {
+        try {
+            Duration timeout = Duration.ofSeconds (elementWaitTimeOut);
+            WebDriverWait wait = new WebDriverWait(driver, timeout);
+            wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(element, By.tagName("option")));
+        } catch (Exception exception) {
+            logger.error(String.format("Synchronization failed - WebDriver element option '%s' was not populated within %d seconds...", value, elementWaitTimeOut));
+            throw exception;
+        }
+    }
+}

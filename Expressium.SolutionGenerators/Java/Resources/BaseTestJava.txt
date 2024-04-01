@@ -1,0 +1,32 @@
+﻿package Bases;
+
+public class BaseTest extends BaseTestFixture {
+    public enum EnvironmentTypes {
+        DEV,
+        TEST,
+        PROD
+    }
+
+    public BaseTest() {
+        company = "CompanyName";
+        project = "ProjectName";
+        environmentId = EnvironmentTypes.TEST.toString();
+        url = "ApplicationUrl";
+        logging = true;
+        loggingPath = "C:\\Temp\\CompanyName\\ProjectName\\TestResults";
+        browser = WebDrivers.BrowserTypes.Chrome.toString();
+        maximize = true;
+        headless = false;
+        highlight = true;
+        highlightTimeOut = 250;
+        screenShot = true;
+        tearDownMessage = false;
+        tearDownMessageTimeOut = 1000;
+    }
+
+    public void initializeBrowserWithLogin() {
+        initializeBrowser();
+
+        // TODO - Implement potential missing login sequence...
+    }
+}

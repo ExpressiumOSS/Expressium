@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NUnit" Version="4.0.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Expressium.CodeGenerators\Expressium.CodeGenerators.csproj" />
+		<ProjectReference Include="..\Expressium.Configurations\Expressium.Configurations.csproj" />
+		<ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
+		<ProjectReference Include="..\Expressium.SolutionGenerators\Expressium.SolutionGenerators.csproj" />
+	</ItemGroup>
+
+</Project>

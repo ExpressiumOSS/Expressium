@@ -1,0 +1,104 @@
+﻿using BoDi;
+using System.IO;
+using System.Text.RegularExpressions;
+using Reqnroll;
+using Reqnroll.Infrastructure;
+
+namespace CompanyName.ProjectName.Web.API.Tests
+{
+    [Binding]
+    public class BaseHooks : BaseTest
+    {
+        private readonly FeatureContext featureContext;
+        private readonly ScenarioContext scenarioContext;
+        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
+        private readonly IObjectContainer objectContainer;
+
+        private ContextController contextController;
+
+        public BaseHooks(FeatureContext featureContext, ScenarioContext scenarioContext, IReqnrollOutputHelper reqnrollOutputHelper, IObjectContainer objectContainer)
+        {
+            this.featureContext = featureContext;
+            this.scenarioContext = scenarioContext;
+            this.reqnrollOutputHelper = reqnrollOutputHelper;
+            this.objectContainer = objectContainer;
+        }
+
+        [BeforeScenario]
+        public void BeforeScenario()
+        {
+            InitializeFixture();
+
+            logger.InfoFormat("// Initialize Testcase");
+            InitializeBrowser();
+
+            InitializeDependencyInjection();
+        }
+
+        private void InitializeDependencyInjection()
+        {
+            contextController = new ContextController();
+            contextController.Configuration = configuration;
+            contextController.Logger = logger;
+            contextController.Asserts = Asserts;
+            contextController.Driver = driver;
+
+            objectContainer.RegisterInstanceAs(contextController);
+        }
+
+        [AfterScenario]
+        public void AfterScenario()
+        {
+            if (configuration.Logging)
+                reqnrollOutputHelper.AddAttachment(".\\" + GetTestName() + "\\TestAutomation.log");
+
+            if (configuration.Screenshot)
+                reqnrollOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".png");
+
+            FinalizeFixture();
+        }
+
+        [BeforeStep]
+        public void BeforeStep()
+        {
+            logger.InfoFormat("");
+            logger.InfoFormat("// " + scenarioContext.StepContext.StepInfo.StepDefinitionType + " " + scenarioContext.StepContext.StepInfo.Text);
+        }
+
+        [AfterStep]
+        public void AfterStep()
+        {
+        }
+
+        protected override string GetTestId()
+        {
+            foreach (string tag in scenarioContext.ScenarioInfo.Tags)
+            {
+                if (tag.StartsWith("Id:"))
+                    return tag.Replace("Id:", "");
+            }
+
+            return null;
+        }
+
+        protected override string GetTestName()
+        {
+            string name = scenarioContext.ScenarioInfo.Title;
+            name = string.Join("", name.Split(Path.GetInvalidFileNameChars()));
+            return Regex.Replace(name, @"^\w| \w", (match) => match.Value.Replace(" ", "").ToUpper());
+        }
+
+        protected override string GetTestCategory()
+        {
+            if (scenarioContext.ScenarioInfo.Tags.Length > 0)
+                return scenarioContext.ScenarioInfo.Tags[0];
+
+            return null;
+        }
+
+        protected override string GetTestDescription()
+        {
+            return scenarioContext.ScenarioInfo.Title;
+        }
+    }
+}

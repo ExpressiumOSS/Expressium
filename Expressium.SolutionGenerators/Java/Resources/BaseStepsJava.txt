@@ -1,0 +1,11 @@
+﻿package BusinessTests.Steps;
+
+import org.openqa.selenium.WebDriver;
+
+public class BaseSteps {
+    protected static WebDriver driver;
+
+    public static void initialize(WebDriver driver) {
+        BaseSteps.driver = driver;
+    }
+}

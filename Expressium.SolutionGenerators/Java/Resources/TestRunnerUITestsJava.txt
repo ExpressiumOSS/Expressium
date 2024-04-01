@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="UiTests" configfailurepolicy="continue">
+    <test name="UITests">
+        <packages>
+            <package name="UITests" />
+        </packages>
+    </test>
+</suite>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="RegressionTests" configfailurepolicy="continue">
+    <suite-files>
+        <suite-file path="UITests.xml"/>
+        <suite-file path="BusinessTests.xml"/>
+    </suite-files>
+</suite>

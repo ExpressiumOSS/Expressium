@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressium.Configurations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -201,7 +202,7 @@ namespace Expressium.ObjectRepositories
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentException(string.Format("The ObjectRepositoryPage property 'Name' is undefined..."));
+                throw new ArgumentException("The ObjectRepositoryPage property 'Name' is undefined...");
 
             foreach (var synchronizer in Synchronizers)
                 synchronizer.Validate();

@@ -1,0 +1,137 @@
+﻿package BusinessTests.Steps;
+
+import Bases.BaseTest;
+import Bases.BaseTestFixture;
+import Bases.Logger;
+import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class BaseTestFixtureBDD extends BaseTest {
+    private Scenario scenario;
+
+    private static final Field field = FieldUtils.getField(Scenario.class, "delegate", true);
+    private static Method getError;
+
+    @Before
+    public void beforeScenario(Scenario scenario) {
+        this.scenario = scenario;
+        initializeFixture(scenario);
+
+        initializeBrowser();
+
+        BaseSteps.initialize(driver);
+    }
+
+    @After
+    public void afterScenario() {
+        if (scenario.isFailed()) {
+            Throwable error = getError(scenario);
+            if (error != null)
+                logErrorMessages(error.getMessage());
+        }
+
+        finalizeFixture(scenario);
+    }
+
+    public void initializeFixture(Scenario scenario) {
+        if (logging) {
+            if (loggingPath == null)
+                throw new IllegalArgumentException("Property loggingPath is undefined...");
+
+            File directory = new File(loggingPath);
+            if (!directory.exists())
+                directory.mkdir();
+
+            File outputPath = new File(String.format("%s\\%s", loggingPath, getValidFileName(scenario.getName())));
+            if (!outputPath.exists())
+                outputPath.mkdir();
+
+            String filePath = String.format("%s\\%s", outputPath, "TestAutomation.log");
+            Logger.initialize(filePath);
+
+            // Scenario Categories...
+            String category = scenario.getSourceTagNames().toString();
+            category = category.replace("[", "").replace("]", "").replaceAll("@", "");
+
+            logger.info(String.format("// Initialize Testcase Fixture"));
+            logger.info(String.format("Company: %s", company));
+            logger.info(String.format("Project: %s", project));
+            logger.info(String.format("Environment: %s", environmentId));
+            logger.info(String.format("Url: %s", url));
+            logger.info(String.format("Name: %s", getValidFileName(scenario.getName())));
+            logger.info(String.format("Category: ", category));
+            logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
+            logger.info(String.format(""));
+        }
+    }
+
+    public void finalizeFixture(Scenario scenario) {
+        if (logging) {
+            logger.info(String.format(""));
+            logger.info(String.format("// Finalize Testcase Fixture"));
+        }
+
+        if (driver != null) {
+            if (screenShot) {
+                String name = getValidFileName(scenario.getName());
+                String filePath = String.format("%s\\%s\\%s.%s", loggingPath, name, name, "png");
+                saveScreenShot(filePath);
+
+                logger.info(String.format("Screenshot has been saved: %s.%s", name, "png"));
+            }
+
+            if (tearDownMessage) {
+                String status;
+                if (scenario.isFailed())
+                    status = "Testcase has failed during execution...";
+                else
+                    status = "Testcase was successfully executed...";
+
+                showAlertMessage(status, tearDownMessageTimeOut);
+            }
+
+            driver.quit();
+        }
+
+        if (logging) {
+            if (scenario.isFailed())
+                logger.info(String.format("Number of failed tests: %d", 1));
+            else
+                logger.info(String.format("Number of passed tests: %d", 1));
+
+            String status;
+            if (scenario.isFailed())
+                status = "Testcase has failed during execution...";
+            else
+                status = "Testcase was successfully executed...";
+
+            logger.info(status + "\r\n");
+            logger.getLoggerRepository().shutdown();
+        }
+    }
+
+    private Throwable getError(Scenario scenario) {
+        try {
+            final TestCaseState testCase = (TestCaseState) field.get(scenario);
+            if (getError == null) {
+                getError = MethodUtils.getMatchingMethod(testCase.getClass(), "getError");
+                getError.setAccessible(true);
+            }
+            return (Throwable) getError.invoke(testCase);
+        } catch (Exception e) {
+            logger.error("getError has failed during execution...");
+        }
+
+        return null;
+    }
+}

@@ -1,0 +1,9 @@
+﻿Feature: Login
+	As a User
+	I want to login on the web application
+	So that I can administrate my product orders
+
+@BusinessTests @Id:TC200??
+Scenario: Successful User Login with Valid Credentials
+	Given I am logged in with valid user credentials
+	Then I should be redirected to the Home page

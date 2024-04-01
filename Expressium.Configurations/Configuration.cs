@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Expressium.Configurations
 {
@@ -11,48 +13,117 @@ namespace Expressium.Configurations
         public string Project { get; set; }
         public string ApplicationUrl { get; set; }
         public string SolutionPath { get; set; }
-        public string RepositoryPath { get; set; }
+
+        [JsonIgnore]
+        public string ConfigurationPath { get { return Path.Combine(SolutionPath, $"{Company}{Project}.cfg"); } }
+
+        [JsonIgnore]
+        public string RepositoryPath { get { return Path.Combine(SolutionPath, $"{Company}{Project}.repo"); } }
+
         public string CodingLanguage { get; set; }
         public string CodingFlavour { get; set; }
         public string CodingStyle { get; set; }
 
-        public ConfigurationEnroller Enroller { get; set; }
-        public ConfigurationCodeGenerator CodeGenerator { get; set; }
+        public string BrowserType { get; set; }
+        public string BrowserLanguage { get; set; }
+        public bool BrowserMaximize { get; set; }
+        public bool BrowserWindow { get; set; }
+        public int BrowserWindowWidth { get; set; }
+        public int BrowserWindowHeight { get; set; }
+
+        public string NameLocator { get; set; }
+        public string ControlsLocator { get; set; }
+
+        public string CustomControls { get; set; }
+        public string InitialLoginPage { get; set; }
+
+        public bool IncludePages { get; set; }
+        public bool IncludeTests { get; set; }
+        public bool IncludeExtensions { get; set; }
+
+        public List<ConfigurationAction> Actions { get; set; }
 
         public Configuration()
         {
-            Enroller = new ConfigurationEnroller();
-            CodeGenerator = new ConfigurationCodeGenerator();
+            BrowserType = BrowserTypes.Chrome.ToString();
+            BrowserMaximize = true;
+            BrowserWindow = false;
+            BrowserWindowWidth = 1920;
+            BrowserWindowHeight = 1080;
+
+            IncludePages = true;
+            IncludeTests = true;
+            IncludeExtensions = true;
+
+            Actions = new List<ConfigurationAction>();
         }
 
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Company))
-                throw new ArgumentException(string.Format("The Configuration property 'Company' is undefined..."));
+                throw new ArgumentException("The Configuration property 'Company' is undefined...");
 
             if (string.IsNullOrWhiteSpace(Project))
-                throw new ArgumentException(string.Format("The Configuration property 'Project' is undefined..."));
+                throw new ArgumentException("The Configuration property 'Project' is undefined...");
 
             if (string.IsNullOrWhiteSpace(ApplicationUrl))
-                throw new ArgumentException(string.Format("The Configuration property 'ApplicationUrl' is undefined..."));
+                throw new ArgumentException("The Configuration property 'ApplicationUrl' is undefined...");
 
             if (string.IsNullOrWhiteSpace(SolutionPath))
-                throw new ArgumentException(string.Format("The Configuration property 'SolutionPath' is undefined...'"));
+                throw new ArgumentException("The Configuration property 'SolutionPath' is undefined...'");
+
+            if (string.IsNullOrWhiteSpace(ConfigurationPath))
+                throw new ArgumentException("The Configuration property 'ConfigurationPath' is undefined...'");
 
             if (string.IsNullOrWhiteSpace(RepositoryPath))
-                throw new ArgumentException(string.Format("The Configuration property 'RepositoryPath' is undefined...'"));
+                throw new ArgumentException("The Configuration property 'RepositoryPath' is undefined...'");
 
-            if (!Directory.Exists(SolutionPath))
-                throw new ArgumentException(string.Format("The Configuration property 'SolutionPath' does not exist..."));
+            if (string.IsNullOrWhiteSpace(ConfigurationPath))
+                throw new ArgumentException("The Configuration property 'ConfigurationPath' is undefined...'");
 
-            if (!File.Exists(RepositoryPath))
-                throw new ArgumentException(string.Format("The Configuration property 'RepositoryPath' does not exist..."));
+            //if (!Directory.Exists(SolutionPath))
+            //    throw new ArgumentException("The Configuration 'SolutionPath' directory does not exist...");
 
             if (!Enum.GetNames(typeof(CodingLanguages)).Any(e => CodingLanguage == e))
-                throw new ArgumentException(string.Format("The Configuration property 'CodingLanguage' is invalid..."));
+                throw new ArgumentException("The Configuration property 'CodingLanguage' is invalid...");
 
-            foreach (var action in Enroller.Actions)
+            if (!Enum.GetNames(typeof(CodingFlavours)).Any(e => CodingFlavour == e))
+                throw new ArgumentException("The Configuration property 'CodingFlavour' is invalid...");
+
+            if (!Enum.GetNames(typeof(CodingStyles)).Any(e => CodingStyle == e))
+                throw new ArgumentException("The Configuration property 'CodingStyle' is invalid...");
+
+            foreach (var action in Actions)
                 action.Validate();
+        }
+
+        public bool IsActionAdded(ConfigurationAction action)
+        {
+            return Actions.Any(m => m.GetHashCode() == action.GetHashCode());
+        }
+
+        public ConfigurationAction GetAction(ConfigurationAction action)
+        {
+            if (IsActionAdded(action))
+                return Actions.FirstOrDefault(c => c.GetHashCode() == action.GetHashCode());
+
+            return null;
+        }
+
+        public void DeleteAction(ConfigurationAction action)
+        {
+            if (IsActionAdded(action))
+            {
+                int index = Actions.FindIndex(m => m.GetHashCode() == action.GetHashCode());
+                Actions.RemoveAt(index);
+            }
+        }
+
+        public void SwapActions(int masterId, int slaveId)
+        {
+            var action = Actions[masterId];
+            Actions[masterId] = Actions[slaveId];
+            Actions[slaveId] = action;
         }
 
         public bool IsCodingLanguageCSharp()
@@ -113,7 +184,7 @@ namespace Expressium.Configurations
 
         public string GetNameSpace()
         {
-            return string.Format("{0}.{1}.Web.API", Company, Project);
+            return $"{Company}.{Project}.Web.API";
         }
 
         public Configuration Copy()

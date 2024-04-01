@@ -27,10 +27,10 @@ namespace Expressium.ObjectRepositories
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentException(string.Format("The ObjectRepositoryMember property 'Name' is undefined..."));
+                throw new ArgumentException("The ObjectRepositoryMember property 'Name' is undefined...");
 
             if (string.IsNullOrWhiteSpace(Page))
-                throw new ArgumentException(string.Format("The ObjectRepositoryMember property 'Page' is undefined..."));
+                throw new ArgumentException("The ObjectRepositoryMember property 'Page' is undefined...");
         }
 
         public override int GetHashCode()

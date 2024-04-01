@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressium.Configurations;
+using System;
 using System.Linq;
 
 namespace Expressium.ObjectRepositories
@@ -36,16 +37,16 @@ namespace Expressium.ObjectRepositories
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentException(string.Format("The ObjectRepositoryControl property 'Name' is undefined..."));
+                throw new ArgumentException("The ObjectRepositoryControl property 'Name' is undefined...");
 
             if (!Enum.GetNames(typeof(ControlTypes)).Any(e => Type.StartsWith(e)))
-                throw new ArgumentException(string.Format("The ObjectRepositoryControl property 'Type' is invalid..."));
+                throw new ArgumentException("The ObjectRepositoryControl property 'Type' is invalid...");
 
             if (!Enum.GetNames(typeof(ControlHows)).Any(e => How == e))
-                throw new ArgumentException(string.Format("The ObjectRepositoryControl property 'How' is invalid..."));
+                throw new ArgumentException("The ObjectRepositoryControl property 'How' is invalid...");
 
             if (string.IsNullOrWhiteSpace(Using))
-                throw new ArgumentException(string.Format("The ObjectRepositoryControl property 'Using' is undefined..."));
+                throw new ArgumentException("The ObjectRepositoryControl property 'Using' is undefined...");
         }
 
         public override int GetHashCode()
@@ -122,9 +123,9 @@ namespace Expressium.ObjectRepositories
             return false;
         }
 
-        public bool IsHeading()
+        public bool IsText()
         {
-            if (Type == ControlTypes.Heading.ToString())
+            if (Type == ControlTypes.Text.ToString())
                 return true;
 
             return false;

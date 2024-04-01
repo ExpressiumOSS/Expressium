@@ -1,0 +1,514 @@
+using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+
+namespace CompanyName.ProjectName.Web.API
+{
+    public static class WebElements
+    {
+        public static int ElementTimeOut { get; set; }
+
+        public static bool Highlight { get; set; }
+        public static int HighlightTimeOut { get; set; }
+        public static int HighlightWidth { get; set; }
+        public static string HighlightStyle { get; set; }
+        public static string HighlightActionColor { get; set; }
+        public static string HighlightValidationColor { get; set; }
+        public static string HighlightFailureColor { get; set; }
+
+
+        static WebElements()
+        {
+            ElementTimeOut = 10000;
+
+            Highlight = false;
+            HighlightTimeOut = 250;
+            HighlightWidth = 2;
+            HighlightStyle = "dashed";
+            HighlightActionColor = "orange";
+            HighlightValidationColor = "mediumseagreen";
+            HighlightFailureColor = "darkred";
+        }
+
+        public static void Click(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+            element.HighlightClear(driver);
+
+            element.Click();
+        }
+
+        public static void ClickLink(this IWebElement element, IWebDriver driver)
+        {
+            element.Click(driver);
+        }
+
+        public static void ClickButton(this IWebElement element, IWebDriver driver)
+        {
+            element.Click(driver);
+        }
+
+        public static void SetCheckBox(this IWebElement element, IWebDriver driver, bool value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            if ((!element.Selected && value) || (element.Selected && !value))
+            {
+                element.HighlightAction(driver);
+
+                element.Click();
+
+                element.HighlightClear(driver);
+            }
+        }
+
+        public static bool GetCheckBox(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Selected;
+        }
+
+        public static void SetRadioButton(this IWebElement element, IWebDriver driver, bool value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            if ((!element.Selected && value))
+            {
+                element.HighlightAction(driver);
+
+                element.Click();
+
+                element.HighlightClear(driver);
+            }
+        }
+
+        public static bool GetRadioButton(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Selected;
+        }
+
+        public static void SetComboBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            element.SetComboBoxByText(driver, value);
+        }
+
+        public static void SetListBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            element.SetComboBoxByText(driver, value);
+        }
+
+        public static void SetComboBoxByText(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.WaitForSelectOptionIsPopulated(driver, value);
+            selectElement.SelectByText(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static void SetComboBoxByIndex(this IWebElement element, IWebDriver driver, int value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.SelectByIndex(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static void SetComboBoxByValue(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.SelectByValue(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static string GetComboBox(this IWebElement element, IWebDriver driver)
+        {
+            return element.GetComboBoxText(driver);
+        }
+
+        public static string GetListBox(this IWebElement element, IWebDriver driver)
+        {
+            return element.GetComboBoxText(driver);
+        }
+
+        public static string GetComboBoxText(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+
+            element.HighlightValidation(driver);
+
+            var selectElement = new SelectElement(element);
+            if (selectElement.SelectedOption != null)
+                return selectElement.SelectedOption.Text.Trim();
+
+            return null;
+        }
+
+        public static void SetTextBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+            element.HighlightAction(driver);
+
+            element.Clear();
+            element.SendKeys(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static string GetTextBox(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.GetAttribute("value").Trim();
+        }
+
+        public static string GetText(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Text.Trim();
+        }
+
+        public static bool IsEnabled(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+
+            element.HighlightValidation(driver);
+
+            if (element.Enabled)
+                return true;
+
+            return false;
+        }
+
+        public static bool IsVisible(this IWebElement element)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(element.TagName))
+                {
+                    if (element.Displayed)
+                        return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public static bool IsPresent(this IWebElement element)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(element.TagName))
+                    return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        public static void HighlightAction(this IWebElement element, IWebDriver driver)
+        {
+            if (Highlight)
+            {
+                try
+                {
+                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
+                    var attribute = element.GetAttribute("style");
+                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightActionColor}; outline-offset: -1px;";
+                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static void HighlightValidation(this IWebElement element, IWebDriver driver)
+        {
+            if (Highlight)
+            {
+                try
+                {
+                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
+                    var attribute = element.GetAttribute("style");
+                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightValidationColor}; outline-offset: -1px;";
+                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static void HighlightFailure(this IWebElement element, IWebDriver driver)
+        {
+            if (Highlight)
+            {
+                try
+                {
+                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
+                    var attribute = element.GetAttribute("style");
+                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightFailureColor}; outline-offset: -1px;";
+                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static void HighlightClear(this IWebElement element, IWebDriver driver)
+        {
+            if (Highlight)
+            {
+                try
+                {
+                    Thread.Sleep(HighlightTimeOut);
+                    var javaScriptExecutor = (IJavaScriptExecutor)driver;
+                    javaScriptExecutor.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static void WaitForElementExists(IWebDriver driver, By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(d => d.FindElement(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForChildElementExists(this IWebElement element, IWebDriver driver, By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(_ => element.FindElements(locator).Any());
+            }
+            catch
+            {
+                throw new ApplicationException($"Page child element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForElementIsVisible(IWebDriver driver, By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be visible within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForElementIsEnabled(IWebDriver driver, By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be enabled within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForElementIsVisible(this IWebElement element, IWebDriver driver)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(IsElementVisible(element));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element was expected to be visible within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static Func<IWebDriver, bool> IsElementVisible(IWebElement element)
+        {
+            return (driver) =>
+            {
+                try
+                {
+                    return element.Displayed;
+                }
+                catch
+                {
+                    return false;
+                }
+            };
+        }
+
+        public static void WaitForElementIsInvisible(IWebDriver driver, By locator, int timeOut)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.InvisibilityOfElementLocated(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be invisible within {timeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForElementIsEnabled(this IWebElement element, IWebDriver driver)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(IsElementEnabled(element));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element was expected to be enabled within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static Func<IWebDriver, bool> IsElementEnabled(IWebElement element)
+        {
+            return (driver) =>
+            {
+                try
+                {
+                    return element.Displayed && element.Enabled;
+                }
+                catch
+                {
+                    return false;
+                }
+            };
+        }
+
+        public static void WaitForSelectOptionIsPopulated(this SelectElement element, IWebDriver driver, string value)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(IsSelectOptionPopulated(element, value));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element option '{value}' was expected to be populated within {ElementTimeOut} milliseconds...");
+            }
+        }
+
+        public static Func<IWebDriver, bool> IsSelectOptionPopulated(SelectElement element, string value)
+        {
+            return (driver) =>
+            {
+                try
+                {
+                    if (element.Options.Count > 0)
+                    {
+                        if (element.Options.First(o => o.Text.Trim() == value) != null)
+                            return true;
+                    }
+
+                    return false;
+                }
+                catch
+                {
+                    return false;
+                }
+            };
+        }
+
+        public static IWebElement GetVisibleElement(IWebDriver driver, By locator)
+        {
+            WaitForElementIsVisible(driver, locator);
+
+            var element = driver.FindElement(locator);
+            if (element == null)
+                return null;
+
+            return element;
+        }
+
+        public static void ScrollIntoView(this IWebElement element, IWebDriver driver)
+        {
+            var javaScriptExecutor = (IJavaScriptExecutor)driver;
+            javaScriptExecutor.ExecuteScript("arguments[0].scrollIntoView(false);", element);
+        }
+
+        public static void MoveToElement(this IWebElement element, IWebDriver driver)
+        {
+            var actions = new Actions(driver);
+            actions.MoveToElement(element).Build().Perform();
+        }
+
+        public static IWebElement GetParentWebElement(this IWebElement element)
+        {
+            return element.FindElement(By.XPath(".."));
+        }
+
+        public static IWebElement GetChildWebElement(this IWebElement element, IWebDriver driver, By locator)
+        {
+            element.WaitForChildElementExists(driver, locator);
+            return element.FindElement(locator);
+        }
+
+        public static ReadOnlyCollection<IWebElement> GetChildWebElements(this IWebElement element, IWebDriver driver, By locator)
+        {
+            element.WaitForChildElementExists(driver, locator);
+            return element.FindElements(locator);
+        }
+    }
+}

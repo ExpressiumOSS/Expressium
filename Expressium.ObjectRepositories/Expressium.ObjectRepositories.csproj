@@ -5,4 +5,8 @@
     <AssemblyName>ObjectRepositories</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Expressium.Configurations\Expressium.Configurations.csproj" />
+  </ItemGroup>
+
 </Project>

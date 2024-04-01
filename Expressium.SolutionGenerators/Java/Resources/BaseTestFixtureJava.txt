@@ -1,0 +1,235 @@
+package Bases;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestContext;
+import org.testng.ITestNGMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class BaseTestFixture {
+    protected static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(BaseTestFixture.class);
+
+    protected WebDriver driver;
+
+    protected String company;
+    protected String project;
+    protected String environmentId;
+    protected String url;
+    protected String browser;
+    protected boolean maximize;
+    protected boolean headless;
+    protected boolean highlight;
+    protected int highlightTimeOut;
+    protected boolean tearDownMessage;
+    protected int tearDownMessageTimeOut;
+    protected boolean logging;
+    protected boolean screenShot;
+    protected String loggingPath;
+
+    public BaseTestFixture() {
+        company = null;
+        project = null;
+        environmentId = null;
+        url = null;
+        logging = false;
+        loggingPath = null;
+        browser = WebDrivers.BrowserTypes.Chrome.toString();
+        maximize = true;
+        headless = false;
+        highlight = false;
+        highlightTimeOut = 1000;
+        screenShot = false;
+        tearDownMessage = true;
+        tearDownMessageTimeOut = 3000;
+    }
+
+    @BeforeClass
+    public void initializeFixture(ITestContext context) {
+        if (logging) {
+            if (loggingPath == null)
+                throw new IllegalArgumentException("Property loggingPath is undefined...");
+
+            File directory = new File(loggingPath);
+            if (!directory.exists())
+                directory.mkdir();
+
+            File outputPath = new File(String.format("%s\\%s", loggingPath, getValidFileName(getTestcaseName(context))));
+            if (!outputPath.exists())
+                outputPath.mkdir();
+
+            String filePath = String.format("%s\\%s", outputPath, "TestAutomation.log");
+            Logger.initialize(filePath);
+
+            logger.info(String.format(""));
+            logger.info(String.format("// Initialize Testcase Fixture"));
+            logger.info(String.format("Company: %s", company));
+            logger.info(String.format("Project: %s", project));
+            logger.info(String.format("Environment: %s", environmentId));
+            logger.info(String.format("Url: %s", url));
+            logger.info(String.format("Name: %s", getValidFileName(getTestcaseName(context))));
+            logger.info(String.format("Category: ", context.getSuite().getName()));
+            logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
+            logger.info(String.format(""));
+        }
+
+        for (ITestNGMethod method : context.getAllTestMethods()) {
+            context.getFailedTests().removeResult(method);
+            context.getSkippedTests().removeResult(method);
+            context.getPassedTests().removeResult(method);
+            context.getFailedButWithinSuccessPercentageTests().removeResult(method);
+        }
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void finalizeFixture(ITestContext context) {
+        if (logging) {
+            logger.info(String.format(""));
+            logger.info(String.format("// Finalize Testcase Fixture"));
+        }
+
+        if (driver != null) {
+            if (screenShot) {
+                String name = getValidFileName(getTestcaseName(context));
+                String filePath = String.format("%s\\%s\\%s.%s", loggingPath, name, name, "png");
+                saveScreenShot(filePath);
+
+                logger.info(String.format("Screenshot has been saved: %s.%s", name, "png"));
+            }
+
+            if (tearDownMessage) {
+                String status;
+                if (context.getFailedTests().size() > 0)
+                    status = "Testcase has failed during execution...";
+                else if (context.getSkippedTests().size() > 0)
+                    status = "Testcase was skipped from execution...";
+                else
+                    status = "Testcase was successfully executed...";
+
+                showAlertMessage(status, tearDownMessageTimeOut);
+            }
+
+            driver.quit();
+        }
+
+        if (logging) {
+            logFailedMessage(context);
+            logSkippedMessage(context);
+
+            logger.info(String.format("Number of passed tests: %d", context.getPassedTests().size()));
+            logger.info(String.format("Number of skipped tests: %d", context.getSkippedTests().size()));
+            logger.info(String.format("Number of failed tests: %d", context.getFailedTests().size()));
+
+            String status;
+            if (context.getFailedTests().size() > 0)
+                status = "Testcase has failed during execution...";
+            else if (context.getSkippedTests().size() > 0)
+                status = "Testcase was skipped from execution...";
+            else
+                status = "Testcase was successfully executed...";
+
+            logger.info(status + "\r\n");
+            logger.getLoggerRepository().shutdown();
+        }
+    }
+
+    protected void initializeBrowser() {
+        if (driver == null && browser != null) {
+            logger.info("initializeBrowser");
+
+            driver = WebDrivers.getWebDriver(browser, headless);
+
+            if (url != null)
+                driver.get(url);
+
+            if (maximize)
+                driver.manage().window().maximize();
+
+            WebElements.highlight = highlight;
+            WebElements.highlightTimeOut = highlightTimeOut;
+        }
+    }
+
+    protected void finalizeBrowser(ITestContext context) {
+        if (driver != null) {
+            logger.info("finalizeBrowser");
+
+            driver.quit();
+            driver = null;
+        }
+    }
+
+    private String getTestcaseName(ITestContext context) {
+        String testName = this.getClass().getName();
+        if (testName.contains((".")))
+            return testName.substring(testName.lastIndexOf(".") + 1);
+
+        return testName;
+    }
+
+    private void logFailedMessage(ITestContext context) {
+        try {
+            context.getFailedTests().getAllResults().forEach(result -> {
+                logErrorMessages(result.getThrowable().getMessage());
+            });
+        } catch (Exception exception) {
+            logger.error("logFailedMessage has failed during execution...");
+            logger.debug(exception.getMessage());
+        }
+    }
+
+    private void logSkippedMessage(ITestContext context) {
+        try {
+            final boolean[] isReported = {false};
+            context.getSkippedTests().getAllResults().forEach(result -> {
+                if (isReported[0] == false) {
+                    logErrorMessages(result.getThrowable().getMessage());
+                    isReported[0] = true;
+                }
+            });
+        } catch (Exception exception) {
+            logger.error("logSkippedMessage has failed during execution...");
+            logger.debug(exception.getMessage());
+        }
+    }
+
+    protected void saveScreenShot(String filePath) {
+        try {
+            File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(screenshotFile, new File(filePath));
+        } catch (Exception exception) {
+            logger.error("saveScreenShot has failed during execution...");
+            logger.debug(exception.getMessage());
+        }
+    }
+
+    protected void showAlertMessage(String message, int timeout) {
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript(String.format("alert('%s');", message));
+            Thread.sleep(timeout);
+            driver.switchTo().alert().accept();
+        } catch (Exception exception) {
+            logger.error("showMessageBox has failed during execution...");
+            logger.debug(exception.getMessage());
+        }
+    }
+
+    protected String getValidFileName(String name) {
+        return name.replaceAll("[\\\\/:*?\"<>|]", "");
+    }
+
+    protected void logErrorMessages(String message) {
+        String[] listOfLines = message.split("(\r\n|\r|\n)", -1);
+        for (int i = 0; i < listOfLines.length; i++) {
+            logger.error(listOfLines[i]);
+        }
+    }
+}

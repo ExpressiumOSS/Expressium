@@ -1,0 +1,19 @@
+﻿package BusinessTests.TestRunners;
+
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.DataProvider;
+
+@CucumberOptions(
+        features = {"src/test/java/BusinessTests/Features"},
+        glue = {"BusinessTests/Steps"},
+        tags = "@BusinessTests"
+)
+public class BusinessTests extends AbstractTestNGCucumberTests {
+
+    @Override
+    @DataProvider(parallel = false)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
+}
