@@ -4,7 +4,7 @@
 
 Expressium is an open-source software tool designed for creating and maintaining a Selenium test automation framework.
 
-Through intelligent enrollment of webpages and extensive code generation, Expressium provides a complete Selenium test automation framework with clean source code in an IDE solution.
+Through intelligent enrollment of webpages and extensive code generation, Expressium provides a complete Selenium test automation framework with clean source code in either a Visual Studio C# or an IntelliJ IDEA Java IDE solution.
 
 The generated output includes convenient Selenium extensions, a Page Object Model set of classes and associated UI tests targeting the web application - A solid foundation for writing business tests as traditional Keyword Driven or Behavior Driven Developing test scripts.
 
