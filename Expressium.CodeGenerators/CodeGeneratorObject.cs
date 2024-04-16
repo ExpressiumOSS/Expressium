@@ -18,7 +18,7 @@ namespace Expressium.CodeGenerators
         }
 
         internal abstract void Generate(ObjectRepositoryPage page);
-        internal abstract string GeneratePreview(ObjectRepositoryPage page);
+        internal abstract string GenerateAsString(ObjectRepositoryPage page);
 
         internal static void SaveListOfLinesAsFile(string filePath, List<string> listOfLines)
         {
@@ -43,7 +43,7 @@ namespace Expressium.CodeGenerators
             return value;
         }
 
-        internal static List<string> FormatSourceCode(List<string> listOfLines)
+        internal static List<string> GetListOfLinesAsFormatted(List<string> listOfLines)
         {
             var listOfFormattedLines = new List<string>();
 
@@ -83,13 +83,13 @@ namespace Expressium.CodeGenerators
             return listOfFormattedLines;
         }
 
-        internal static List<string> GenerateExtensionCode(string filePath, string startLine, string endLine)
+        internal static List<string> GenerateExtensions(string filePath, string startLine, string endLine)
         {
             var listOfLines = new List<string>();
 
             listOfLines.Add(startLine);
 
-            var listOfExtensionCodeLines = GetExtensionCodeInFile(filePath, startLine, endLine);
+            var listOfExtensionCodeLines = GetExtensionsInFile(filePath, startLine, endLine);
             if (listOfExtensionCodeLines != null && listOfExtensionCodeLines.Count > 0)
                 listOfLines.AddRange(listOfExtensionCodeLines);
             else
@@ -100,7 +100,7 @@ namespace Expressium.CodeGenerators
             return listOfLines;
         }
 
-        internal static List<string> GetExtensionCodeInFile(string filePath, string startLine, string endLine)
+        internal static List<string> GetExtensionsInFile(string filePath, string startLine, string endLine)
         {
             var listOfLines = new List<string>();
 

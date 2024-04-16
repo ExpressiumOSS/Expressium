@@ -11,7 +11,7 @@ namespace Expressium.CodeGenerators.CSharp
         {
         }
 
-        internal override string GetSourceCodeFilePath(ObjectRepositoryPage page)
+        internal override string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {

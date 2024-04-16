@@ -2,7 +2,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -329,7 +329,7 @@ namespace CompanyName.ProjectName.Web.API
             }
         }
 
-        public static void WaitForChildElementExists(this IWebElement element, IWebDriver driver, By locator)
+        public static void WaitForSubElementExists(this IWebElement element, IWebDriver driver, By locator)
         {
             try
             {
@@ -338,7 +338,7 @@ namespace CompanyName.ProjectName.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Page child element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
+                throw new ApplicationException($"Page sub element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
             }
         }
 
@@ -494,21 +494,21 @@ namespace CompanyName.ProjectName.Web.API
             actions.MoveToElement(element).Build().Perform();
         }
 
-        public static IWebElement GetParentWebElement(this IWebElement element)
+        public static IWebElement GetParentElement(this IWebElement element)
         {
             return element.FindElement(By.XPath(".."));
         }
 
-        public static IWebElement GetChildWebElement(this IWebElement element, IWebDriver driver, By locator)
+        public static IWebElement GetSubElement(this IWebElement element, IWebDriver driver, By locator)
         {
-            element.WaitForChildElementExists(driver, locator);
+            element.WaitForSubElementExists(driver, locator);
             return element.FindElement(locator);
         }
 
-        public static ReadOnlyCollection<IWebElement> GetChildWebElements(this IWebElement element, IWebDriver driver, By locator)
+        public static List<IWebElement> GetSubElements(this IWebElement element, IWebDriver driver, By locator)
         {
-            element.WaitForChildElementExists(driver, locator);
-            return element.FindElements(locator);
+            element.WaitForSubElementExists(driver, locator);
+            return element.FindElements(locator).ToList();
         }
     }
 }

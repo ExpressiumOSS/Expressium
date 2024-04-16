@@ -11,7 +11,7 @@ namespace Expressium.CodeGenerators.CSharp
         {
         }
 
-        internal override string GetSourceCodeFilePath(ObjectRepositoryPage page)
+        internal override string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace Expressium.CodeGenerators.CSharp
             listOfLines.AddRange(GenerateClass(page));
             listOfLines.Add($"{{");
             listOfLines.AddRange(GenerateProperties(page));
-            listOfLines.AddRange(GenerateExtensionSourceCode(page));
+            listOfLines.AddRange(GenerateExtensions(page));
             listOfLines.Add($"}}");
             listOfLines.Add($"}}");
 
@@ -96,12 +96,12 @@ namespace Expressium.CodeGenerators.CSharp
             return listOfLines;
         }
 
-        internal List<string> GenerateExtensionSourceCode(ObjectRepositoryPage page)
+        internal List<string> GenerateExtensions(ObjectRepositoryPage page)
         {
             if (configuration.IncludeExtensions)
             {
-                var filePath = GetSourceCodeFilePath(page);
-                return GenerateExtensionCode(filePath, "#region Extensions", "#endregion");
+                var filePath = GetFilePath(page);
+                return GenerateExtensions(filePath, "#region Extensions", "#endregion");
             }
 
             return new List<string>();

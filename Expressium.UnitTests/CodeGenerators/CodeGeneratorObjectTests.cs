@@ -8,7 +8,7 @@ namespace Expressium.UnitTests.CodeGenerators
     public class CodeGeneratorObjectTests
     {
         [Test]
-        public void CodeGeneratorObject_FormatSourceCode()
+        public void CodeGeneratorObject_GetListOfLinesAsFormatted()
         {
             var input = new List<string>
             {
@@ -34,8 +34,8 @@ namespace Expressium.UnitTests.CodeGenerators
                 "}"
             };
 
-            var result = CodeGeneratorObject.FormatSourceCode(input);
-            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject FormatSourceCode validate generated output");
+            var result = CodeGeneratorObject.GetListOfLinesAsFormatted(input);
+            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject GetListOfLinesAsFormatted validation");
         }
 
         [Test]
@@ -51,15 +51,15 @@ namespace Expressium.UnitTests.CodeGenerators
             var expected = "<Model>\n<Attribute name='FaultLocation'>\n</Model>\n";
 
             var result = CodeGeneratorObject.GetListOfLinesAsString(input);
-            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject GetListOfLinesAsString validate generated output");
+            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject GetListOfLinesAsString validation");
         }
 
         [Test]
-        public void ConfigurationObject_GenerateExtensionCode()
+        public void ConfigurationObject_GenerateExtensions()
         {
-            var listOfLines = CodeGeneratorObject.GenerateExtensionCode(null, "#region Extensions", "#endregion");
+            var listOfLines = CodeGeneratorObject.GenerateExtensions(null, "#region Extensions", "#endregion");
 
-            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorObject GenerateExtensionCode validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorObject GenerateExtensions validation");
         }
     }
 }

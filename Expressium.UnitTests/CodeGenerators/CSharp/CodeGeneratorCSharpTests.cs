@@ -58,10 +58,10 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
             codeGenerator.GenerateAll();
 
-            Assert.That(File.Exists(loginPageFile), Is.True, "CodeGenerator ExecuteAll validation");
-            Assert.That(File.Exists(loginModelFile), Is.True, "CodeGenerator ExecuteAll validation");
-            Assert.That(File.Exists(loginTestFile), Is.True, "CodeGenerator ExecuteAll validation");
-            Assert.That(File.Exists(loginFactoryFile), Is.True, "CodeGenerator ExecuteAll validation");
+            Assert.That(File.Exists(loginPageFile), Is.True, "CodeGenerator GenerateAll validation");
+            Assert.That(File.Exists(loginModelFile), Is.True, "CodeGenerator GenerateAll validation");
+            Assert.That(File.Exists(loginTestFile), Is.True, "CodeGenerator GenerateAll validation");
+            Assert.That(File.Exists(loginFactoryFile), Is.True, "CodeGenerator GenerateAll validation");
         }
 
         [Test]
@@ -78,6 +78,14 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
             if (File.Exists(loginPageModelFile))
                 File.Delete(loginPageModelFile);
 
+            var loginTestFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "UITests", "LoginPageTests.cs");
+            if (File.Exists(loginTestFile))
+                File.Delete(loginTestFile);
+
+            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "Factories", "LoginPageModelFactory.cs");
+            if (File.Exists(loginFactoryFile))
+                File.Delete(loginFactoryFile);
+
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
             ObjectRepositoryUtilities.SerializeAsJson(configuration.RepositoryPath, objectRepository);
@@ -85,32 +93,58 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
             codeGenerator.GeneratePage("LoginPage");
 
-            Assert.That(File.Exists(loginPageFile), Is.True, "CodeGenerator ExecutePage validation");
-            Assert.That(File.Exists(loginPageModelFile), Is.True, "CodeGenerator ExecutePage validation");
+            Assert.That(File.Exists(loginPageFile), Is.True, "CodeGenerator GeneratePage validation");
+            Assert.That(File.Exists(loginPageModelFile), Is.True, "CodeGenerator GeneratePage validation");
+            Assert.That(File.Exists(loginTestFile), Is.True, "CodeGenerator GeneratePage validation");
+            Assert.That(File.Exists(loginFactoryFile), Is.True, "CodeGenerator GeneratePage validation");
         }
 
         [Test]
-        public void CodeGenerator_CSharp_GeneratePagePreview()
+        public void CodeGenerator_CSharp_GeneratePageAsString()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GeneratePagePreview("LoginPage");
+            var result = codeGenerator.GeneratePageAsString("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPage"), "CodeGenerator ExecutePagePreview validation");
+            Assert.That(result, Does.Contain("LoginPage"), "CodeGenerator GeneratePageAsString validation");
         }
 
         [Test]
-        public void CodeGenerator_CSharp_GenerateModelPreview()
+        public void CodeGenerator_CSharp_GenerateModelAsString()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GenerateModelPreview("LoginPage");
+            var result = codeGenerator.GenerateModelAsString("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPageModel"), "CodeGenerator ExecutePageModelPreview validation");
+            Assert.That(result, Does.Contain("LoginPageModel"), "CodeGenerator GenerateModelAsString validation");
+        }
+
+        [Test]
+        public void CodeGenerator_CSharp_GenerateTestAsString()
+        {
+            var objectRepository = new ObjectRepository();
+            objectRepository.AddPage(CreateLoginPage());
+
+            var codeGenerator = new CodeGenerator(configuration, objectRepository);
+            var result = codeGenerator.GenerateTestAsString("LoginPage");
+
+            Assert.That(result, Does.Contain("LoginPageModel"), "CodeGenerator GenerateTestAsString validation");
+        }
+
+        [Test]
+        public void CodeGenerator_CSharp_GenerateFactoryAsString()
+        {
+            var objectRepository = new ObjectRepository();
+            objectRepository.AddPage(CreateLoginPage());
+
+            var codeGenerator = new CodeGenerator(configuration, objectRepository);
+            var result = codeGenerator.GenerateFactoryAsString("LoginPage");
+
+            Assert.That(result, Does.Contain("LoginPageModelFactory"), "CodeGenerator GenerateFactoryAsString validation");
         }
 
         private ObjectRepositoryPage CreateLoginPage()

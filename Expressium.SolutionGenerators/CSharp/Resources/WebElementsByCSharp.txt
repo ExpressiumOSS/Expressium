@@ -2,7 +2,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -36,7 +36,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static void ClickLink(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.ClickLink(driver);
         }
 
@@ -47,7 +47,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static void ClickButton(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.ClickButton(driver);
         }
 
@@ -68,7 +68,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static void SetCheckBox(this By locator, IWebDriver driver, bool value)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetCheckBox(driver, value);
         }
 
@@ -86,7 +86,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static bool GetCheckBox(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             return element.GetCheckBox(driver);
         }
 
@@ -100,7 +100,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static void SetRadioButton(this By locator, IWebDriver driver, bool value)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetRadioButton(driver, value);
         }
 
@@ -118,7 +118,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static bool GetRadioButton(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             return element.GetRadioButton(driver);
         }
 
@@ -140,7 +140,7 @@ namespace CompanyName.ProjectName.Web.API
             if (value == null)
                 return;
 
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetComboBoxByText(driver, value);
         }
 
@@ -161,7 +161,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static void SetComboBoxByIndex(this By locator, IWebDriver driver, int value)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetComboBoxByIndex(driver, value);
         }
 
@@ -181,7 +181,7 @@ namespace CompanyName.ProjectName.Web.API
             if (value == null)
                 return;
 
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetComboBoxByValue(driver, value);
         }
 
@@ -201,7 +201,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static string GetComboBox(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             return element.GetComboBox(driver);
         }
 
@@ -222,7 +222,7 @@ namespace CompanyName.ProjectName.Web.API
             if (value == null)
                 return;
 
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             element.SetTextBox(driver, value);
         }
 
@@ -240,7 +240,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static string GetTextBox(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             return element.GetTextBox(driver);
         }
 
@@ -254,7 +254,7 @@ namespace CompanyName.ProjectName.Web.API
 
         public static string GetText(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
+            var element = locator.GetElement(driver);
             return element.GetText(driver);
         }
 
@@ -299,7 +299,7 @@ namespace CompanyName.ProjectName.Web.API
         {
             try
             {
-                locator.GetWebElement(driver);
+                locator.GetElement(driver);
                 return true;
             }
             catch
@@ -388,7 +388,7 @@ namespace CompanyName.ProjectName.Web.API
             }
         }
 
-        public static void WaitForChildElementExists(this IWebElement element, IWebDriver driver, By locator)
+        public static void WaitForSubElementExists(this IWebElement element, IWebDriver driver, By locator)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace CompanyName.ProjectName.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Page child element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
+                throw new ApplicationException($"Page sub element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
             }
         }
 
@@ -533,7 +533,7 @@ namespace CompanyName.ProjectName.Web.API
         public static IWebElement GetVisibleWebElement(this By locator, IWebDriver driver)
         {
             locator.WaitForElementExists(driver);
-            return locator.GetWebElement(driver);
+            return locator.GetElement(driver);
         }
 
         public static void ScrollIntoView(this IWebElement element, IWebDriver driver)
@@ -548,7 +548,7 @@ namespace CompanyName.ProjectName.Web.API
             actions.MoveToElement(element).Build().Perform();
         }
 
-        public static IWebElement GetWebElement(this By locator, IWebDriver driver)
+        public static IWebElement GetElement(this By locator, IWebDriver driver)
         {
             try
             {
@@ -563,39 +563,39 @@ namespace CompanyName.ProjectName.Web.API
             return driver.FindElement(locator);
         }
 
-        public static IWebElement GetParentWebElement(this By locator, IWebDriver driver)
+        public static IWebElement GetParentElement(this By locator, IWebDriver driver)
         {
-            var element = locator.GetWebElement(driver);
-            return element.GetParentWebElement();
+            var element = locator.GetElement(driver);
+            return element.GetParentElement();
         }
 
-        public static IWebElement GetParentWebElement(this IWebElement element)
+        public static IWebElement GetParentElement(this IWebElement element)
         {
             return element.FindElement(By.XPath(".."));
         }
 
-        public static IWebElement GetChildWebElement(this By locator, IWebDriver driver, By childLocator)
+        public static IWebElement GetSubElement(this By locator, IWebDriver driver, By subLocator)
         {
-            var element = locator.GetWebElement(driver);
-            return element.GetChildWebElement(driver, childLocator);
+            var element = locator.GetElement(driver);
+            return element.GetSubElement(driver, subLocator);
         }
 
-        public static IWebElement GetChildWebElement(this IWebElement element, IWebDriver driver, By locator)
+        public static IWebElement GetSubElement(this IWebElement element, IWebDriver driver, By locator)
         {
-            element.WaitForChildElementExists(driver, locator);
+            element.WaitForSubElementExists(driver, locator);
             return element.FindElement(locator);
         }
 
-        public static ReadOnlyCollection<IWebElement> GetChildWebElements(this By locator, IWebDriver driver, By childLocator)
+        public static List<IWebElement> GetSubElements(this By locator, IWebDriver driver, By subLocator)
         {
-            var element = locator.GetWebElement(driver);
-            return element.GetChildWebElements(driver, childLocator);
+            var element = locator.GetElement(driver);
+            return element.GetSubElements(driver, subLocator).ToList();
         }
 
-        public static ReadOnlyCollection<IWebElement> GetChildWebElements(this IWebElement element, IWebDriver driver, By locator)
+        public static List<IWebElement> GetSubElements(this IWebElement element, IWebDriver driver, By locator)
         {
-            element.WaitForChildElementExists(driver, locator);
-            return element.FindElements(locator);
+            element.WaitForSubElementExists(driver, locator);
+            return element.FindElements(locator).ToList();
         }
     }
 }

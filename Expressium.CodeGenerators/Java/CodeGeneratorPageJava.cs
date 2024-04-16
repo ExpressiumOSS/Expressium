@@ -11,7 +11,7 @@ namespace Expressium.CodeGenerators.Java
         {
         }
 
-        internal override string GetSourceCodeFilePath(ObjectRepositoryPage page)
+        internal override string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.AddRange(GenerateMemberMethods(page));
             listOfLines.AddRange(GenerateControlMethods(page));
             listOfLines.AddRange(GenerateFillFormMethod(page));
-            listOfLines.AddRange(GenerateExtensionSourceCode(page));
+            listOfLines.AddRange(GenerateExtensions(page));
             listOfLines.Add($"}}");
 
             return listOfLines;
@@ -181,12 +181,12 @@ namespace Expressium.CodeGenerators.Java
             return listOfLines;
         }
 
-        internal List<string> GenerateExtensionSourceCode(ObjectRepositoryPage page)
+        internal List<string> GenerateExtensions(ObjectRepositoryPage page)
         {
             if (configuration.IncludeExtensions)
             {
-                var filePath = GetSourceCodeFilePath(page);
-                return GenerateExtensionCode(filePath, "// region Extensions", "// endregion");
+                var filePath = GetFilePath(page);
+                return GenerateExtensions(filePath, "// region Extensions", "// endregion");
             }
 
             return new List<string>();

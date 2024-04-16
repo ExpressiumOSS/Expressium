@@ -133,101 +133,56 @@ namespace Expressium.CodeGenerators.CSharp
 
         internal static List<string> GenerateTableMethods(ObjectRepositoryControl control)
         {
-            if (!string.IsNullOrWhiteSpace(control.Value))
-                return GenerateTableWithHeaderMethods(control);
-            else
-                return GenerateTableWithoutHeaderMethods(control);
-        }
-
-        internal static List<string> GenerateTableWithHeaderMethods(ObjectRepositoryControl control)
-        {
-            var listOfLines = new List<string>();
-
-            var listOfHeaders = control.Value.Split(';');
-            var listOfUniqueHeaders = new List<string>();
-
-            listOfLines.Add($"private enum {control.Name}Columns");
-            listOfLines.Add($"{{");
-
-            for (int i = 0; i < listOfHeaders.Count(); i++)
-            {
-                var header = listOfHeaders[i].Trim();
-                header = header.PascalCase();
-
-                if (listOfUniqueHeaders.Contains(header))
-                    continue;
-
-                if (string.IsNullOrWhiteSpace(header))
-                    continue;
-
-                listOfUniqueHeaders.Add(header);
-
-                listOfLines.Add($"{header} = {i + 1},");
-            }
-
-            listOfLines.Add($"}}");
-            listOfLines.Add("");
-
-            listOfLines.AddRange(new List<string>
-            {
-                $"public int GetNumberOf{control.Name}()",
-                $"{{",
-                $"logger.InfoFormat(\"GetNumberOf{control.Name}()\");",
-                $"return {control.Name}.GetChildWebElements(driver, By.XPath(\"./tbody/tr\")).Count;",
-                $"}}",
-                ""
-            });
-
-            foreach (var header in listOfUniqueHeaders)
-            {
-                listOfLines.AddRange(new List<string>
-                {
-                    $"public string Get{control.Name}{header}Text(int rowIndex)",
-                    $"{{",
-                    $"logger.InfoFormat(\"Get{control.Name}{header}Text({{0}})\", rowIndex);",
-                    $"return Get{control.Name}Text(rowIndex, (int){control.Name}Columns.{header});",
-                    $"}}",
-                    ""
-                });
-            }
-
-            listOfLines.AddRange(new List<string>
-            {
-                $"private string Get{control.Name}Text(int rowIndex, int columnIndex)",
-                $"{{",
-                $"var element = {control.Name}.GetChildWebElement(driver, By.XPath($\"./tbody/tr[{{rowIndex}}]/td[position()={{columnIndex}}]\"));",
-                $"return element.GetText(driver);",
-                $"}}",
-                ""
-            });
-
-            return listOfLines;
-        }
-
-        internal static List<string> GenerateTableWithoutHeaderMethods(ObjectRepositoryControl control)
-        {
             var listOfLines = new List<string>
             {
-                $"public int GetNumberOf{control.Name}()",
+                $"public int Get{control.Name}NumberOfRows()",
                 $"{{",
-                $"logger.InfoFormat(\"GetNumberOf{control.Name}()\");",
-                $"return {control.Name}.GetChildWebElements(driver, By.XPath(\"./tbody/tr\")).Count;",
+                $"logger.InfoFormat(\"Get{control.Name}NumberOfRows()\");",
+                $"return {control.Name}.GetSubElements(driver, By.XPath(\"./tbody/tr\")).Count;",
                 $"}}",
                 "",
-                $"public void Click{control.Name}(int rowId, int columnId)",
+                $"public int Get{control.Name}NumberOfColumns()",
                 $"{{",
-                $"logger.InfoFormat(\"Click{control.Name}({{0}}, {{1}})\", rowId, columnId);",
-                $"var element = {control.Name}.GetChildWebElement(driver, By.XPath($\"./tbody/tr[{{rowId}}]/td[position()={{columnId}}]//a\"));",
+                $"logger.InfoFormat(\"Get{control.Name}NumberOfColumns()\");",
+                $"return {control.Name}.GetSubElements(driver, By.XPath(\"./thead/tr/th\")).Count;",
+                $"}}",
+                "",
+                $"public void Click{control.Name}Cell(int rowIndex, int columnIndex)",
+                $"{{",
+                $"logger.InfoFormat(\"Click{control.Name}Cell({{0}}, {{1}})\", rowIndex, columnIndex);",
+                $"var element = {control.Name}.GetSubElement(driver, By.XPath($\"./tbody/tr[{{rowIndex}}]/td[{{columnIndex}}]\"));",
                 $"element.Click(driver);",
                 $"}}",
                 "",
-                $"public string Get{control.Name}Text(int rowIndex, int columnIndex)",
+                $"public string Get{control.Name}CellText(int rowIndex, int columnIndex)",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}Text({{0}}, {{1}})\", rowIndex, columnIndex);",
-                $"var element = {control.Name}.GetChildWebElement(driver, By.XPath($\"./tbody/tr[{{rowIndex}}]/td[position()={{columnIndex}}]\"));",
+                $"logger.InfoFormat(\"Get{control.Name}CellText({{0}}, {{1}})\", rowIndex, columnIndex);",
+                $"var element = {control.Name}.GetSubElement(driver, By.XPath($\"./tbody/tr[{{rowIndex}}]/td[{{columnIndex}}]\"));",
                 $"return element.GetText(driver);",
                 $"}}",
-                ""
+                "",
+                $"public string Get{control.Name}CellText(int rowIndex, string columnName)",
+                $"{{",
+                $"logger.InfoFormat(\"Get{control.Name}CellText({{0}}, {{1}})\", rowIndex, columnName);",
+                $"",
+                $"var columnIndex = GetColumnIndex(columnName);",
+                $"",
+                $"var element = {control.Name}.GetSubElement(driver, By.XPath($\"./tbody/tr[{{rowIndex}}]/td[{{columnIndex}}]\"));",
+                $"return element.GetText(driver);",
+                $"}}",
+                "",
+                $"private int GetColumnIndex(string columnName)",
+                $"{{",
+                $"var columnNames = {control.Name}.GetSubElements(driver, By.XPath(\"./thead/tr/th\"));",
+                $"",
+                $"int index = columnNames.FindIndex((IWebElement element) => element.Text == columnName);",
+                $"",
+                $"if (index == -1)",
+                $"throw new ApplicationException($\"The column name '{{columnName}}' was not found...\");",
+                $"",
+                $"return index + 1;",
+                $"}}",
+                $"",
             };
 
             return listOfLines;

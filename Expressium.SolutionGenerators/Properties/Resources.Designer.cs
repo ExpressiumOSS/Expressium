@@ -1033,7 +1033,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using OpenQA.Selenium.Interactions;
         ///using OpenQA.Selenium.Support.UI;
         ///using System;
-        ///using System.Collections.ObjectModel;
+        ///using System.Collections.Generic;
         ///using System.Linq;
         ///using System.Threading;
         ///
@@ -1046,7 +1046,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static bool Highlight { get; set; }
         ///        public static int HighlightTimeOut { get; set; }
         ///        public static int HighlightWidth { get; set; }
-        ///  [rest of string was truncated]&quot;;.
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElementsByCSharp {
             get {
@@ -1059,7 +1059,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using OpenQA.Selenium.Interactions;
         ///using OpenQA.Selenium.Support.UI;
         ///using System;
-        ///using System.Collections.ObjectModel;
+        ///using System.Collections.Generic;
         ///using System.Linq;
         ///using System.Threading;
         ///
@@ -1072,7 +1072,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static bool Highlight { get; set; }
         ///        public static int HighlightTimeOut { get; set; }
         ///        public static int HighlightWidth { get; set; }
-        ///  [rest of string was truncated]&quot;;.
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElementsCSharp {
             get {

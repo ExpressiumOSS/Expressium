@@ -11,10 +11,10 @@ namespace Expressium.CodeGenerators
         private readonly Configuration configuration;
         private readonly ObjectRepository objectRepository;
 
-        private readonly CodeGeneratorModel codeGeneratorModel;
         private readonly CodeGeneratorPage codeGeneratorPage;
-        private readonly CodeGeneratorFactory codeGeneratorFactory;
         private readonly CodeGeneratorTest codeGeneratorTest;
+        private readonly CodeGeneratorModel codeGeneratorModel;
+        private readonly CodeGeneratorFactory codeGeneratorFactory;
 
         public CodeGenerator(Configuration configuration, ObjectRepository objectRepository)
         {
@@ -104,35 +104,35 @@ namespace Expressium.CodeGenerators
             }
         }
 
-        public string GeneratePagePreview(string name)
+        public string GeneratePageAsString(string name)
         {
             if (codeGeneratorPage != null && configuration.IncludePages)
             {
                 if (objectRepository.IsPageAdded(name))
                 {
                     var page = objectRepository.GetPage(name);
-                    return codeGeneratorPage.GeneratePreview(page);
+                    return codeGeneratorPage.GenerateAsString(page);
                 }
             }
 
             return null;
         }
 
-        public string GenerateTestPreview(string name)
+        public string GenerateTestAsString(string name)
         {
             if (codeGeneratorTest != null && configuration.IncludeTests)
             {
                 if (objectRepository.IsPageAdded(name))
                 {
                     var page = objectRepository.GetPage(name);
-                    return codeGeneratorTest.GeneratePreview(page);
+                    return codeGeneratorTest.GenerateAsString(page);
                 }
             }
 
             return null;
         }
 
-        public string GenerateModelPreview(string name)
+        public string GenerateModelAsString(string name)
         {
             if (codeGeneratorModel != null && configuration.IncludePages)
             {
@@ -140,14 +140,14 @@ namespace Expressium.CodeGenerators
                 {
                     var page = objectRepository.GetPage(name);
                     if (page.Model)
-                        return codeGeneratorModel.GeneratePreview(page);
+                        return codeGeneratorModel.GenerateAsString(page);
                 }
             }
 
             return null;
         }
 
-        public string GenerateFactoryPreview(string name)
+        public string GenerateFactoryAsString(string name)
         {
             if (codeGeneratorFactory != null && configuration.IncludeTests)
             {
@@ -155,7 +155,7 @@ namespace Expressium.CodeGenerators
                 {
                     var page = objectRepository.GetPage(name);
                     if (page.Model)
-                        return codeGeneratorFactory.GeneratePreview(page);
+                        return codeGeneratorFactory.GenerateAsString(page);
                 }
             }
 

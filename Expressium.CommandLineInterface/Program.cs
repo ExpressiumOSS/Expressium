@@ -6,7 +6,7 @@ using System;
 
 namespace Expressium.CommandLineInterface
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -20,10 +20,9 @@ namespace Expressium.CommandLineInterface
             }
             else
             {
-                Console.WriteLine("Expressium...");
-                Console.WriteLine("ExpressiumCLI.exe [OPTION] [CONFIGURATION]");
-                Console.WriteLine("ExpressiumCLI.exe --solutiongenerator C:\\SourceCode\\company-project-tests\\CompanyProject.cfg");
-                Console.WriteLine("ExpressiumCLI.exe --codegenerator C:\\SourceCode\\company-project-tests\\CompanyProject.cfg");
+                Console.WriteLine("Expressium.CommandLineInterface.exe [OPTION] [CONFIGURATION]");
+                Console.WriteLine("Expressium.CommandLineInterface.exe --solutiongenerator C:\\SourceCode\\company-project-tests\\CompanyProject.cfg");
+                Console.WriteLine("Expressium.CommandLineInterface.exe --codegenerator C:\\SourceCode\\company-project-tests\\CompanyProject.cfg");
             }
         }
 
