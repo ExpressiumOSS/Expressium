@@ -8,14 +8,14 @@ namespace Expressium.ObjectRepositories
     public class ObjectRepositoryPage
     {
         public string Name { get; set; }
-        public string Url { get; set; }
         public string Title { get; set; }
+        public string Url { get; set; }
         public string Base { get; set; }
         public bool Model { get; set; }
 
         public string NameLocator { get; set; }
-        public string ControlsLocator { get; set; }
         public string IncludeControlsLocator { get; set; }
+        public string ExcludeControlsLocator { get; set; }
 
         public List<ObjectRepositorySynchronizer> Synchronizers { get; set; }
         public List<ObjectRepositoryMember> Members { get; set; }
@@ -46,8 +46,8 @@ namespace Expressium.ObjectRepositories
             Model = page.Model;
 
             NameLocator = page.NameLocator;
-            ControlsLocator = page.ControlsLocator;
             IncludeControlsLocator = page.IncludeControlsLocator;
+            ExcludeControlsLocator = page.ExcludeControlsLocator;
 
             Synchronizers.Clear();
             foreach (var synchronizer in page.Synchronizers)
@@ -268,19 +268,6 @@ namespace Expressium.ObjectRepositories
             }
 
             return false;
-        }
-
-        public int GetNumberOfFillFormControls()
-        {
-            int numberOfControls = 0;
-
-            foreach (var control in Controls)
-            {
-                if (control.IsFillFormControl())
-                    numberOfControls++;
-            }
-
-            return numberOfControls;
         }
     }
 }
