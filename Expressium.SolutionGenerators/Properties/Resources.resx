@@ -133,9 +133,6 @@
   <data name="BaseHooksReqnRollCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CSharp\Resources\BaseHooksReqnRollCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="BasePageByCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CSharp\Resources\BasePageByCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="BasePageCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CSharp\Resources\BasePageCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -150,6 +147,9 @@
   </data>
   <data name="BaseStepsJava" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Java\Resources\BaseStepsJava.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="BaseTableCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\CSharp\Resources\BaseTableCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="BaseTestCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CSharp\Resources\BaseTestCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -205,9 +205,6 @@
   <data name="PomJava" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Java\Resources\PomJava.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="ProjectFileApiByCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CSharp\Resources\ProjectFileApiByCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="ProjectFileApiCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CSharp\Resources\ProjectFileApiCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -243,9 +240,6 @@
   </data>
   <data name="WebDriversJava" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Java\Resources\WebDriversJava.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="WebElementsByCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\CSharp\Resources\WebElementsByCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="WebElementsCSharp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CSharp\Resources\WebElementsCSharp.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>

@@ -12,7 +12,6 @@ namespace CompanyName.ProjectName.Web.API
         protected ILog logger;
         protected IWebDriver driver;
 
-        public static int PageFactoryTimeOut { get; set; }
         public static int PageTimeOut { get; set; }
 
         public static By PageSpinnerLocator { get; set; }
@@ -21,7 +20,6 @@ namespace CompanyName.ProjectName.Web.API
 
         static BasePage()
         {
-            PageFactoryTimeOut = 10000;
             PageTimeOut = 10000;
 
             PageSpinnerLocator = null;
@@ -37,7 +35,7 @@ namespace CompanyName.ProjectName.Web.API
             WaitForPageDocumentReadyStateEqualsComplete();
             WaitForPageSpinnerIsCompleted();
 
-            PageFactory.InitElements(this, new RetryingElementLocator(driver, TimeSpan.FromMilliseconds(PageFactoryTimeOut)));
+            PageFactory.InitElements(this, new RetryingElementLocator(driver, TimeSpan.FromMilliseconds(PageTimeOut)));
         }
 
         public string GetTitle()
@@ -151,6 +149,19 @@ namespace CompanyName.ProjectName.Web.API
             }
         }
 
+        protected void WaitForPageElementIsVisible(By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Synchronization - Page element '{locator}' was expected to be visible within {PageTimeOut} milliseconds...");
+            }
+        }
+
         protected void WaitForPageElementIsVisible(IWebElement element)
         {
             try
@@ -161,6 +172,19 @@ namespace CompanyName.ProjectName.Web.API
             catch
             {
                 throw new ApplicationException($"Synchronization - Page element was expected to be visible within {PageTimeOut} milliseconds...");
+            }
+        }
+
+        protected void WaitForPageElementIsEnabled(By locator)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Synchronization - Page element '{locator}' was expected to be enabled within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -206,7 +230,7 @@ namespace CompanyName.ProjectName.Web.API
                 }
                 else
                 {
-                    System.Threading.Thread.Sleep(delay);
+                    Thread.Sleep(delay);
                 }
             }
 

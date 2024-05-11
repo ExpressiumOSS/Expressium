@@ -23,7 +23,7 @@ namespace Expressium.SolutionGenerators.CSharp
                 { "CompanyName", configuration.Company },
                 { "ProjectName", configuration.Project },
                 { "ApplicationUrl", configuration.ApplicationUrl },
-                { "BrowserType", configuration.BrowserType }
+                { "BrowserType", configuration.Enroller.BrowserType }
             };
 
             // Generate Solution Files...
@@ -40,22 +40,11 @@ namespace Expressium.SolutionGenerators.CSharp
 
             WriteToFile(Path.Combine(apiProjectPath, "Logger.cs"), Resources.LoggerCSharp, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "Randomizer.cs"), Resources.RandomizerCSharp, mapOfProperties);
+            WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsCSharp, mapOfProperties);
 
-            if (configuration.IsCodingStylePageFactory())
-            {
-                WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApiCSharp, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageCSharp, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsCSharp, mapOfProperties);
-            }
-            else if (configuration.IsCodingStyleByLocators())
-            {
-                WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApiByCSharp, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageByCSharp, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsByCSharp, mapOfProperties);
-            }
-            else
-            {
-            }
+            WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApiCSharp, mapOfProperties);
+            WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageCSharp, mapOfProperties);
+            WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTableCSharp, mapOfProperties);
 
             // Generate Solution Api Test Project Files...
             var apiTestProjectPath = Path.Combine(directory, nameSpace + ".Tests");

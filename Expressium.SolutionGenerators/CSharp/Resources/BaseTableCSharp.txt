@@ -1,0 +1,87 @@
+using log4net;
+using OpenQA.Selenium;
+using System;
+using System.Linq;
+
+namespace CompanyName.ProjectName.Web.API
+{
+    public class BaseTable : BasePage
+    {
+        protected By baseLocator;
+
+        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
+        {
+            this.logger = logger;
+            this.driver = driver;
+            this.baseLocator = baseLocator;
+        }
+
+        public virtual int GetNumberOfRows()
+        {
+            logger.InfoFormat("GetNumberOfRows()");
+            return baseLocator.GetSubElements(driver, By.XPath("./tbody/tr")).Count;
+        }
+
+        public virtual int GetNumberOfColumns()
+        {
+            logger.InfoFormat("GetNumberOfColumns()");
+            return baseLocator.GetSubElements(driver, By.XPath("./thead/tr/th")).Count;
+        }
+
+        public virtual string GetCellText(int rowIndex, int columnIndex)
+        {
+            logger.InfoFormat("GetCellText({0}, {1})", rowIndex, columnIndex);
+
+            var element = baseLocator.GetSubElement(driver, By.XPath($"./tbody/tr[{rowIndex}]/td[{columnIndex}]"));
+            return element.GetText(driver);
+        }
+
+        public virtual string GetCellText(int rowIndex, string columnName)
+        {
+            logger.InfoFormat("GetCellText({0}, {1})", rowIndex, columnName);
+
+            var columnIndex = GetColumnIndex(columnName);
+
+            var element = baseLocator.GetSubElement(driver, By.XPath($"./tbody/tr[{rowIndex}]/td[{columnIndex}]"));
+            return element.GetText(driver);
+        }
+
+        public virtual void ClickContextMenu(int rowIndex, int columnIndex, string menuEntry)
+        {
+            logger.InfoFormat("ClickContextMenu({0}, {1})", rowIndex, columnIndex);
+
+            var element = baseLocator.GetSubElement(driver, By.XPath($"./tbody/tr[{rowIndex}]/td[{columnIndex}]"));
+            element.Click(driver);
+
+            var contextMenuLocator = By.XPath($"//li[@role='menuitem']//a[normalize-space()='{menuEntry}']");
+            var contextMenuElement = contextMenuLocator.GetElement(driver);
+            contextMenuElement.Click(driver);
+        }
+
+        public virtual void ClickContextMenu(int rowIndex, string columnName, string menuEntry)
+        {
+            logger.InfoFormat("ClickContextMenu({0}, {1})", rowIndex, columnName);
+
+            var columnIndex = GetColumnIndex(columnName);
+
+            var element = baseLocator.GetSubElement(driver, By.XPath($"./tbody/tr[{rowIndex}]/td[{columnIndex}]"));
+            element.Click(driver);
+
+            var contextMenuLocator = By.XPath($"//li[@role='menuitem']//a[normalize-space()='{menuEntry}']");
+            var contextMenuElement = contextMenuLocator.GetElement(driver);
+            contextMenuElement.Click(driver);
+        }
+
+        public virtual int GetColumnIndex(string columnName)
+        {
+            var columnNames = baseLocator.GetSubElements(driver, By.XPath("./thead/tr/th")).ToList();
+
+            int index = columnNames.FindIndex((IWebElement element) => element.Text == columnName);
+
+            if (index == -1)
+                throw new ApplicationException($"The column name '{columnName}' was not found...");
+
+            return index + 1;
+        }
+    }
+}

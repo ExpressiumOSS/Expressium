@@ -1,4 +1,5 @@
 ﻿using Expressium.Configurations;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -25,8 +26,12 @@ namespace Expressium.SolutionGenerators
                 Directory.CreateDirectory(directory);
 
             using (var fileStream = File.Create(destinationFile))
-            using (var streamWriter = new StreamWriter(fileStream))
-                streamWriter.WriteLine(text);
+            {
+                using (var streamWriter = new StreamWriter(fileStream))
+                    streamWriter.WriteLine(text);
+            }
+
+            Console.WriteLine(destinationFile);
         }
     }
 }

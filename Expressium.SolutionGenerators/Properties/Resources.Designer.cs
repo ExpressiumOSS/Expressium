@@ -179,6 +179,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
         ///using OpenQA.Selenium.Support.UI;
+        ///using SeleniumExtras.PageObjects;
         ///using System;
         ///using System.Threading;
         ///
@@ -193,36 +194,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///        public static By PageSpinnerLocator { get; set; }
         ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static int PageSpinnerTimeOut { get; set; }
-        ///
-        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BasePageByCSharp {
-            get {
-                return ResourceManager.GetString("BasePageByCSharp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using log4net;
-        ///using OpenQA.Selenium;
-        ///using OpenQA.Selenium.Support.UI;
-        ///using SeleniumExtras.PageObjects;
-        ///using System;
-        ///using System.Threading;
-        ///
-        ///namespace CompanyName.ProjectName.Web.API
-        ///{
-        ///    public class BasePage
-        ///    {
-        ///        protected ILog logger;
-        ///        protected IWebDriver driver;
-        ///
-        ///        public static int PageFactoryTimeOut { get; set; }
-        ///        public static int PageTimeOut { get; set; }
-        ///
-        ///        public static By PageSpinnerLocator { get; set; }
-        ///        public static int PageSpin [rest of string was truncated]&quot;;.
+        ///        public static int P [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageCSharp {
             get {
@@ -322,6 +294,35 @@ namespace Expressium.SolutionGenerators.Properties {
         internal static string BaseStepsJava {
             get {
                 return ResourceManager.GetString("BaseStepsJava", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using log4net;
+        ///using OpenQA.Selenium;
+        ///using System;
+        ///using System.Linq;
+        ///
+        ///namespace CompanyName.ProjectName.Web.API
+        ///{
+        ///    public class BaseTable : BasePage
+        ///    {
+        ///        protected By baseLocator;
+        ///
+        ///        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
+        ///        {
+        ///            this.logger = logger;
+        ///            this.driver = driver;
+        ///            this.baseLocator = baseLocator;
+        ///        }
+        ///
+        ///        public virtual int GetNumberOfRows()
+        ///        {
+        ///            l [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BaseTableCSharp {
+            get {
+                return ResourceManager.GetString("BaseTableCSharp", resourceCulture);
             }
         }
         
@@ -758,34 +759,11 @@ namespace Expressium.SolutionGenerators.Properties {
         ///  &lt;/PropertyGroup&gt;
         ///
         ///  &lt;ItemGroup&gt;
-        ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;log4net&quot; Version=&quot;2.0.15&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;110.2.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.18.1&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.18.1&quot; /&gt;
-        ///  &lt;/ItemGroup&gt;
-        ///
-        ///  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ProjectFileApiByCSharp {
-            get {
-                return ResourceManager.GetString("ProjectFileApiByCSharp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
-        ///
-        ///  &lt;PropertyGroup&gt;
-        ///    &lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
-        ///  &lt;/PropertyGroup&gt;
-        ///
-        ///  &lt;ItemGroup&gt;
         ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.PageObjects.Core&quot; Version=&quot;4.14.1&quot; /&gt;
         ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;log4net&quot; Version=&quot;2.0.15&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;log4net&quot; Version=&quot;2.0.17&quot; /&gt;
         ///    &lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;110.2.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.18.1&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.20.0&quot; /&gt;
         /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiCSharp {
@@ -1025,32 +1003,6 @@ namespace Expressium.SolutionGenerators.Properties {
         internal static string WebDriversJava {
             get {
                 return ResourceManager.GetString("WebDriversJava", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using OpenQA.Selenium;
-        ///using OpenQA.Selenium.Interactions;
-        ///using OpenQA.Selenium.Support.UI;
-        ///using System;
-        ///using System.Collections.Generic;
-        ///using System.Linq;
-        ///using System.Threading;
-        ///
-        ///namespace CompanyName.ProjectName.Web.API
-        ///{
-        ///    public static class WebElements
-        ///    {
-        ///        public static int ElementTimeOut { get; set; }
-        ///
-        ///        public static bool Highlight { get; set; }
-        ///        public static int HighlightTimeOut { get; set; }
-        ///        public static int HighlightWidth { get; set; }
-        ///      [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string WebElementsByCSharp {
-            get {
-                return ResourceManager.GetString("WebElementsByCSharp", resourceCulture);
             }
         }
         

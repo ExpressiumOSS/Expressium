@@ -34,184 +34,17 @@ namespace CompanyName.ProjectName.Web.API
             HighlightFailureColor = "darkred";
         }
 
-        public static void Click(this IWebElement element, IWebDriver driver)
+        public static bool IsPresent(this IWebElement element)
         {
-            element.WaitForElementIsEnabled(driver);
-
-            element.HighlightAction(driver);
-            element.HighlightClear(driver);
-
-            element.Click();
-        }
-
-        public static void ClickLink(this IWebElement element, IWebDriver driver)
-        {
-            element.Click(driver);
-        }
-
-        public static void ClickButton(this IWebElement element, IWebDriver driver)
-        {
-            element.Click(driver);
-        }
-
-        public static void SetCheckBox(this IWebElement element, IWebDriver driver, bool value)
-        {
-            element.WaitForElementIsEnabled(driver);
-
-            if ((!element.Selected && value) || (element.Selected && !value))
+            try
             {
-                element.HighlightAction(driver);
-
-                element.Click();
-
-                element.HighlightClear(driver);
+                if (!string.IsNullOrWhiteSpace(element.TagName))
+                    return true;
             }
-        }
-
-        public static bool GetCheckBox(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-            element.HighlightValidation(driver);
-
-            return element.Selected;
-        }
-
-        public static void SetRadioButton(this IWebElement element, IWebDriver driver, bool value)
-        {
-            element.WaitForElementIsEnabled(driver);
-
-            if ((!element.Selected && value))
+            catch
             {
-                element.HighlightAction(driver);
-
-                element.Click();
-
-                element.HighlightClear(driver);
+                return false;
             }
-        }
-
-        public static bool GetRadioButton(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-            element.HighlightValidation(driver);
-
-            return element.Selected;
-        }
-
-        public static void SetComboBox(this IWebElement element, IWebDriver driver, string value)
-        {
-            element.SetComboBoxByText(driver, value);
-        }
-
-        public static void SetListBox(this IWebElement element, IWebDriver driver, string value)
-        {
-            element.SetComboBoxByText(driver, value);
-        }
-
-        public static void SetComboBoxByText(this IWebElement element, IWebDriver driver, string value)
-        {
-            if (value == null)
-                return;
-
-            element.WaitForElementIsEnabled(driver);
-
-            element.HighlightAction(driver);
-
-            var selectElement = new SelectElement(element);
-            selectElement.WaitForSelectOptionIsPopulated(driver, value);
-            selectElement.SelectByText(value);
-
-            element.HighlightClear(driver);
-        }
-
-        public static void SetComboBoxByIndex(this IWebElement element, IWebDriver driver, int value)
-        {
-            element.WaitForElementIsEnabled(driver);
-
-            element.HighlightAction(driver);
-
-            var selectElement = new SelectElement(element);
-            selectElement.SelectByIndex(value);
-
-            element.HighlightClear(driver);
-        }
-
-        public static void SetComboBoxByValue(this IWebElement element, IWebDriver driver, string value)
-        {
-            if (value == null)
-                return;
-
-            element.WaitForElementIsEnabled(driver);
-
-            element.HighlightAction(driver);
-
-            var selectElement = new SelectElement(element);
-            selectElement.SelectByValue(value);
-
-            element.HighlightClear(driver);
-        }
-
-        public static string GetComboBox(this IWebElement element, IWebDriver driver)
-        {
-            return element.GetComboBoxText(driver);
-        }
-
-        public static string GetListBox(this IWebElement element, IWebDriver driver)
-        {
-            return element.GetComboBoxText(driver);
-        }
-
-        public static string GetComboBoxText(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-
-            element.HighlightValidation(driver);
-
-            var selectElement = new SelectElement(element);
-            if (selectElement.SelectedOption != null)
-                return selectElement.SelectedOption.Text.Trim();
-
-            return null;
-        }
-
-        public static void SetTextBox(this IWebElement element, IWebDriver driver, string value)
-        {
-            if (value == null)
-                return;
-
-            element.WaitForElementIsEnabled(driver);
-            element.HighlightAction(driver);
-
-            element.Clear();
-            element.SendKeys(value);
-
-            element.HighlightClear(driver);
-        }
-
-        public static string GetTextBox(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-            element.HighlightValidation(driver);
-
-            return element.GetAttribute("value").Trim();
-        }
-
-        public static string GetText(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-            element.HighlightValidation(driver);
-
-            return element.Text.Trim();
-        }
-
-        public static bool IsEnabled(this IWebElement element, IWebDriver driver)
-        {
-            element.WaitForElementIsVisible(driver);
-
-            element.HighlightValidation(driver);
-
-            if (element.Enabled)
-                return true;
 
             return false;
         }
@@ -234,17 +67,14 @@ namespace CompanyName.ProjectName.Web.API
             return false;
         }
 
-        public static bool IsPresent(this IWebElement element)
+        public static bool IsEnabled(this IWebElement element, IWebDriver driver)
         {
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(element.TagName))
-                    return true;
-            }
-            catch
-            {
-                return false;
-            }
+            element.WaitForElementIsVisible(driver);
+
+            element.HighlightValidation(driver);
+
+            if (element.Enabled)
+                return true;
 
             return false;
         }
@@ -342,7 +172,7 @@ namespace CompanyName.ProjectName.Web.API
             }
         }
 
-        public static void WaitForElementIsVisible(IWebDriver driver, By locator)
+        public static void WaitForElementIsVisible(this By locator, IWebDriver driver)
         {
             try
             {
@@ -352,19 +182,6 @@ namespace CompanyName.ProjectName.Web.API
             catch
             {
                 throw new ApplicationException($"Page element '{locator}' was expected to be visible within {ElementTimeOut} milliseconds...");
-            }
-        }
-
-        public static void WaitForElementIsEnabled(IWebDriver driver, By locator)
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
-            }
-            catch
-            {
-                throw new ApplicationException($"Page element '{locator}' was expected to be enabled within {ElementTimeOut} milliseconds...");
             }
         }
 
@@ -406,6 +223,19 @@ namespace CompanyName.ProjectName.Web.API
             catch
             {
                 throw new ApplicationException($"Page element '{locator}' was expected to be invisible within {timeOut} milliseconds...");
+            }
+        }
+
+        public static void WaitForElementIsEnabled(this By locator, IWebDriver driver)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be enabled within {ElementTimeOut} milliseconds...");
             }
         }
 
@@ -471,17 +301,6 @@ namespace CompanyName.ProjectName.Web.API
             };
         }
 
-        public static IWebElement GetVisibleElement(IWebDriver driver, By locator)
-        {
-            WaitForElementIsVisible(driver, locator);
-
-            var element = driver.FindElement(locator);
-            if (element == null)
-                return null;
-
-            return element;
-        }
-
         public static void ScrollIntoView(this IWebElement element, IWebDriver driver)
         {
             var javaScriptExecutor = (IJavaScriptExecutor)driver;
@@ -494,9 +313,36 @@ namespace CompanyName.ProjectName.Web.API
             actions.MoveToElement(element).Build().Perform();
         }
 
+        public static IWebElement GetElement(this By locator, IWebDriver driver)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
+                wait.Until(d => d.FindElement(locator));
+            }
+            catch
+            {
+                throw new ApplicationException($"Page element '{locator}' was expected to be found within {ElementTimeOut} milliseconds...");
+            }
+
+            return driver.FindElement(locator);
+        }
+
+        public static IWebElement GetParentElement(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetParentElement();
+        }
+
         public static IWebElement GetParentElement(this IWebElement element)
         {
             return element.FindElement(By.XPath(".."));
+        }
+
+        public static IWebElement GetSubElement(this By locator, IWebDriver driver, By subLocator)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetSubElement(driver, subLocator);
         }
 
         public static IWebElement GetSubElement(this IWebElement element, IWebDriver driver, By locator)
@@ -505,10 +351,278 @@ namespace CompanyName.ProjectName.Web.API
             return element.FindElement(locator);
         }
 
+        public static List<IWebElement> GetSubElements(this By locator, IWebDriver driver, By subLocator)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetSubElements(driver, subLocator).ToList();
+        }
+
         public static List<IWebElement> GetSubElements(this IWebElement element, IWebDriver driver, By locator)
         {
             element.WaitForSubElementExists(driver, locator);
             return element.FindElements(locator).ToList();
+        }
+
+        public static void Click(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+            element.HighlightClear(driver);
+
+            element.Click();
+        }
+
+        public static void ClickLink(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            element.ClickLink(driver);
+        }
+
+        public static void ClickLink(this IWebElement element, IWebDriver driver)
+        {
+            element.Click(driver);
+        }
+
+        public static void ClickButton(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            element.ClickButton(driver);
+        }
+
+        public static void ClickButton(this IWebElement element, IWebDriver driver)
+        {
+            element.Click(driver);
+        }
+
+        public static void SetCheckBox(this By locator, IWebDriver driver, bool value)
+        {
+            var element = locator.GetElement(driver);
+            element.SetCheckBox(driver, value);
+        }
+
+        public static void SetCheckBox(this IWebElement element, IWebDriver driver, bool value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            if ((!element.Selected && value) || (element.Selected && !value))
+            {
+                element.HighlightAction(driver);
+
+                element.Click();
+
+                element.HighlightClear(driver);
+            }
+        }
+
+        public static bool GetCheckBox(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetCheckBox(driver);
+        }
+
+        public static bool GetCheckBox(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Selected;
+        }
+
+        public static void SetRadioButton(this By locator, IWebDriver driver, bool value)
+        {
+            var element = locator.GetElement(driver);
+            element.SetRadioButton(driver, value);
+        }
+
+        public static void SetRadioButton(this IWebElement element, IWebDriver driver, bool value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            if ((!element.Selected && value))
+            {
+                element.HighlightAction(driver);
+
+                element.Click();
+
+                element.HighlightClear(driver);
+            }
+        }
+
+        public static bool GetRadioButton(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetRadioButton(driver);
+        }
+
+        public static bool GetRadioButton(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Selected;
+        }
+
+        public static void SetComboBox(this By locator, IWebDriver driver, string value)
+        {
+            locator.SetComboBoxByText(driver, value);
+        }
+
+        public static void SetComboBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            element.SetComboBoxByText(driver, value);
+        }
+
+        public static void SetComboBoxByText(this By locator, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            var element = locator.GetElement(driver);
+            element.SetComboBoxByText(driver, value);
+        }
+
+        public static void SetComboBoxByText(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.WaitForSelectOptionIsPopulated(driver, value);
+            selectElement.SelectByText(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static void SetComboBoxByIndex(this By locator, IWebDriver driver, int value)
+        {
+            var element = locator.GetElement(driver);
+            element.SetComboBoxByIndex(driver, value);
+        }
+
+        public static void SetComboBoxByIndex(this IWebElement element, IWebDriver driver, int value)
+        {
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.SelectByIndex(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static void SetComboBoxByValue(this By locator, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            var element = locator.GetElement(driver);
+            element.SetComboBoxByValue(driver, value);
+        }
+
+        public static void SetComboBoxByValue(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+
+            element.HighlightAction(driver);
+
+            var selectElement = new SelectElement(element);
+            selectElement.SelectByValue(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static string GetComboBox(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetComboBox(driver);
+        }
+
+        public static string GetComboBox(this IWebElement element, IWebDriver driver)
+        {
+            return element.GetComboBoxText(driver);
+        }
+
+        public static string GetComboBoxText(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+
+            element.HighlightValidation(driver);
+
+            var selectElement = new SelectElement(element);
+            if (selectElement.SelectedOption != null)
+                return selectElement.SelectedOption.Text.Trim();
+
+            return null;
+        }
+
+        public static void SetListBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            element.SetComboBoxByText(driver, value);
+        }
+
+        public static string GetListBox(this IWebElement element, IWebDriver driver)
+        {
+            return element.GetComboBoxText(driver);
+        }
+
+        public static void SetTextBox(this By locator, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            var element = locator.GetElement(driver);
+            element.SetTextBox(driver, value);
+        }
+
+        public static void SetTextBox(this IWebElement element, IWebDriver driver, string value)
+        {
+            if (value == null)
+                return;
+
+            element.WaitForElementIsEnabled(driver);
+            element.HighlightAction(driver);
+
+            element.Clear();
+            element.SendKeys(value);
+
+            element.HighlightClear(driver);
+        }
+
+        public static string GetTextBox(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetTextBox(driver);
+        }
+
+        public static string GetTextBox(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.GetAttribute("value").Trim();
+        }
+
+        public static string GetText(this By locator, IWebDriver driver)
+        {
+            var element = locator.GetElement(driver);
+            return element.GetText(driver);
+        }
+
+        public static string GetText(this IWebElement element, IWebDriver driver)
+        {
+            element.WaitForElementIsVisible(driver);
+            element.HighlightValidation(driver);
+
+            return element.Text.Trim();
         }
     }
 }
