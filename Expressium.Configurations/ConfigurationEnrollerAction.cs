@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Expressium.Configurations
 {
-    public class ConfigurationAction
+    public class ConfigurationEnrollerAction
     {
         public string Name { get; set; }
         public string Type { get; set; }
@@ -11,7 +11,7 @@ namespace Expressium.Configurations
         public string Using { get; set; }
         public string Value { get; set; }
 
-        public ConfigurationAction()
+        public ConfigurationEnrollerAction()
         {
         }
 
