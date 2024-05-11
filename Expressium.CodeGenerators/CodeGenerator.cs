@@ -6,14 +6,14 @@ using System;
 
 namespace Expressium.CodeGenerators
 {
-    public class CodeGenerator
+    public class CodeGenerator : ICodeGenerator
     {
         private readonly Configuration configuration;
         private readonly ObjectRepository objectRepository;
 
         private readonly CodeGeneratorPage codeGeneratorPage;
-        private readonly CodeGeneratorTest codeGeneratorTest;
         private readonly CodeGeneratorModel codeGeneratorModel;
+        private readonly CodeGeneratorTest codeGeneratorTest;
         private readonly CodeGeneratorFactory codeGeneratorFactory;
 
         public CodeGenerator(Configuration configuration, ObjectRepository objectRepository)
@@ -26,17 +26,17 @@ namespace Expressium.CodeGenerators
 
             if (configuration.IsCodingLanguageCSharp())
             {
-                codeGeneratorModel = new CodeGeneratorModelCSharp(configuration, objectRepository);
                 codeGeneratorPage = new CodeGeneratorPageCSharp(configuration, objectRepository);
-                codeGeneratorFactory = new CodeGeneratorFactoryCSharp(configuration, objectRepository);
+                codeGeneratorModel = new CodeGeneratorModelCSharp(configuration, objectRepository);
                 codeGeneratorTest = new CodeGeneratorTestCSharp(configuration, objectRepository);
+                codeGeneratorFactory = new CodeGeneratorFactoryCSharp(configuration, objectRepository);
             }
             else if (configuration.IsCodingLanguageJava())
             {
-                codeGeneratorModel = new CodeGeneratorModelJava(configuration, objectRepository);
                 codeGeneratorPage = new CodeGeneratorPageJava(configuration, objectRepository);
-                codeGeneratorFactory = new CodeGeneratorFactoryJava(configuration, objectRepository);
+                codeGeneratorModel = new CodeGeneratorModelJava(configuration, objectRepository);
                 codeGeneratorTest = new CodeGeneratorTestJava(configuration, objectRepository);
+                codeGeneratorFactory = new CodeGeneratorFactoryJava(configuration, objectRepository);
             }
             else
             {
@@ -46,73 +46,40 @@ namespace Expressium.CodeGenerators
 
         public void GenerateAll()
         {
-            if (codeGeneratorPage != null && configuration.IncludePages)
+            foreach (var page in objectRepository.Pages)
             {
-                foreach (var page in objectRepository.Pages)
-                {
-                    codeGeneratorPage.Generate(page);
-                    if (page.Model)
-                    {
-                        if (codeGeneratorModel != null)
-                            codeGeneratorModel.Generate(page);
-                    }
-                }
-            }
+                codeGeneratorPage.Generate(page);
+                if (page.Model)
+                    codeGeneratorModel.Generate(page);
 
-            if (codeGeneratorTest != null && configuration.IncludeTests)
-            {
-                foreach (var page in objectRepository.Pages)
-                {
-                    codeGeneratorTest.Generate(page);
-                    if (page.Model)
-                    {
-                        if (codeGeneratorFactory != null)
-                            codeGeneratorFactory.Generate(page);
-                    }
-                }
+                codeGeneratorTest.Generate(page);
+                if (page.Model)
+                    codeGeneratorFactory.Generate(page);
             }
         }
 
         public void GeneratePage(string name)
         {
-            if (codeGeneratorPage != null && configuration.IncludePages)
+            if (objectRepository.IsPageAdded(name))
             {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    codeGeneratorPage.Generate(page);
-                    if (page.Model)
-                    {
-                        if (codeGeneratorModel != null)
-                            codeGeneratorModel.Generate(page);
-                    }
-                }
-            }
+                var page = objectRepository.GetPage(name);
 
-            if (codeGeneratorTest != null && configuration.IncludeTests)
-            {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    codeGeneratorTest.Generate(page);
-                    if (page.Model)
-                    {
-                        if (codeGeneratorFactory != null)
-                            codeGeneratorFactory.Generate(page);
-                    }
-                }
+                codeGeneratorPage.Generate(page);
+                if (page.Model)
+                    codeGeneratorModel.Generate(page);
+
+                codeGeneratorTest.Generate(page);
+                if (page.Model)
+                    codeGeneratorFactory.Generate(page);
             }
         }
 
         public string GeneratePageAsString(string name)
         {
-            if (codeGeneratorPage != null && configuration.IncludePages)
+            if (objectRepository.IsPageAdded(name))
             {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    return codeGeneratorPage.GenerateAsString(page);
-                }
+                var page = objectRepository.GetPage(name);
+                return codeGeneratorPage.GenerateAsString(page);
             }
 
             return null;
@@ -120,13 +87,10 @@ namespace Expressium.CodeGenerators
 
         public string GenerateTestAsString(string name)
         {
-            if (codeGeneratorTest != null && configuration.IncludeTests)
+            if (objectRepository.IsPageAdded(name))
             {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    return codeGeneratorTest.GenerateAsString(page);
-                }
+                var page = objectRepository.GetPage(name);
+                return codeGeneratorTest.GenerateAsString(page);
             }
 
             return null;
@@ -134,14 +98,11 @@ namespace Expressium.CodeGenerators
 
         public string GenerateModelAsString(string name)
         {
-            if (codeGeneratorModel != null && configuration.IncludePages)
+            if (objectRepository.IsPageAdded(name))
             {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    if (page.Model)
-                        return codeGeneratorModel.GenerateAsString(page);
-                }
+                var page = objectRepository.GetPage(name);
+                if (page.Model)
+                    return codeGeneratorModel.GenerateAsString(page);
             }
 
             return null;
@@ -149,14 +110,11 @@ namespace Expressium.CodeGenerators
 
         public string GenerateFactoryAsString(string name)
         {
-            if (codeGeneratorFactory != null && configuration.IncludeTests)
+            if (objectRepository.IsPageAdded(name))
             {
-                if (objectRepository.IsPageAdded(name))
-                {
-                    var page = objectRepository.GetPage(name);
-                    if (page.Model)
-                        return codeGeneratorFactory.GenerateAsString(page);
-                }
+                var page = objectRepository.GetPage(name);
+                if (page.Model)
+                    return codeGeneratorFactory.GenerateAsString(page);
             }
 
             return null;

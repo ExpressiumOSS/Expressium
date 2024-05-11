@@ -32,7 +32,7 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.Add($"{{");
             listOfLines.AddRange(GenerateAttributes(page));
             listOfLines.AddRange(GenerateMethods(page));
-            listOfLines.AddRange(GenerateExtensions(page));
+            listOfLines.AddRange(GenerateExtensionMethods(page));
             listOfLines.Add($"}}");
 
             return listOfLines;
@@ -129,15 +129,10 @@ namespace Expressium.CodeGenerators.Java
             return listOfLines;
         }
 
-        internal List<string> GenerateExtensions(ObjectRepositoryPage page)
+        internal List<string> GenerateExtensionMethods(ObjectRepositoryPage page)
         {
-            if (configuration.IncludeExtensions)
-            {
-                var filePath = GetFilePath(page);
-                return GenerateExtensions(filePath, "// region Extensions", "// endregion");
-            }
-
-            return new List<string>();
+            var filePath = GetFilePath(page);
+            return GenerateSourceCodeExtensionMethods(filePath, "// region Extensions", "// endregion");
         }
     }
 }

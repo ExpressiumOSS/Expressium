@@ -33,7 +33,7 @@ namespace Expressium.CodeGenerators.CSharp
             listOfLines.AddRange(GenerateClass(page));
             listOfLines.Add($"{{");
             listOfLines.AddRange(GenerateProperties(page));
-            listOfLines.AddRange(GenerateExtensions(page));
+            listOfLines.AddRange(GenerateExtensionMethods(page));
             listOfLines.Add($"}}");
             listOfLines.Add($"}}");
 
@@ -96,15 +96,10 @@ namespace Expressium.CodeGenerators.CSharp
             return listOfLines;
         }
 
-        internal List<string> GenerateExtensions(ObjectRepositoryPage page)
+        internal List<string> GenerateExtensionMethods(ObjectRepositoryPage page)
         {
-            if (configuration.IncludeExtensions)
-            {
-                var filePath = GetFilePath(page);
-                return GenerateExtensions(filePath, "#region Extensions", "#endregion");
-            }
-
-            return new List<string>();
+            var filePath = GetFilePath(page);
+            return GenerateSourceCodeExtensionMethods(filePath, "#region Extensions", "#endregion");
         }
     }
 }

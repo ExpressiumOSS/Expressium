@@ -33,10 +33,18 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.AddRange(GeneratedDataVariables(page));
             listOfLines.AddRange(GenerateOneTimeSetUpMethod(page));
             listOfLines.AddRange(GeneratePageTitleTestMethod(page));
-            listOfLines.AddRange(GenerateControlTestMethods(page));
+            listOfLines.AddRange(GenerateFillFormTestMethods(page));
             listOfLines.Add($"}}");
 
             return listOfLines;
+        }
+
+        internal override bool IsFileModified(string filePath)
+        {
+            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+                return true;
+
+            return false;
         }
 
         internal List<string> GenerateImports()
@@ -128,7 +136,7 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.Add($"public void oneTimeSetUp() throws Exception");
             listOfLines.Add($"{{");
 
-            if (!string.IsNullOrWhiteSpace(configuration.InitialLoginPage) && !configuration.InitialLoginPage.Contains(page.Name))
+            if (!string.IsNullOrWhiteSpace(configuration.CodeGenerator.InitialLoginPage) && !configuration.CodeGenerator.InitialLoginPage.Contains(page.Name))
                 listOfLines.Add($"initializeBrowserWithLogin();");
             else
                 listOfLines.Add($"initializeBrowser();");
@@ -143,13 +151,15 @@ namespace Expressium.CodeGenerators.Java
 
             listOfLines.Add($"{page.Name.CamelCase()} = new {page.Name}(driver);");
 
-            foreach (var control in page.Controls)
+            if (page.Model)
             {
-                if (control.IsFillFormControl())
+                listOfLines.Add($"{page.Name.CamelCase()}.fillForm({page.Name.CamelCase()}Model);");
+            }
+            else
+            {
+                foreach (var control in page.Controls)
                 {
-                    if (page.Model)
-                        listOfLines.Add($"{page.Name.CamelCase()}.set{control.Name}({page.Name.CamelCase()}Model.get{control.Name}());");
-                    else
+                    if (control.IsFillFormControl())
                         listOfLines.Add($"{page.Name.CamelCase()}.set{control.Name}({control.Name.CamelCase()});");
                 }
             }
@@ -174,7 +184,7 @@ namespace Expressium.CodeGenerators.Java
             return listOfLines;
         }
 
-        internal List<string> GenerateControlTestMethods(ObjectRepositoryPage page)
+        internal List<string> GenerateFillFormTestMethods(ObjectRepositoryPage page)
         {
             var listOfLines = new List<string>();
 

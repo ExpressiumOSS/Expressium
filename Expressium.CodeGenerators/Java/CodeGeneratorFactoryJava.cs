@@ -17,7 +17,7 @@ namespace Expressium.CodeGenerators.Java
             {
                 return Path.Combine(configuration.SolutionPath, @"src\test\java", TestFolders.Factories.ToString(), page.Name + "ModelFactory.java");
             }
-            catch 
+            catch
             {
                 return null;
             }
@@ -34,6 +34,14 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.Add($"}}");
 
             return listOfLines;
+        }
+
+        internal override bool IsFileModified(string filePath)
+        {
+            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+                return true;
+
+            return false;
         }
 
         internal List<string> GenerateImports(ObjectRepositoryPage page)

@@ -35,9 +35,9 @@ namespace Expressium.CodeGenerators
             if (string.IsNullOrEmpty(value))
                 return value;
 
-            value = RemoveIllegalCharacters(value);
-            value = CapitalizeWords(value);
-            value = RemoveWhiteSpaces(value);
+            value = value.RemoveIllegalCharacters();
+            value = value.CapitalizeWords();
+            value = value.RemoveWhiteSpaces();
 
             if (value.Length == 1)
                 return value[0].ToString().ToLower();
@@ -50,14 +50,14 @@ namespace Expressium.CodeGenerators
             if (string.IsNullOrEmpty(value))
                 return value;
 
-            value = RemoveIllegalCharacters(value);
-            value = CapitalizeWords(value);
-            value = RemoveWhiteSpaces(value);
+            value = value.RemoveIllegalCharacters();
+            value = value.CapitalizeWords();
+            value = value.RemoveWhiteSpaces();
 
             return value;
         }
 
-        internal static string RemoveIllegalCharacters(string value)
+        internal static string RemoveIllegalCharacters(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -72,7 +72,7 @@ namespace Expressium.CodeGenerators
             return Regex.Replace(value, @"\s{2,}", " ").Trim();
         }
 
-        internal static string CapitalizeWords(string value)
+        internal static string CapitalizeWords(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -80,7 +80,7 @@ namespace Expressium.CodeGenerators
             return Regex.Replace(value, @"(^\w)|(\s\w)", m => m.Value.ToUpper());
         }
 
-        internal static string RemoveWhiteSpaces(string value)
+        internal static string RemoveWhiteSpaces(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;

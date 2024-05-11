@@ -2,7 +2,6 @@
 using Expressium.ObjectRepositories;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Expressium.CodeGenerators.CSharp
 {
@@ -43,6 +42,14 @@ namespace Expressium.CodeGenerators.CSharp
             listOfLines.Add($"}}");
 
             return listOfLines;
+        }
+
+        internal override bool IsFileModified(string filePath)
+        {
+            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+                return true;
+
+            return false;
         }
 
         internal List<string> GenerateUsings(ObjectRepositoryPage page)
@@ -158,7 +165,7 @@ namespace Expressium.CodeGenerators.CSharp
             listOfLines.Add($"public void OneTimeSetUp()");
             listOfLines.Add($"{{");
 
-            if (!string.IsNullOrWhiteSpace(configuration.InitialLoginPage) && !configuration.InitialLoginPage.Contains(page.Name))
+            if (!string.IsNullOrWhiteSpace(configuration.CodeGenerator.InitialLoginPage) && !configuration.CodeGenerator.InitialLoginPage.Contains(page.Name))
                 listOfLines.Add($"InitializeBrowserWithLogin();");
             else
                 listOfLines.Add($"InitializeBrowser();");
@@ -280,35 +287,41 @@ namespace Expressium.CodeGenerators.CSharp
                     listOfLines.Add($"[Test]");
                     listOfLines.Add($"public void Validate_Page_{control.Name}_Number_Of_Rows()");
                     listOfLines.Add($"{{");
-                    listOfLines.Add($"Asserts.GreaterThan({page.Name.CamelCase()}.Get{control.Name}NumberOfRows(), -1, \"Validating the {page.Name} {control.Name} number of rows...\");");
+                    listOfLines.Add($"Asserts.GreaterThan({page.Name.CamelCase()}.{control.Name}.GetNumberOfRows(), -1, \"Validating the {page.Name} {control.Name} number of rows...\");");
                     listOfLines.Add($"}}");
 
                     listOfLines.Add($"");
                     listOfLines.Add($"[Test]");
                     listOfLines.Add($"public void Validate_Page_{control.Name}_Number_Of_Columns()");
                     listOfLines.Add($"{{");
-                    listOfLines.Add($"Asserts.GreaterThan({page.Name.CamelCase()}.Get{control.Name}NumberOfColumns(), -1, \"Validating the {page.Name} {control.Name} number of columns...\");");
+                    listOfLines.Add($"Asserts.GreaterThan({page.Name.CamelCase()}.{control.Name}.GetNumberOfColumns(), -1, \"Validating the {page.Name} {control.Name} number of columns...\");");
                     listOfLines.Add($"}}");
 
-                    //var listOfHeaders = control.Value.Split(';');
-                    //if (listOfHeaders.Count() > 1)
-                    //{
-                    //    var header = listOfHeaders[2].Trim();
+                    var listOfHeaders = control.Value.Split(';');
+                    if (listOfHeaders.Length > 1)
+                    {
+                        foreach (var header in listOfHeaders)
+                        {
+                            var name = header.Trim();
 
-                    //    listOfLines.Add($"");
-                    //    listOfLines.Add($"[Test]");
-                    //    listOfLines.Add($"public void Validate_Page_{control.Name}_Cell_Text()");
-                    //    listOfLines.Add($"{{");
-                    //    listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.Get{control.Name}CellText(1, \"{header}\"), \"Validating the {page.Name} {control.Name} table cell Text...\");");
-                    //    listOfLines.Add($"}}");
-                    //}
-                    //else
+                            if (CodeGeneratorUtilities.IsValidClassName(name))
+                            {
+                                listOfLines.Add($"");
+                                listOfLines.Add($"[Test]");
+                                listOfLines.Add($"public void Validate_Page_{control.Name}_Cell_Text_{name}()");
+                                listOfLines.Add($"{{");
+                                listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.{control.Name}.GetCellText(1, \"{name}\"), \"Validating the {page.Name} {control.Name} table cell Text {name}...\");");
+                                listOfLines.Add($"}}");
+                            }
+                        }
+                    }
+                    else
                     {
                         listOfLines.Add($"");
                         listOfLines.Add($"[Test]");
                         listOfLines.Add($"public void Validate_Page_{control.Name}_Cell_Text()");
                         listOfLines.Add($"{{");
-                        listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.Get{control.Name}CellText(1, 2), \"Validating the {page.Name} {control.Name} table cell Text...\");");
+                        listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.{control.Name}.GetCellText(1, 2), \"Validating the {page.Name} {control.Name} table cell Text...\");");
                         listOfLines.Add($"}}");
                     }
                 }

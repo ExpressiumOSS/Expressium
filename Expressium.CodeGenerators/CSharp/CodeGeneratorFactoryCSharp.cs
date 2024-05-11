@@ -39,6 +39,14 @@ namespace Expressium.CodeGenerators.CSharp
             return listOfLines;
         }
 
+        internal override bool IsFileModified(string filePath)
+        {
+            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+                return true;
+
+            return false;
+        }
+
         internal List<string> GenerateUsings()
         {
             var listOfLines = new List<string>
