@@ -33,9 +33,9 @@ namespace Expressium.UnitTests.CodeGenerators
             configuration.Project = "Coffeeshop";
             configuration.ApplicationUrl = "http://www.dr.dk";
             configuration.SolutionPath = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "SolutionGenerator");
-            configuration.CodingLanguage = CodingLanguages.CSharp.ToString();
-            configuration.CodingFlavour = CodingFlavours.Specflow.ToString();
-            configuration.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingLanguage = CodingLanguages.CSharp.ToString();
+            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Specflow.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
 
             Directory.CreateDirectory(configuration.SolutionPath);
 
@@ -54,9 +54,9 @@ namespace Expressium.UnitTests.CodeGenerators
             configuration.Project = "Coffeeshop";
             configuration.ApplicationUrl = "http://www.dr.dk";
             configuration.SolutionPath = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "SolutionGenerator");
-            configuration.CodingLanguage = CodingLanguages.Java.ToString();
-            configuration.CodingFlavour = CodingFlavours.Cucumber.ToString();
-            configuration.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingLanguage = CodingLanguages.Java.ToString();
+            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Cucumber.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
 
             Directory.CreateDirectory(configuration.SolutionPath);
 

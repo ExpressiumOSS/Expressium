@@ -69,11 +69,11 @@ namespace Expressium.UnitTests.Configurations
             ConfigurationUtilities.SerializeAsJson(configuration.RepositoryPath, configuration);
             Assert.DoesNotThrow(() => configuration.Validate(), "Configuration Validate validate valid configuration");
 
-            configuration.CodingLanguage = "English";
+            configuration.CodeGenerator.CodingLanguage = "English";
             var exception = Assert.Throws<ArgumentException>(() => configuration.Validate());
             Assert.That(exception.Message, Is.EqualTo("The Configuration property 'CodingLanguage' is invalid..."), "Configuration Validate invalid property CodingLanguage");
 
-            configuration.CodingLanguage = null;
+            configuration.CodeGenerator.CodingLanguage = null;
             exception = Assert.Throws<ArgumentException>(() => configuration.Validate());
             Assert.That(exception.Message, Is.EqualTo("The Configuration property 'CodingLanguage' is invalid..."), "Configuration Validate invalid property CodingLanguage");
         }
@@ -86,9 +86,9 @@ namespace Expressium.UnitTests.Configurations
             configuration.Project = "Coffeeshop"; ;
             configuration.ApplicationUrl = "http://www.google.com";
             configuration.SolutionPath = directory;
-            configuration.CodingLanguage = CodingLanguages.CSharp.ToString();
-            configuration.CodingFlavour = CodingFlavours.Specflow.ToString();
-            configuration.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingLanguage = CodingLanguages.CSharp.ToString();
+            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Specflow.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
 
             return configuration;
         }

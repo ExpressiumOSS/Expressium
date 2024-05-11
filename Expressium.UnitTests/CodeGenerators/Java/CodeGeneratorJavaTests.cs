@@ -24,9 +24,9 @@ namespace Expressium.UnitTests.CodeGenerators.Java
             configuration.Project = "Coffeeshop";
             configuration.ApplicationUrl = "http://www.google.com";
             configuration.SolutionPath = directory;
-            configuration.CodingLanguage = CodingLanguages.Java.ToString();
-            configuration.CodingFlavour = CodingFlavours.Cucumber.ToString();
-            configuration.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingLanguage = CodingLanguages.Java.ToString();
+            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Cucumber.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
         }
 
         [Test]

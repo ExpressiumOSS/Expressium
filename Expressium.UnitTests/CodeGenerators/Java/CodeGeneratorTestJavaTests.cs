@@ -94,13 +94,13 @@ namespace Expressium.UnitTests.CodeGenerators.Java
         }
 
         [Test]
-        public void CodeGeneratorPageJava_GenerateControlTestMethods()
+        public void CodeGeneratorPageJava_GenerateFillFormTestMethods()
         {
-            var listOfLines = codeGeneratorTestJava.GenerateControlTestMethods(page);
+            var listOfLines = codeGeneratorTestJava.GenerateFillFormTestMethods(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(6), "CodeGeneratorPageJava GenerateControlTestMethods validation");
-            Assert.That(listOfLines[2], Is.EqualTo("public void validate_Page_Property_Username() throws Exception"), "CodeGeneratorPageJava GenerateControlTestMethods validation");
-            Assert.That(listOfLines[4].Contains("assertEquals(loginPageModel.getUsername(), loginPage.getUsername()"), "CodeGeneratorPageJava GenerateControlTestMethods validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(6), "CodeGeneratorPageJava GenerateFillFormTestMethods validation");
+            Assert.That(listOfLines[2], Is.EqualTo("public void validate_Page_Property_Username() throws Exception"), "CodeGeneratorPageJava GenerateFillFormTestMethods validation");
+            Assert.That(listOfLines[4].Contains("assertEquals(loginPageModel.getUsername(), loginPage.getUsername()"), "CodeGeneratorPageJava GenerateFillFormTestMethods validation");
         }
 
         private static ObjectRepositoryPage CreateLoginPage()

@@ -110,16 +110,6 @@ namespace Expressium.UnitTests.CodeGenerators.Java
             Assert.That(listOfLines[9], Is.EqualTo("return WebElements.getTextBox(driver, username);"), "CodeGeneratorPageJava GenerateControlMethods validation");
         }
 
-        [Test]
-        public void CodeGeneratorPageJava_GenerateFillFormMethod()
-        {
-            var listOfLines = codeGeneratorPageJava.GenerateFillFormMethod(page);
-
-            Assert.That(listOfLines.Count, Is.EqualTo(5), "CodeGeneratorPageJava GenerateFillFormMethod validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public void fillForm(LoginPageModel model) throws Exception"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
-            Assert.That(listOfLines[2], Is.EqualTo("setUsername(model.getUsername());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
-        }
-
         private static ObjectRepositoryPage CreateLoginPage()
         {
             var page = new ObjectRepositoryPage();

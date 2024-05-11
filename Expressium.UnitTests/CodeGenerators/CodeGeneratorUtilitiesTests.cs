@@ -68,7 +68,7 @@ namespace Expressium.UnitTests.CodeGenerators
         [TestCase(" hello my world ", "hellomyworld")]
         public void CodeGeneratorUtilities_RemoveWhiteSpaces(string input, string expected)
         {
-            Assert.That(expected, Is.EqualTo(CodeGeneratorUtilities.RemoveWhiteSpaces(input)), "CodeGeneratorUtilities RemoveWhiteSpaces validate generated output");
+            Assert.That(expected, Is.EqualTo(input.RemoveWhiteSpaces()), "CodeGeneratorUtilities RemoveWhiteSpaces validate generated output");
         }
 
         [TestCase(null, null)]
@@ -79,7 +79,7 @@ namespace Expressium.UnitTests.CodeGenerators
         [TestCase("hello's world", "hellos world")]
         public void CodeGeneratorUtilities_RemoveIllegalCharacters(string input, string expected)
         {
-            Assert.That(expected, Is.EqualTo(CodeGeneratorUtilities.RemoveIllegalCharacters(input)), "CodeGeneratorUtilities RemoveIllegalCharacters validate generated output");
+            Assert.That(expected, Is.EqualTo(input.RemoveIllegalCharacters()), "CodeGeneratorUtilities RemoveIllegalCharacters validate generated output");
         }
 
         [TestCase(null, null)]
@@ -88,7 +88,7 @@ namespace Expressium.UnitTests.CodeGenerators
         [TestCase("hEllo worlD", "HEllo WorlD")]
         public void CodeGeneratorUtilities_CapitalizeWords(string input, string expected)
         {
-            Assert.That(expected, Is.EqualTo(CodeGeneratorUtilities.CapitalizeWords(input)), "CodeGeneratorUtilities CapitalizeWords validate generated output");
+            Assert.That(expected, Is.EqualTo(input.CapitalizeWords()), "CodeGeneratorUtilities CapitalizeWords validate generated output");
         }
     }
 }

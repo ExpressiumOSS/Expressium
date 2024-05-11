@@ -1,19 +1,19 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using Expressium.CodeGenerators.CSharp;
+using Expressium.CodeGenerators.Java;
 using Expressium.Configurations;
 using Expressium.ObjectRepositories;
 
-namespace Expressium.UnitTests.CodeGenerators.CSharp
+namespace Expressium.UnitTests.CodeGenerators.Java
 {
     [TestFixture]
-    public class CodeGeneratorPageCSharpFillFormTests
+    public class CodeGeneratorPageJavaFillFormTests
     {
         private Configuration configuration;
         private ObjectRepository objectRepository;
         private ObjectRepositoryPage page;
 
-        private CodeGeneratorPageCSharp codeGeneratorPageCSharp;
+        private CodeGeneratorPageJava codeGeneratorPageJava;
 
         [OneTimeSetUp]
         public void Setup()
@@ -27,21 +27,21 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
             objectRepository = new ObjectRepository();
             objectRepository.AddPage(page);
 
-            codeGeneratorPageCSharp = new CodeGeneratorPageCSharp(configuration, objectRepository);
+            codeGeneratorPageJava = new CodeGeneratorPageJava(configuration, objectRepository);
         }
 
         [Test]
-        public void CodeGeneratorPageCSharp_GenerateFillFormMethod()
+        public void CodeGeneratorPageJava_GenerateFillFormMethod()
         {
-            var listOfLines = codeGeneratorPageCSharp.GenerateFillFormMethod(page);
+            var listOfLines = codeGeneratorPageJava.GenerateFillFormMethod(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(9), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public void FillForm(FillFormPageModel model)"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[2], Is.EqualTo("SetUsername(model.Username);"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[3], Is.EqualTo("SetGender(model.Gender);"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[4], Is.EqualTo("SetTransport(model.Transport);"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[5], Is.EqualTo("SetAgreement(model.Agreement);"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
-            Assert.That(listOfLines[6], Is.EqualTo("SetSection(model.Section);"), "CodeGeneratorPageCSharp GenerateFillFormMethod validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(9), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public void fillForm(FillFormPageModel model) throws Exception"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[2], Is.EqualTo("setUsername(model.getUsername());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[3], Is.EqualTo("setGender(model.getGender());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[4], Is.EqualTo("setTransport(model.getTransport());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[5], Is.EqualTo("setAgreement(model.getAgreement());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
+            Assert.That(listOfLines[6], Is.EqualTo("setSection(model.getSection());"), "CodeGeneratorPageJava GenerateFillFormMethod validation");
         }
 
         private static ObjectRepositoryPage CreateFillFormPage()

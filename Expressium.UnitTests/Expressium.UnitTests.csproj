@@ -7,16 +7,44 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="NUnit" Version="4.0.0" />
+		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Expressium.CodeGenerators\Expressium.CodeGenerators.csproj" />
 		<ProjectReference Include="..\Expressium.Configurations\Expressium.Configurations.csproj" />
+		<ProjectReference Include="..\Expressium.Enrollers\Expressium.Enrollers.csproj" />
 		<ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
 		<ProjectReference Include="..\Expressium.SolutionGenerators\Expressium.SolutionGenerators.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Enrollers\Pages\Primefaces.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Salesforce.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Bootstraps.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\ContactUs.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Services.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Home.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Products.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Enrollers\Pages\Registration.html">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
