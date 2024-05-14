@@ -116,8 +116,16 @@ public class BasePage {
         }
     }
 
+    protected void waitForPageElementIsVisible(By locator) {
+        WebElements.waitForElementIsVisible(driver, locator);
+    }
+
     protected void waitForPageElementIsVisible(WebElement element) {
         WebElements.waitForElementIsVisible(driver, element);
+    }
+
+    protected void waitForPageElementIsEnabled(By locator) {
+        WebElements.waitForElementIsEnabled(driver, locator);
     }
 
     protected void waitForPageElementIsEnabled(WebElement element) {

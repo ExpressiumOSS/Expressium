@@ -1,6 +1,5 @@
 ﻿package Bases;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,13 +12,12 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class WebDrivers {
     public enum BrowserTypes {
         Chrome,
+        Edge,
         Firefox
     }
 
     public static WebDriver getWebDriver(String browser, boolean headless) {
         if (browser.equals(BrowserTypes.Chrome.toString())) {
-            WebDriverManager.chromedriver().setup();
-
             ChromeOptions options = new ChromeOptions();
             //options.addArguments("--lang=da");
             options.addArguments("--disable-notifications");
@@ -30,9 +28,18 @@ public class WebDrivers {
             }
 
             return new ChromeDriver(options);
-        } else if (browser.equals(BrowserTypes.Firefox.toString())) {
-            WebDriverManager.firefoxdriver().setup();
+        } else if (browser.equals(BrowserTypes.Edge.toString())) {
+            EdgeOptions options = new EdgeOptions();
+            //options.addArguments("--lang=da");
+            options.addArguments("--disable-notifications");
 
+            if (headless) {
+                options.addArguments("--headless");
+                options.addArguments("--window-size=1920,1080");
+            }
+
+            return new EdgeDriver(options);
+        } else if (browser.equals(BrowserTypes.Firefox.toString())) {
             FirefoxProfile profile = new FirefoxProfile();
             //profile.setPreference("intl.accept_languages", "da");
 

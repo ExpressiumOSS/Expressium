@@ -961,9 +961,6 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using OpenQA.Selenium.Edge;
         ///using OpenQA.Selenium.Firefox;
         ///using System;
-        ///using WebDriverManager;
-        ///using WebDriverManager.DriverConfigs.Impl;
-        ///using WebDriverManager.Helpers;
         ///
         ///namespace CompanyName.ProjectName.Web.API.Tests
         ///{
@@ -976,7 +973,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            Edge
         ///        }
         ///
-        ///        public static IWebDriver Initialize(string browserType,  [rest of string was truncated]&quot;;.
+        ///        public static IWebDriver Initialize(string browserType, string url = null, bool maximized = true, bool headless = false, bool windowSize = false, int windowWi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebDriverFactoryCSharp {
             get {
@@ -987,7 +984,6 @@ namespace Expressium.SolutionGenerators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to package Bases;
         ///
-        ///import io.github.bonigarcia.wdm.WebDriverManager;
         ///import org.openqa.selenium.WebDriver;
         ///import org.openqa.selenium.chrome.ChromeDriver;
         ///import org.openqa.selenium.chrome.ChromeOptions;
@@ -998,7 +994,11 @@ namespace Expressium.SolutionGenerators.Properties {
         ///import org.openqa.selenium.firefox.FirefoxProfile;
         ///
         ///public class WebDrivers {
-        ///    public enum BrowserTypes { [rest of string was truncated]&quot;;.
+        ///    public enum BrowserTypes {
+        ///        Chrome,
+        ///        Edge,
+        ///        Firefox
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebDriversJava {
             get {
@@ -1036,22 +1036,20 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to package Bases;
         ///
         ///import org.apache.log4j.Logger;
-        ///import org.openqa.selenium.*;
+        ///import org.openqa.selenium.By;
+        ///import org.openqa.selenium.JavascriptExecutor;
+        ///import org.openqa.selenium.WebDriver;
+        ///import org.openqa.selenium.WebElement;
         ///import org.openqa.selenium.interactions.Actions;
-        ///import org.openqa.selenium.support.ui.*;
+        ///import org.openqa.selenium.support.ui.ExpectedConditions;
+        ///import org.openqa.selenium.support.ui.Select;
+        ///import org.openqa.selenium.support.ui.WebDriverWait;
         ///
         ///import java.time.Duration;
         ///import java.util.List;
         ///
         ///public class WebElements {
-        ///    private static Logger logger = Logger.getLogger(WebElements.class);
-        ///
-        ///    public static long elementWaitTimeOut;
-        ///
-        ///    public static boolean highlight;
-        ///    public static int highlightTimeOut;
-        ///    public static int highlightWidth;
-        ///    public stat [rest of string was truncated]&quot;;.
+        ///    priv [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElementsJava {
             get {

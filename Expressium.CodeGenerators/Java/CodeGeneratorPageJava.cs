@@ -94,8 +94,19 @@ namespace Expressium.CodeGenerators.Java
         {
             var listOfLines = new List<string>();
 
-            foreach (var control in page.Controls)
-                listOfLines.AddRange(GenerateFindsByLocator(control));
+            if (configuration.IsCodingStyleByLocators())
+            {
+                foreach (var control in page.Controls)
+                    listOfLines.AddRange(GenerateByLocator(control));
+
+                if (page.Controls.Count > 0)
+                    listOfLines.Add("");
+            }
+            else
+            {
+                foreach (var control in page.Controls)
+                    listOfLines.AddRange(GenerateFindsByLocator(control));
+            }
 
             return listOfLines;
         }
@@ -111,6 +122,17 @@ namespace Expressium.CodeGenerators.Java
 
             return listOfLines;
         }
+
+        internal List<string> GenerateByLocator(ObjectRepositoryControl control)
+        {
+            var listOfLines = new List<string>
+            {
+                $"private By {control.Name.CamelCase()} = By.{control.How.ToLower()}(\"{control.Using}\");"
+            };
+
+            return listOfLines;
+        }
+
 
         internal string GetFindbysHowMapping(string how)
         {
@@ -129,16 +151,6 @@ namespace Expressium.CodeGenerators.Java
             }
 
             return how.ToUpper();
-        }
-
-        internal List<string> GenerateByLocator(ObjectRepositoryControl control)
-        {
-            var listOfLines = new List<string>
-            {
-                $"private By {control.Name.CamelCase()} = By.{control.How.ToLower()}(\"{control.Using}\");"
-            };
-
-            return listOfLines;
         }
 
         internal List<string> GenerateContructor(ObjectRepositoryPage page)

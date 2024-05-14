@@ -53,11 +53,8 @@ namespace CompanyName.ProjectName.Web.API
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(element.TagName))
-                {
-                    if (element.Displayed)
-                        return true;
-                }
+                if (element.Displayed)
+                    return true;
             }
             catch
             {
@@ -67,14 +64,17 @@ namespace CompanyName.ProjectName.Web.API
             return false;
         }
 
-        public static bool IsEnabled(this IWebElement element, IWebDriver driver)
+        public static bool IsEnabled(this IWebElement element)
         {
-            element.WaitForElementIsVisible(driver);
-
-            element.HighlightValidation(driver);
-
-            if (element.Enabled)
-                return true;
+            try
+            {
+                if (element.Enabled)
+                    return true;
+            }
+            catch
+            {
+                return false;
+            }
 
             return false;
         }

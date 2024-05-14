@@ -3,9 +3,6 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using System;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs.Impl;
-using WebDriverManager.Helpers;
 
 namespace CompanyName.ProjectName.Web.API.Tests
 {
@@ -22,8 +19,6 @@ namespace CompanyName.ProjectName.Web.API.Tests
         {
             if (browserType == BrowserTypes.Chrome.ToString())
             {
-                new DriverManager().SetUpDriver(new ChromeConfig(), VersionResolveStrategy.MatchingBrowser);
-
                 var service = ChromeDriverService.CreateDefaultService();
                 service.HideCommandPromptWindow = true;
 
@@ -58,8 +53,6 @@ namespace CompanyName.ProjectName.Web.API.Tests
             }
             else if (browserType == BrowserTypes.Firefox.ToString())
             {
-                new DriverManager().SetUpDriver(new FirefoxConfig());
-
                 var service = FirefoxDriverService.CreateDefaultService();
                 service.HideCommandPromptWindow = true;
                 service.Host = "::1";
@@ -90,8 +83,6 @@ namespace CompanyName.ProjectName.Web.API.Tests
             }
             else if (browserType == BrowserTypes.Edge.ToString())
             {
-                new DriverManager().SetUpDriver(new EdgeConfig(), VersionResolveStrategy.MatchingBrowser);
-
                 var service = EdgeDriverService.CreateDefaultService();
                 service.HideCommandPromptWindow = true;
 
