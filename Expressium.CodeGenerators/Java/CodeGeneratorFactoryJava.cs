@@ -38,7 +38,7 @@ namespace Expressium.CodeGenerators.Java
 
         internal override bool IsFileModified(string filePath)
         {
-            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+            if (File.Exists(filePath) && !IsTextInSourceCodeFile(filePath, "// TODO - Implement"))
                 return true;
 
             return false;

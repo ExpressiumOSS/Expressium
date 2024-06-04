@@ -124,7 +124,7 @@ namespace Expressium.CodeGenerators
             return listOfLines;
         }
 
-        internal static bool IsSourceCodeTextInFile(string filePath, string text)
+        internal static bool IsTextInSourceCodeFile(string filePath, string text)
         {
             if (File.Exists(filePath) && File.ReadAllText(filePath).Contains(text))
                 return true;

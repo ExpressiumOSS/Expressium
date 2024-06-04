@@ -46,7 +46,7 @@ namespace Expressium.CodeGenerators.CSharp
 
         internal override bool IsFileModified(string filePath)
         {
-            if (IsSourceCodeTextInFile(filePath, "// TODO - Implement"))
+            if (File.Exists(filePath) && !IsTextInSourceCodeFile(filePath, "// TODO - Implement"))
                 return true;
 
             return false;
@@ -297,9 +297,13 @@ namespace Expressium.CodeGenerators.CSharp
                     listOfLines.Add($"Asserts.GreaterThan({page.Name.CamelCase()}.{control.Name}.GetNumberOfColumns(), -1, \"Validating the {page.Name} {control.Name} number of columns...\");");
                     listOfLines.Add($"}}");
 
-                    var listOfHeaders = control.Value.Split(';');
-                    if (listOfHeaders.Length > 1)
+                    var numberOfHeaders = 0;
+                    if (!string.IsNullOrWhiteSpace(control.Value))
+                        numberOfHeaders = control.Value.Split(';').Length;
+
+                    if (numberOfHeaders > 1)
                     {
+                        var listOfHeaders = control.Value.Split(';');
                         foreach (var header in listOfHeaders)
                         {
                             var name = header.Trim();
