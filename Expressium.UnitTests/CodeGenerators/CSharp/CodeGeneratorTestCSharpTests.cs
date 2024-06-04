@@ -1,7 +1,7 @@
-using NUnit.Framework;
+using Expressium.CodeGenerators.CSharp;
 using Expressium.Configurations;
 using Expressium.ObjectRepositories;
-using Expressium.CodeGenerators.CSharp;
+using NUnit.Framework;
 
 namespace Expressium.UnitTests.CodeGenerators.CSharp
 {

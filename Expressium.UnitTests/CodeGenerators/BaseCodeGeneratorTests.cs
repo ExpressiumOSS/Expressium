@@ -117,8 +117,8 @@ namespace Expressium.UnitTests.CodeGenerators
             File.Delete(filePath);
             File.WriteAllText(filePath, "Hugoline was here...");
 
-            Assert.That(BaseCodeGenerator.IsSourceCodeTextInFile(filePath, "Hugoline was here..."), Is.True, "BaseCodeGenerator IsSourceCodeTextInFile validation");
-            Assert.That(BaseCodeGenerator.IsSourceCodeTextInFile(filePath, "Superman was here..."), Is.False, "BaseCodeGenerator IsSourceCodeTextInFile validation");
+            Assert.That(BaseCodeGenerator.IsTextInSourceCodeFile(filePath, "Hugoline was here..."), Is.True, "BaseCodeGenerator IsTextInSourceCodeFile validation");
+            Assert.That(BaseCodeGenerator.IsTextInSourceCodeFile(filePath, "Superman was here..."), Is.False, "BaseCodeGenerator IsTextInSourceCodeFile validation");
         }
     }
 }
