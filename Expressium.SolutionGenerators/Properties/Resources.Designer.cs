@@ -180,6 +180,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using OpenQA.Selenium;
         ///using OpenQA.Selenium.Support.UI;
         ///using SeleniumExtras.PageObjects;
+        ///using SeleniumExtras.WaitHelpers;
         ///using System;
         ///using System.Threading;
         ///
@@ -193,8 +194,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static int PageTimeOut { get; set; }
         ///
         ///        public static By PageSpinnerLocator { get; set; }
-        ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static int P [rest of string was truncated]&quot;;.
+        ///        public static int PageSpinnerInitialTimeOut { get;  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageCSharp {
             get {
@@ -1010,6 +1010,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to using OpenQA.Selenium;
         ///using OpenQA.Selenium.Interactions;
         ///using OpenQA.Selenium.Support.UI;
+        ///using SeleniumExtras.WaitHelpers;
         ///using System;
         ///using System.Collections.Generic;
         ///using System.Linq;
@@ -1023,8 +1024,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///        public static bool Highlight { get; set; }
         ///        public static int HighlightTimeOut { get; set; }
-        ///        public static int HighlightWidth { get; set; }
-        ///      [rest of string was truncated]&quot;;.
+        ///        public static int  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElementsCSharp {
             get {

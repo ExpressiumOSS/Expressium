@@ -2,6 +2,7 @@ using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.PageObjects;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Threading;
 
@@ -71,7 +72,7 @@ namespace CompanyName.ProjectName.Web.API
                 {
                     Thread.Sleep(PageSpinnerInitialTimeOut);
                     var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageSpinnerTimeOut));
-                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.InvisibilityOfElementLocated(PageSpinnerLocator));
+                    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(PageSpinnerLocator));
                 }
                 catch
                 {
@@ -154,7 +155,7 @@ namespace CompanyName.ProjectName.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+                wait.Until(ExpectedConditions.ElementIsVisible(locator));
             }
             catch
             {
@@ -180,7 +181,7 @@ namespace CompanyName.ProjectName.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+                wait.Until(ExpectedConditions.ElementToBeClickable(locator));
             }
             catch
             {

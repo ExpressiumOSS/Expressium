@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,7 +178,7 @@ namespace CompanyName.ProjectName.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(locator));
+                wait.Until(ExpectedConditions.ElementIsVisible(locator));
             }
             catch
             {
@@ -218,7 +219,7 @@ namespace CompanyName.ProjectName.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.InvisibilityOfElementLocated(locator));
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(locator));
             }
             catch
             {
@@ -231,7 +232,7 @@ namespace CompanyName.ProjectName.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(locator));
+                wait.Until(ExpectedConditions.ElementToBeClickable(locator));
             }
             catch
             {
