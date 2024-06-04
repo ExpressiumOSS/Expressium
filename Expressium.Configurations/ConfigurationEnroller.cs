@@ -34,7 +34,7 @@ namespace Expressium.Configurations
             ExcludeControlsLocator = null;
             PrependControlsLocator = false;
             MergeExistingControls = false;
-            AppendNameSynchronizer = false;
+            AppendNameSynchronizer = true;
 
             Actions = new List<ConfigurationEnrollerAction>();
         }
