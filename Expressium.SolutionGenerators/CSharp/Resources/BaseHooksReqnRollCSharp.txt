@@ -1,8 +1,7 @@
-﻿using BoDi;
+﻿using Reqnroll;
+using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
-using Reqnroll;
-using Reqnroll.Infrastructure;
 
 namespace CompanyName.ProjectName.Web.API.Tests
 {

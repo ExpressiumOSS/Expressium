@@ -151,11 +151,10 @@ namespace Expressium.SolutionGenerators.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using BoDi;
+        ///   Looks up a localized string similar to using Reqnroll;
+        ///using Reqnroll.BoDi;
         ///using System.IO;
         ///using System.Text.RegularExpressions;
-        ///using Reqnroll;
-        ///using Reqnroll.Infrastructure;
         ///
         ///namespace CompanyName.ProjectName.Web.API.Tests
         ///{
@@ -167,7 +166,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        private ContextControl [rest of string was truncated]&quot;;.
+        ///        private ContextController contextController;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooksReqnRollCSharp {
             get {
@@ -762,8 +761,8 @@ namespace Expressium.SolutionGenerators.Properties {
         ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.PageObjects.Core&quot; Version=&quot;4.14.1&quot; /&gt;
         ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;
         ///    &lt;PackageReference Include=&quot;log4net&quot; Version=&quot;2.0.17&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;110.2.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.20.0&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;111.2.0&quot; /&gt;
+        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.21.0&quot; /&gt;
         /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiCSharp {
@@ -783,8 +782,8 @@ namespace Expressium.SolutionGenerators.Properties {
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;8.0.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;8.0.1&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;8.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.9.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;NUnit&quot;  [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.10.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTestsCSharp {
             get {
@@ -803,8 +802,8 @@ namespace Expressium.SolutionGenerators.Properties {
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;8.0.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;8.0.1&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;8.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.9.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;NUnit&quot;  [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.10.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTestsReqnRollCSharp {
             get {
