@@ -4,7 +4,7 @@ using Expressium.SolutionGenerators;
 using System;
 using System.IO;
 
-namespace Expressium.UnitTests.CodeGenerators
+namespace Expressium.UnitTests.SolutionGenerators
 {
     [TestFixture]
     public class SolutionGeneratorProjectTests
