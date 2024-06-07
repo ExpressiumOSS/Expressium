@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace CompanyName.ProjectName.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests
 {
     public class Configuration
     {

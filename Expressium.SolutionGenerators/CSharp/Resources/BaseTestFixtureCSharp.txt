@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CompanyName.ProjectName.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests
 {
     public class BaseTestFixture
     {

@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 
-namespace CompanyName.ProjectName.Web.API
+namespace $Company$.$Project$.Web.API
 {
     public class BaseService
     {

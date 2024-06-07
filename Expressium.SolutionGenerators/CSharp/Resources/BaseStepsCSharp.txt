@@ -1,7 +1,7 @@
 ﻿using log4net;
 using OpenQA.Selenium;
 
-namespace CompanyName.ProjectName.Web.API.Tests.BusinessTests.Steps
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
 {
     public class BaseSteps
     {

@@ -21,9 +21,10 @@ namespace Expressium.SolutionGenerators.Java
             // Setup Solution Mapping Properties...
             var mapOfProperties = new Dictionary<string, string>
             {
-                { "CompanyName", configuration.Company },
-                { "ProjectName", configuration.Project },
-                { "ApplicationUrl", configuration.ApplicationUrl }
+                { "$Company$", configuration.Company },
+                { "$Project$", configuration.Project },
+                { "$Url$", configuration.ApplicationUrl },
+                { "$BrowserType$", configuration.Enroller.BrowserType }
             };
 
             // Generate Solution Files...

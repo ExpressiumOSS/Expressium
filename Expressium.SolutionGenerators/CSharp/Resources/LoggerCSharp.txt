@@ -4,7 +4,7 @@ using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
 
-namespace CompanyName.ProjectName.Web.API
+namespace $Company$.$Project$.Web.API
 {
     public class Logger
     {

@@ -6,7 +6,7 @@ using SeleniumExtras.WaitHelpers;
 using System;
 using System.Threading;
 
-namespace CompanyName.ProjectName.Web.API
+namespace $Company$.$Project$.Web.API
 {
     public class BasePage
     {

@@ -77,7 +77,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using NUnit.Framework;
         ///using System;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class Asserts
         ///    {
@@ -94,7 +94,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            {
         ///                Assert.That(actual, Is.EqualTo(expected), message);
         ///
-        ///                logger.InfoFormat(&quot;{0}&quot;, m [rest of string was truncated]&quot;;.
+        ///                logger.InfoFormat(&quot;{0}&quot;, messa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AssertsCSharp {
             get {
@@ -132,7 +132,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using TechTalk.SpecFlow;
         ///using TechTalk.SpecFlow.Infrastructure;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    [Binding]
         ///    public class BaseHooks : BaseTest
@@ -142,7 +142,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        private readonly ISpecFlowOutputHelper specFlowOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        priv [rest of string was truncated]&quot;;.
+        ///        private  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooksCSharp {
             get {
@@ -156,7 +156,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System.IO;
         ///using System.Text.RegularExpressions;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    [Binding]
         ///    public class BaseHooks : BaseTest
@@ -166,7 +166,9 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        private ContextController contextController;        /// [rest of string was truncated]&quot;;.
+        ///        private ContextController contextController;
+        ///
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooksReqnRollCSharp {
             get {
@@ -183,7 +185,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System;
         ///using System.Threading;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public class BasePage
         ///    {
@@ -193,7 +195,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static int PageTimeOut { get; set; }
         ///
         ///        public static By PageSpinnerLocator { get; set; }
-        ///        public static int PageSpinnerInitialTimeOut { get;  [rest of string was truncated]&quot;;.
+        ///        public static int PageSpinnerInitialTimeOut { get; set; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageCSharp {
             get {
@@ -232,7 +234,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System.Diagnostics;
         ///using System.Net;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public class BaseService
         ///    {
@@ -244,7 +246,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public string RequestUrl { get; private set; }
         ///        public string RequestMethod { get; private set; }
         ///        public string ResponseStatusCode { get; private set; }
-        ///        publ [rest of string was truncated]&quot;;.
+        ///        public s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseServiceCSharp {
             get {
@@ -256,7 +258,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests.BusinessTests.Steps
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         ///{
         ///    public class BaseSteps
         ///    {
@@ -269,7 +271,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        {
         ///            configuration = contextController.Configuration;
         ///            logger = contextController.Logger;
-        ///            Asserts = c [rest of string was truncated]&quot;;.
+        ///            Asserts = conte [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseStepsCSharp {
             get {
@@ -302,7 +304,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System;
         ///using System.Linq;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public class BaseTable : BasePage
         ///    {
@@ -317,7 +319,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///        public virtual int GetNumberOfRows()
         ///        {
-        ///            l [rest of string was truncated]&quot;;.
+        ///            logge [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTableCSharp {
             get {
@@ -328,7 +330,7 @@ namespace Expressium.SolutionGenerators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using NUnit.Framework;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class BaseTest : BaseTestFixture
         ///    {
@@ -345,7 +347,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            // TODO - Implement potential missing login sequence...
         ///
         ///            // var loginPage = new LoginPage(logger, driver);
-        /// [rest of string was truncated]&quot;;.
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestCSharp {
             get {
@@ -388,7 +390,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System.IO;
         ///using System.Linq;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class BaseTestFixture
         ///    {
@@ -400,7 +402,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///        public BaseTestFixture()
         ///        {
-        ///            config [rest of string was truncated]&quot;;.
+        ///            configurat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixtureCSharp {
             get {
@@ -444,14 +446,16 @@ namespace Expressium.SolutionGenerators.Properties {
         ///    }
         ///
         ///    public BaseTest() {
-        ///        company = &quot;CompanyName&quot;;
-        ///        project = &quot;ProjectName&quot;;
+        ///        company = &quot;$Company$&quot;;
+        ///        project = &quot;$Project$&quot;;
         ///        environmentId = EnvironmentTypes.TEST.toString();
-        ///        url = &quot;ApplicationUrl&quot;;
+        ///        url = &quot;$Url$&quot;;
         ///        logging = true;
-        ///        loggingPath = &quot;C:\\Temp\\CompanyName\\ProjectName\\TestResults&quot;;
-        ///        browser = WebDrivers.BrowserTypes.Chrome.toString();
-        ///        max [rest of string was truncated]&quot;;.
+        ///        loggingPath = &quot;C:\\Temp\\$Company$\\$Project$\\TestResults&quot;;
+        ///        browser = &quot;$BrowserType$&quot;;
+        ///        maximize = true;
+        ///        headless = false;
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestJava {
             get {
@@ -481,7 +485,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System;
         ///using System.IO;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class Configuration
         ///    {
@@ -497,7 +501,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public string Project { get; set; }
         ///        public string Environment { get; set; }
         ///        public string Url { get; set; }
-        ///        publ [rest of string was truncated]&quot;;.
+        ///        public s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationCSharp {
             get {
@@ -509,21 +513,22 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to {
         ///  &quot;Profiles&quot;: {
         ///    &quot;Development&quot;: {
-        ///      &quot;Company&quot;: &quot;CompanyName&quot;,
-        ///      &quot;Project&quot;: &quot;ProjectName&quot;,
+        ///      &quot;Company&quot;: &quot;$Company$&quot;,
+        ///      &quot;Project&quot;: &quot;$Project$&quot;,
         ///      &quot;Environment&quot;: &quot;Development&quot;,
-        ///      &quot;Url&quot;: &quot;ApplicationUrl&quot;,
+        ///      &quot;Url&quot;: &quot;$Url$&quot;,
         ///      &quot;Username&quot;: &quot;john.doe@microsoft.com&quot;,
         ///      &quot;Password&quot;: &quot;1234567890&quot;,
         ///      &quot;Logging&quot;: true,
         ///      &quot;LoggingPath&quot;: &quot;.\\TestResults&quot;,
-        ///      &quot;BrowserType&quot;: &quot;BrowserType&quot;,
+        ///      &quot;BrowserType&quot;: &quot;$BrowserType$&quot;,
         ///      &quot;Maximize&quot;: true,
         ///      &quot;Headless&quot;: false,
         ///      &quot;WindowSize&quot;: false,
         ///      &quot;WindowWidth&quot;: 1920,
         ///      &quot;WindowHeight&quot;: 1080,
-        ///      &quot;Highlight&quot;: t [rest of string was truncated]&quot;;.
+        ///      &quot;Highlight&quot;: true,
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationTestsCSharp {
             get {
@@ -535,7 +540,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class ContextController
         ///    {
@@ -589,9 +594,9 @@ namespace Expressium.SolutionGenerators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to echo Runnning LivingDoc Documentation...
         ///
-        ///cd .\CompanyName.ProjectName.Web.API.Tests\bin\Debug\net6.0
+        ///cd .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0
         ///
-        ///livingdoc test-assembly CompanyName.ProjectName.Web.API.Tests.dll -t TestExecution.json
+        ///livingdoc test-assembly $Company$.$Project$.Web.API.Tests.dll -t TestExecution.json
         ///
         ///mkdir TestResults
         ///
@@ -612,7 +617,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using log4net.Core;
         ///using log4net.Layout;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public class Logger
         ///    {
@@ -622,7 +627,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///            var patternLayout = new PatternLayout();
         ///            patternLayout.ConversionPattern = &quot;%date{HH:mm:ss} %level %type # %message%newline&quot;;
-        ///            pat [rest of string was truncated]&quot;;.
+        ///            pattern [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoggerCSharp {
             get {
@@ -656,7 +661,7 @@ namespace Expressium.SolutionGenerators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using TechTalk.SpecFlow;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests.BusinessTests.Steps
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         ///{
         ///    [Binding]
         ///    public class LoginSteps : BaseSteps
@@ -671,7 +676,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            ScenarioContext.Current.Pending();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirec [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirected  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginStepsCSharp {
             get {
@@ -705,7 +710,7 @@ namespace Expressium.SolutionGenerators.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests.BusinessTests.Steps
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         ///{
         ///    [Binding]
         ///    public class LoginSteps : BaseSteps
@@ -720,7 +725,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            ScenarioContext.Current.Pending();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirected to th [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirected to the Ho [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginStepsReqnRollCSharp {
             get {
@@ -815,7 +820,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///   Looks up a localized string similar to using System;
         ///using System.Linq;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public class Randomizer
         ///    {
@@ -827,7 +832,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            return new string(Enumerable.Repeat(chars, length).Select(s =&gt; s[random.Next(s.Length)]).ToArray());
         ///        }
         ///
-        ///        public static int GetRan [rest of string was truncated]&quot;;.
+        ///        public static int GetRandomI [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string RandomizerCSharp {
             get {
@@ -840,13 +845,13 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///set PROFILE=Development
         ///
-        ///rmdir /q /s .\CompanyName.ProjectName.Web.API.Tests\bin\Debug\net6.0\TestResults
+        ///rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0\TestResults
         ///
         ///dotnet nuget
         ///dotnet build
         ///
-        ///dotnet test .\CompanyName.ProjectName.Web.API.Tests\CompanyName.ProjectName.Web.API.Tests.csproj --filter TestCategory=&quot;UITests&quot;
-        ///dotnet test .\CompanyName.ProjectName.Web.API.Tests\CompanyName.ProjectName.Web.API.Tests.csproj --filter TestCategory=&quot;BusinessTests&quot;.
+        ///dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory=&quot;UITests&quot;
+        ///dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory=&quot;BusinessTests&quot;.
         /// </summary>
         internal static string RegressionTestCSharp {
             get {
@@ -902,9 +907,9 @@ namespace Expressium.SolutionGenerators.Properties {
         ///# Visual Studio Version 17
         ///VisualStudioVersion = 17.5.33414.496
         ///MinimumVisualStudioVersion = 10.0.40219.1
-        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;CompanyName.ProjectName.Web.API&quot;, &quot;CompanyName.ProjectName.Web.API\CompanyName.ProjectName.Web.API.csproj&quot;, &quot;{C3C90606-9E62-457B-990D-550CADD0AFD9}&quot;
+        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Company$.$Project$.Web.API&quot;, &quot;$Company$.$Project$.Web.API\$Company$.$Project$.Web.API.csproj&quot;, &quot;{C3C90606-9E62-457B-990D-550CADD0AFD9}&quot;
         ///EndProject
-        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;CompanyName.ProjectName.Web.API.Tests&quot;, &quot;CompanyName.ProjectName.Web.API [rest of string was truncated]&quot;;.
+        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Company$.$Project$.Web.API.Tests&quot;, &quot;$Company$.$Project$.Web.API.Tests\$Company$.$Pr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SolutionFileCSharp {
             get {
@@ -961,7 +966,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using OpenQA.Selenium.Firefox;
         ///using System;
         ///
-        ///namespace CompanyName.ProjectName.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    public class WebDriverFactory
         ///    {
@@ -972,7 +977,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///            Edge
         ///        }
         ///
-        ///        public static IWebDriver Initialize(string browserType, string url = null, bool maximized = true, bool headless = false, bool windowSize = false, int windowWi [rest of string was truncated]&quot;;.
+        ///        public static IWebDriver Initialize(string browserType, string url = null, bool maximized = true, bool headless = false, bool windowSize = false, int windowWidth  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebDriverFactoryCSharp {
             get {
@@ -1015,7 +1020,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///using System.Linq;
         ///using System.Threading;
         ///
-        ///namespace CompanyName.ProjectName.Web.API
+        ///namespace $Company$.$Project$.Web.API
         ///{
         ///    public static class WebElements
         ///    {
@@ -1023,7 +1028,7 @@ namespace Expressium.SolutionGenerators.Properties {
         ///
         ///        public static bool Highlight { get; set; }
         ///        public static int HighlightTimeOut { get; set; }
-        ///        public static int  [rest of string was truncated]&quot;;.
+        ///        public static int High [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElementsCSharp {
             get {

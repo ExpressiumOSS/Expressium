@@ -8,13 +8,13 @@ public class BaseTest extends BaseTestFixture {
     }
 
     public BaseTest() {
-        company = "CompanyName";
-        project = "ProjectName";
+        company = "$Company$";
+        project = "$Project$";
         environmentId = EnvironmentTypes.TEST.toString();
-        url = "ApplicationUrl";
+        url = "$Url$";
         logging = true;
-        loggingPath = "C:\\Temp\\CompanyName\\ProjectName\\TestResults";
-        browser = WebDrivers.BrowserTypes.Chrome.toString();
+        loggingPath = "C:\\Temp\\$Company$\\$Project$\\TestResults";
+        browser = "$BrowserType$";
         maximize = true;
         headless = false;
         highlight = true;

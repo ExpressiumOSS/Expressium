@@ -1,8 +1,8 @@
 ﻿echo Runnning LivingDoc Documentation...
 
-cd .\CompanyName.ProjectName.Web.API.Tests\bin\Debug\net6.0
+cd .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0
 
-livingdoc test-assembly CompanyName.ProjectName.Web.API.Tests.dll -t TestExecution.json
+livingdoc test-assembly $Company$.$Project$.Web.API.Tests.dll -t TestExecution.json
 
 mkdir TestResults
 

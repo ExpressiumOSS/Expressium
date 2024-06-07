@@ -1,6 +1,6 @@
 ﻿using TechTalk.SpecFlow;
 
-namespace CompanyName.ProjectName.Web.API.Tests.BusinessTests.Steps
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
 {
     [Binding]
     public class LoginSteps : BaseSteps

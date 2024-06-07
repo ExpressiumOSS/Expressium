@@ -1,15 +1,15 @@
 ﻿{
   "Profiles": {
     "Development": {
-      "Company": "CompanyName",
-      "Project": "ProjectName",
+      "Company": "$Company$",
+      "Project": "$Project$",
       "Environment": "Development",
-      "Url": "ApplicationUrl",
+      "Url": "$Url$",
       "Username": "john.doe@microsoft.com",
       "Password": "1234567890",
       "Logging": true,
       "LoggingPath": ".\\TestResults",
-      "BrowserType": "BrowserType",
+      "BrowserType": "$BrowserType$",
       "Maximize": true,
       "Headless": false,
       "WindowSize": false,
