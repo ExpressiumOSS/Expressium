@@ -35,9 +35,18 @@ namespace Expressium.SolutionGenerators.Java
             Directory.CreateDirectory(Path.Combine(directory, nameSpaceApi, CodeFolders.Pages.ToString()));
 
             var basesFolderApi = Path.Combine(directory, nameSpaceApi, "Bases");
-            WriteToFile(Path.Combine(basesFolderApi, "BasePage.java"), Resources.BasePageJava, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderApi, "Logger.java"), Resources.LoggerJava, mapOfProperties);
-            WriteToFile(Path.Combine(basesFolderApi, "WebElements.java"), Resources.WebElementsJava, mapOfProperties);
+
+            if (configuration.IsCodingStyleByLocators())
+            {
+                WriteToFile(Path.Combine(basesFolderApi, "BasePage.java"), Resources.BasePageByLocatorsJava, mapOfProperties);
+                WriteToFile(Path.Combine(basesFolderApi, "WebElements.java"), Resources.WebElementsByLocatorsJava, mapOfProperties);
+            }
+            else if (configuration.IsCodingStylePageFactory())
+            {
+                WriteToFile(Path.Combine(basesFolderApi, "BasePage.java"), Resources.BasePagePageFactoryJava, mapOfProperties);
+                WriteToFile(Path.Combine(basesFolderApi, "WebElements.java"), Resources.WebElementsPageFactoryJava, mapOfProperties);
+            }
 
             // Generate Solution Api Test Project Files...
             Directory.CreateDirectory(Path.Combine(directory, nameSpaceTest, TestFolders.Factories.ToString()));

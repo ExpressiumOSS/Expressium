@@ -38,13 +38,21 @@ namespace Expressium.SolutionGenerators.CSharp
             Directory.CreateDirectory(Path.Combine(apiProjectPath, CodeFolders.Models.ToString()));
             Directory.CreateDirectory(Path.Combine(apiProjectPath, CodeFolders.Pages.ToString()));
 
+            WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApiCSharp, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "Logger.cs"), Resources.LoggerCSharp, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "Randomizer.cs"), Resources.RandomizerCSharp, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsCSharp, mapOfProperties);
-
-            WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApiCSharp, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageCSharp, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTableCSharp, mapOfProperties);
+
+            if (configuration.IsCodingStyleByLocators())
+            {
+                WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageByLocatorsCSharp, mapOfProperties);
+                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsByLocatorsCSharp, mapOfProperties);
+            }
+            else if (configuration.IsCodingStylePageFactory())
+            {
+                WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePagePageFactoryCSharp, mapOfProperties);
+                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElementsPageFactoryCSharp, mapOfProperties);
+            }
 
             // Generate Solution Api Test Project Files...
             var apiTestProjectPath = Path.Combine(directory, nameSpace + ".Tests");

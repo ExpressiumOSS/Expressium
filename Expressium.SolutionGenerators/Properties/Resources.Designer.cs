@@ -197,9 +197,9 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static By PageSpinnerLocator { get; set; }
         ///        public static int PageSpinnerInitialTimeOut { get; set; [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BasePageCSharp {
+        internal static string BasePageByLocatorsCSharp {
             get {
-                return ResourceManager.GetString("BasePageCSharp", resourceCulture);
+                return ResourceManager.GetString("BasePageByLocatorsCSharp", resourceCulture);
             }
         }
         
@@ -220,9 +220,59 @@ namespace Expressium.SolutionGenerators.Properties {
         ///public class BasePage {
         ///    protected static Logger logger = Logger.getLo [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BasePageJava {
+        internal static string BasePageByLocatorsJava {
             get {
-                return ResourceManager.GetString("BasePageJava", resourceCulture);
+                return ResourceManager.GetString("BasePageByLocatorsJava", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using log4net;
+        ///using OpenQA.Selenium;
+        ///using OpenQA.Selenium.Support.UI;
+        ///using SeleniumExtras.PageObjects;
+        ///using SeleniumExtras.WaitHelpers;
+        ///using System;
+        ///using System.Threading;
+        ///
+        ///namespace $Company$.$Project$.Web.API
+        ///{
+        ///    public class BasePage
+        ///    {
+        ///        protected ILog logger;
+        ///        protected IWebDriver driver;
+        ///
+        ///        public static int PageTimeOut { get; set; }
+        ///
+        ///        public static By PageSpinnerLocator { get; set; }
+        ///        public static int PageSpinnerInitialTimeOut { get; set; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BasePagePageFactoryCSharp {
+            get {
+                return ResourceManager.GetString("BasePagePageFactoryCSharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to package Bases;
+        ///
+        ///import org.apache.log4j.Logger;
+        ///import org.openqa.selenium.*;
+        ///import org.openqa.selenium.support.PageFactory;
+        ///import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
+        ///import org.openqa.selenium.support.ui.ExpectedCondition;
+        ///import org.openqa.selenium.support.ui.ExpectedConditions;
+        ///import org.openqa.selenium.support.ui.WebDriverWait;
+        ///
+        ///import java.time.Duration;
+        ///import java.util.ArrayList;
+        ///
+        ///public class BasePage {
+        ///    protected static Logger logger = Logger.getLo [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BasePagePageFactoryJava {
+            get {
+                return ResourceManager.GetString("BasePagePageFactoryJava", resourceCulture);
             }
         }
         
@@ -1030,9 +1080,9 @@ namespace Expressium.SolutionGenerators.Properties {
         ///        public static int HighlightTimeOut { get; set; }
         ///        public static int High [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string WebElementsCSharp {
+        internal static string WebElementsByLocatorsCSharp {
             get {
-                return ResourceManager.GetString("WebElementsCSharp", resourceCulture);
+                return ResourceManager.GetString("WebElementsByLocatorsCSharp", resourceCulture);
             }
         }
         
@@ -1055,9 +1105,60 @@ namespace Expressium.SolutionGenerators.Properties {
         ///public class WebElements {
         ///    priv [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string WebElementsJava {
+        internal static string WebElementsByLocatorsJava {
             get {
-                return ResourceManager.GetString("WebElementsJava", resourceCulture);
+                return ResourceManager.GetString("WebElementsByLocatorsJava", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///using OpenQA.Selenium.Interactions;
+        ///using OpenQA.Selenium.Support.UI;
+        ///using SeleniumExtras.WaitHelpers;
+        ///using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Threading;
+        ///
+        ///namespace $Company$.$Project$.Web.API
+        ///{
+        ///    public static class WebElements
+        ///    {
+        ///        public static int ElementTimeOut { get; set; }
+        ///
+        ///        public static bool Highlight { get; set; }
+        ///        public static int HighlightTimeOut { get; set; }
+        ///        public static int High [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WebElementsPageFactoryCSharp {
+            get {
+                return ResourceManager.GetString("WebElementsPageFactoryCSharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to package Bases;
+        ///
+        ///import org.apache.log4j.Logger;
+        ///import org.openqa.selenium.By;
+        ///import org.openqa.selenium.JavascriptExecutor;
+        ///import org.openqa.selenium.WebDriver;
+        ///import org.openqa.selenium.WebElement;
+        ///import org.openqa.selenium.interactions.Actions;
+        ///import org.openqa.selenium.support.ui.ExpectedConditions;
+        ///import org.openqa.selenium.support.ui.Select;
+        ///import org.openqa.selenium.support.ui.WebDriverWait;
+        ///
+        ///import java.time.Duration;
+        ///import java.util.List;
+        ///
+        ///public class WebElements {
+        ///    priv [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WebElementsPageFactoryJava {
+            get {
+                return ResourceManager.GetString("WebElementsPageFactoryJava", resourceCulture);
             }
         }
     }

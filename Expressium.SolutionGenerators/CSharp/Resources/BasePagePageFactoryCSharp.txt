@@ -60,7 +60,7 @@ namespace $Company$.$Project$.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Synchronization - Page document ready state was expected to be completed within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page document ready state was expected to be completed within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -68,16 +68,7 @@ namespace $Company$.$Project$.Web.API
         {
             if (PageSpinnerLocator != null)
             {
-                try
-                {
-                    Thread.Sleep(PageSpinnerInitialTimeOut);
-                    var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageSpinnerTimeOut));
-                    wait.Until(ExpectedConditions.InvisibilityOfElementLocated(PageSpinnerLocator));
-                }
-                catch
-                {
-                    throw new ApplicationException($"Synchronization - Page spinner element '{PageSpinnerLocator}' was expected to be invisible within {PageSpinnerTimeOut} milliseconds...");
-                }
+                PageSpinnerLocator.WaitForElementIsInvisible(driver, PageSpinnerInitialTimeOut, PageSpinnerTimeOut);
             }
         }
 
@@ -90,7 +81,7 @@ namespace $Company$.$Project$.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Synchronization - Page title was expected to be equal to '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page title was expected to be equal to '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -103,7 +94,7 @@ namespace $Company$.$Project$.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Synchronization - Page title was expected to contain '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page title was expected to contain '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -116,7 +107,7 @@ namespace $Company$.$Project$.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Synchronization - Page URL was expected to be equal to '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page URL was expected to be equal to '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -129,7 +120,7 @@ namespace $Company$.$Project$.Web.API
             }
             catch
             {
-                throw new ApplicationException($"Synchronization - Page URL was expected to contain '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page URL was expected to contain '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
             }
         }
 
@@ -145,61 +136,19 @@ namespace $Company$.$Project$.Web.API
                 }
                 catch
                 {
-                    throw new ApplicationException($"Synchronization - Page jQuery active was expected to be zero within {PageTimeOut} milliseconds...");
+                    throw new ApplicationException($"Page jQuery active was expected to be zero within {PageTimeOut} milliseconds...");
                 }
-            }
-        }
-
-        protected void WaitForPageElementIsVisible(By locator)
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(ExpectedConditions.ElementIsVisible(locator));
-            }
-            catch
-            {
-                throw new ApplicationException($"Synchronization - Page element '{locator}' was expected to be visible within {PageTimeOut} milliseconds...");
             }
         }
 
         protected void WaitForPageElementIsVisible(IWebElement element)
         {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(WebElements.IsElementVisible(element));
-            }
-            catch
-            {
-                throw new ApplicationException($"Synchronization - Page element was expected to be visible within {PageTimeOut} milliseconds...");
-            }
-        }
-
-        protected void WaitForPageElementIsEnabled(By locator)
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(ExpectedConditions.ElementToBeClickable(locator));
-            }
-            catch
-            {
-                throw new ApplicationException($"Synchronization - Page element '{locator}' was expected to be enabled within {PageTimeOut} milliseconds...");
-            }
+            element.WaitForElementIsVisible(driver);
         }
 
         protected void WaitForPageElementIsEnabled(IWebElement element)
         {
-            try
-            {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
-                wait.Until(WebElements.IsElementEnabled(element));
-            }
-            catch
-            {
-                throw new ApplicationException($"Synchronization - Page element was expected to be enabled within {PageTimeOut} milliseconds...");
-            }
+            element.WaitForElementIsEnabled(driver);
         }
 
         protected void SwitchToAlertAccept()

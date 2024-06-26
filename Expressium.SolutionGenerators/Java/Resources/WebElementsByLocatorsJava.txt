@@ -126,7 +126,7 @@ public class WebElements {
         try {
             String tagName = element.getTagName();
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element '%s' does not exist...", element.toString()));
+            logger.error(String.format("Page element '%s' does not exist...", element.toString()));
             throw exception;
         }
     }
@@ -137,7 +137,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element was not found within %d seconds...", elementWaitTimeOut));
+            logger.error(String.format("Page element was not found within %d seconds...", elementWaitTimeOut));
             throw exception;
         }
     }
@@ -148,7 +148,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element was not visible within %d seconds...", elementWaitTimeOut));
+            logger.error(String.format("Page element was not visible within %d seconds...", elementWaitTimeOut));
             throw exception;
         }
     }
@@ -159,7 +159,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.elementToBeClickable(locator));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element was not enabled within %d seconds...", elementWaitTimeOut));
+            logger.error(String.format("Page element was not enabled within %d seconds...", elementWaitTimeOut));
             throw exception;
         }
     }
@@ -170,7 +170,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.elementToBeClickable(element));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element was not visible within %d seconds...", elementWaitTimeOut));
+            logger.error(String.format("Page element was not visible within %d seconds...", elementWaitTimeOut));
             throw exception;
         }
     }
@@ -181,7 +181,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.elementToBeClickable(element));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element was not enabled within %d seconds...", elementWaitTimeOut));
+            logger.error(String.format("Page element was not enabled within %d seconds...", elementWaitTimeOut));
             throw exception;
         }
     }
@@ -192,7 +192,7 @@ public class WebElements {
             WebDriverWait wait = new WebDriverWait(driver, timeout);
             wait.until(ExpectedConditions.presenceOfNestedElementLocatedBy(element, By.tagName("option")));
         } catch (Exception exception) {
-            logger.error(String.format("Synchronization failed - WebDriver element option '%s' was not populated within %d seconds...", value, elementWaitTimeOut));
+            logger.error(String.format("Page element option '%s' was not populated within %d seconds...", value, elementWaitTimeOut));
             throw exception;
         }
     }
@@ -388,6 +388,14 @@ public class WebElements {
         WebElement option = select.getFirstSelectedOption();
 
         return option.getText().trim();
+    }
+
+    public static void setListBox(WebDriver driver, By locator, String value) throws Exception {
+        setComboBox(driver, locator, value);
+    }
+
+    public static String getListBox(WebDriver driver, By locator) {
+        return getComboBox(driver, locator);
     }
 
     public static void setTextBox(WebDriver driver, By locator, String value) throws Exception {

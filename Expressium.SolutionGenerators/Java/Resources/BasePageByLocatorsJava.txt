@@ -49,7 +49,7 @@ public class BasePage {
                 ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
 
         if (!success) {
-            logger.debug(String.format("Synchronization - Page document ready state was expected to be completed within %s seconds...", pageWaitTimeOut));
+            logger.debug(String.format("Page document ready state was expected to be completed within %s seconds...", pageWaitTimeOut));
             throw new Exception("waitForPageDocumentReadyStateEqualsComplete failed");
         }
     }
@@ -60,7 +60,7 @@ public class BasePage {
         boolean success = wait.until(ExpectedConditions.titleIs(title));
 
         if (!success) {
-            logger.debug(String.format("Synchronization - Page title was expected to be equal to '%s' but was '%s' within %s seconds...", title, driver.getTitle(), pageWaitTimeOut));
+            logger.debug(String.format("Page title was expected to be equal to '%s' but was '%s' within %s seconds...", title, driver.getTitle(), pageWaitTimeOut));
             throw new TimeoutException("waitForPageTitleEquals failed");
         }
     }
@@ -71,7 +71,7 @@ public class BasePage {
         boolean success = wait.until(ExpectedConditions.titleContains(title));
 
         if (!success) {
-            logger.debug(String.format("Synchronization - Page title was expected to contain '%s' but was '%s' within %s seconds...", title, driver.getTitle(), pageWaitTimeOut));
+            logger.debug(String.format("Page title was expected to contain '%s' but was '%s' within %s seconds...", title, driver.getTitle(), pageWaitTimeOut));
             throw new TimeoutException("waitForPageTitleContains failed");
         }
     }
@@ -82,7 +82,7 @@ public class BasePage {
         boolean success = wait.until(ExpectedConditions.urlToBe(url));
 
         if (!success) {
-            logger.debug(String.format("Synchronization - Page URL was expected to be equal to '%s' but was '%s' within %s seconds...", url, driver.getCurrentUrl(), pageWaitTimeOut));
+            logger.debug(String.format("Page URL was expected to be equal to '%s' but was '%s' within %s seconds...", url, driver.getCurrentUrl(), pageWaitTimeOut));
             throw new TimeoutException("waitForPageUrlEquals failed");
         }
     }
@@ -93,7 +93,7 @@ public class BasePage {
         boolean success = wait.until(ExpectedConditions.urlContains(url));
 
         if (!success) {
-            logger.debug(String.format("Synchronization - Page URL was expected to contain '%s' but was '%s' within %s seconds...", url, driver.getCurrentUrl(), pageWaitTimeOut));
+            logger.debug(String.format("Page URL was expected to contain '%s' but was '%s' within %s seconds...", url, driver.getCurrentUrl(), pageWaitTimeOut));
             throw new TimeoutException("waitForPageUrlContains failed");
         }
     }
@@ -120,16 +120,8 @@ public class BasePage {
         WebElements.waitForElementIsVisible(driver, locator);
     }
 
-    protected void waitForPageElementIsVisible(WebElement element) {
-        WebElements.waitForElementIsVisible(driver, element);
-    }
-
     protected void waitForPageElementIsEnabled(By locator) {
         WebElements.waitForElementIsEnabled(driver, locator);
-    }
-
-    protected void waitForPageElementIsEnabled(WebElement element) {
-        WebElements.waitForElementIsEnabled(driver, element);
     }
 
     protected void switchToAlertAccept() {
