@@ -100,51 +100,51 @@ namespace Expressium.UnitTests.CodeGenerators.Java
         }
 
         [Test]
-        public void CodeGenerator_Java_GeneratePageAsString()
+        public void CodeGenerator_Java_GeneratePagePreview()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GeneratePageAsString("LoginPage");
+            var result = codeGenerator.GeneratePagePreview("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPage"), "CodeGenerator GeneratePageAsString validation");
+            Assert.That(result, Does.Contain("LoginPage"), "CodeGenerator GeneratePagePreview validation");
         }
 
         [Test]
-        public void CodeGenerator_Java_GenerateModelAsString()
+        public void CodeGenerator_Java_GenerateModelPreview()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GenerateModelAsString("LoginPage");
+            var result = codeGenerator.GenerateModelPreview("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPageModel"), "CodeGenerator GenerateModelAsString validation");
+            Assert.That(result, Does.Contain("LoginPageModel"), "CodeGenerator GenerateModelPreview validation");
         }
 
         [Test]
-        public void CodeGenerator_Java_GenerateTestAsString()
+        public void CodeGenerator_Java_GenerateTestPreview()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GenerateTestAsString("LoginPage");
+            var result = codeGenerator.GenerateTestPreview("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPageTests"), "CodeGenerator GenerateTestAsString validation");
+            Assert.That(result, Does.Contain("LoginPageTests"), "CodeGenerator GenerateTestPreview validation");
         }
 
         [Test]
-        public void CodeGenerator_Java_GenerateFactoryAsString()
+        public void CodeGenerator_Java_GenerateFactoryPreview()
         {
             var objectRepository = new ObjectRepository();
             objectRepository.AddPage(CreateLoginPage());
 
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
-            var result = codeGenerator.GenerateFactoryAsString("LoginPage");
+            var result = codeGenerator.GenerateFactoryPreview("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPageModelFactory"), "CodeGenerator GenerateFactoryAsString validation");
+            Assert.That(result, Does.Contain("LoginPageModelFactory"), "CodeGenerator GenerateFactoryPreview validation");
         }
 
         private ObjectRepositoryPage CreateLoginPage()

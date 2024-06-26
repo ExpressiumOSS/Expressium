@@ -21,7 +21,7 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
             configuration = new Configuration();
             configuration.Company = "Expressium";
             configuration.Project = "Coffeeshop";
-            //configuration.CodeGenerator.CodingStyle = CodingStyles.ByLocators.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
 
             page = CreateLoginPage();
 

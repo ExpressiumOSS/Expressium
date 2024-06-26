@@ -21,6 +21,7 @@ namespace Expressium.UnitTests.CodeGenerators.Java
             configuration = new Configuration();
             configuration.Company = "Expressium";
             configuration.Project = "Coffeeshop";
+            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
 
             page = CreateLoginPage();
 

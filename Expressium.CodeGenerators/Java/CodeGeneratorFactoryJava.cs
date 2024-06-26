@@ -5,13 +5,32 @@ using System.IO;
 
 namespace Expressium.CodeGenerators.Java
 {
-    internal class CodeGeneratorFactoryJava : CodeGeneratorFactory
+    internal class CodeGeneratorFactoryJava : CodeGeneratorObject, ICodeGeneratorFactory
     {
         internal CodeGeneratorFactoryJava(Configuration configuration, ObjectRepository objectRepository) : base(configuration, objectRepository)
         {
         }
 
-        internal override string GetFilePath(ObjectRepositoryPage page)
+        public void Generate(ObjectRepositoryPage page)
+        {
+            var filePath = GetFilePath(page);
+
+            if (IsSourceCodeModified(filePath))
+                return;
+
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            SaveSourceCode(filePath, listOfLines);
+        }
+
+        public string GeneratePreview(ObjectRepositoryPage page)
+        {
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            return GetSourceCodeAsString(listOfLines);
+        }
+
+        internal string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {
@@ -23,7 +42,7 @@ namespace Expressium.CodeGenerators.Java
             }
         }
 
-        internal override List<string> GenerateSourceCode(ObjectRepositoryPage page)
+        internal List<string> GenerateSourceCode(ObjectRepositoryPage page)
         {
             var listOfLines = new List<string>();
 
@@ -34,14 +53,6 @@ namespace Expressium.CodeGenerators.Java
             listOfLines.Add($"}}");
 
             return listOfLines;
-        }
-
-        internal override bool IsFileModified(string filePath)
-        {
-            if (File.Exists(filePath) && !IsTextInSourceCodeFile(filePath, "// TODO - Implement"))
-                return true;
-
-            return false;
         }
 
         internal List<string> GenerateImports(ObjectRepositoryPage page)

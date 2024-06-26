@@ -11,10 +11,10 @@ namespace Expressium.CodeGenerators
         private readonly Configuration configuration;
         private readonly ObjectRepository objectRepository;
 
-        private readonly CodeGeneratorPage codeGeneratorPage;
-        private readonly CodeGeneratorModel codeGeneratorModel;
-        private readonly CodeGeneratorTest codeGeneratorTest;
-        private readonly CodeGeneratorFactory codeGeneratorFactory;
+        private readonly ICodeGeneratorPage codeGeneratorPage;
+        private readonly ICodeGeneratorModel codeGeneratorModel;
+        private readonly ICodeGeneratorTest codeGeneratorTest;
+        private readonly ICodeGeneratorFactory codeGeneratorFactory;
 
         public CodeGenerator(Configuration configuration, ObjectRepository objectRepository)
         {
@@ -74,47 +74,47 @@ namespace Expressium.CodeGenerators
             }
         }
 
-        public string GeneratePageAsString(string name)
+        public string GeneratePagePreview(string name)
         {
             if (objectRepository.IsPageAdded(name))
             {
                 var page = objectRepository.GetPage(name);
-                return codeGeneratorPage.GenerateAsString(page);
+                return codeGeneratorPage.GeneratePreview(page);
             }
 
             return null;
         }
 
-        public string GenerateTestAsString(string name)
-        {
-            if (objectRepository.IsPageAdded(name))
-            {
-                var page = objectRepository.GetPage(name);
-                return codeGeneratorTest.GenerateAsString(page);
-            }
-
-            return null;
-        }
-
-        public string GenerateModelAsString(string name)
+        public string GenerateModelPreview(string name)
         {
             if (objectRepository.IsPageAdded(name))
             {
                 var page = objectRepository.GetPage(name);
                 if (page.Model)
-                    return codeGeneratorModel.GenerateAsString(page);
+                    return codeGeneratorModel.GeneratePreview(page);
             }
 
             return null;
         }
 
-        public string GenerateFactoryAsString(string name)
+        public string GenerateTestPreview(string name)
+        {
+            if (objectRepository.IsPageAdded(name))
+            {
+                var page = objectRepository.GetPage(name);
+                return codeGeneratorTest.GeneratePreview(page);
+            }
+
+            return null;
+        }
+
+        public string GenerateFactoryPreview(string name)
         {
             if (objectRepository.IsPageAdded(name))
             {
                 var page = objectRepository.GetPage(name);
                 if (page.Model)
-                    return codeGeneratorFactory.GenerateAsString(page);
+                    return codeGeneratorFactory.GeneratePreview(page);
             }
 
             return null;

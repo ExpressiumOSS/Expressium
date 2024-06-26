@@ -6,13 +6,28 @@ using System.Linq;
 
 namespace Expressium.CodeGenerators.CSharp
 {
-    internal class CodeGeneratorPageCSharp : CodeGeneratorPage
+    internal class CodeGeneratorPageCSharp : CodeGeneratorObject, ICodeGeneratorPage
     {
         internal CodeGeneratorPageCSharp(Configuration configuration, ObjectRepository objectRepository) : base(configuration, objectRepository)
         {
         }
 
-        internal override string GetFilePath(ObjectRepositoryPage page)
+        public void Generate(ObjectRepositoryPage page)
+        {
+            var filePath = GetFilePath(page);
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            SaveSourceCode(filePath, listOfLines);
+        }
+
+        public string GeneratePreview(ObjectRepositoryPage page)
+        {
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            return GetSourceCodeAsString(listOfLines);
+        }
+
+        internal string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {
@@ -24,7 +39,7 @@ namespace Expressium.CodeGenerators.CSharp
             }
         }
 
-        internal override List<string> GenerateSourceCode(ObjectRepositoryPage page)
+        internal List<string> GenerateSourceCode(ObjectRepositoryPage page)
         {
             var listOfLines = new List<string>();
 
@@ -51,7 +66,7 @@ namespace Expressium.CodeGenerators.CSharp
 
             listOfLines.Add("using OpenQA.Selenium;");
 
-            if (!configuration.IsCodingStyleByLocators())
+            if (configuration.IsCodingStylePageFactory())
                 listOfLines.Add("using SeleniumExtras.PageObjects;");
 
             if (page.Model)
@@ -123,19 +138,19 @@ namespace Expressium.CodeGenerators.CSharp
                 if (listOfLines.Count > 0)
                     listOfLines.Add("");
             }
-            else
+            else if (configuration.IsCodingStylePageFactory())
             {
                 foreach (var control in page.Controls)
                 {
                     if (!control.IsTable())
-                        listOfLines.AddRange(GenerateFindsByLocator(control));
+                        listOfLines.AddRange(GeneratePageFactoryLocator(control));
                 }
             }
 
             return listOfLines;
         }
 
-        internal List<string> GenerateFindsByLocator(ObjectRepositoryControl control)
+        internal List<string> GeneratePageFactoryLocator(ObjectRepositoryControl control)
         {
             var listOfLines = new List<string>
             {

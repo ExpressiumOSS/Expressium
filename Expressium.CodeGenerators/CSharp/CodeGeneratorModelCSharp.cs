@@ -5,13 +5,28 @@ using System.IO;
 
 namespace Expressium.CodeGenerators.CSharp
 {
-    internal class CodeGeneratorModelCSharp : CodeGeneratorModel
+    internal class CodeGeneratorModelCSharp : CodeGeneratorObject, ICodeGeneratorModel
     {
         internal CodeGeneratorModelCSharp(Configuration configuration, ObjectRepository objectRepository) : base(configuration, objectRepository)
         {
         }
 
-        internal override string GetFilePath(ObjectRepositoryPage page)
+        public void Generate(ObjectRepositoryPage page)
+        {
+            var filePath = GetFilePath(page);
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            SaveSourceCode(filePath, listOfLines);
+        }
+
+        public string GeneratePreview(ObjectRepositoryPage page)
+        {
+            var sourceCode = GenerateSourceCode(page);
+            var listOfLines = GetSourceCodeAsFormatted(sourceCode);
+            return GetSourceCodeAsString(listOfLines);
+        }
+
+        internal string GetFilePath(ObjectRepositoryPage page)
         {
             try
             {
@@ -23,7 +38,7 @@ namespace Expressium.CodeGenerators.CSharp
             }
         }
 
-        internal override List<string> GenerateSourceCode(ObjectRepositoryPage page)
+        internal List<string> GenerateSourceCode(ObjectRepositoryPage page)
         {
             var listOfLines = new List<string>();
 

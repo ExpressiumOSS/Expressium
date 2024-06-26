@@ -7,10 +7,10 @@ using System;
 namespace Expressium.UnitTests.CodeGenerators
 {
     [TestFixture]
-    public class BaseCodeGeneratorTests
+    public class CodeGeneratorObjectTests
     {
         [Test]
-        public void BaseCodeGenerator_FormatSourceCode()
+        public void CodeGeneratorObject_GetSourceCodeAsFormatted()
         {
             var input = new List<string>
             {
@@ -64,12 +64,12 @@ namespace Expressium.UnitTests.CodeGenerators
                 "}"
             };
 
-            var result = BaseCodeGenerator.FormatSourceCode(input);
-            Assert.That(result, Is.EqualTo(expected), "BaseCodeGenerator FormatSourceCode validation");
+            var result = CodeGeneratorObject.GetSourceCodeAsFormatted(input);
+            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject GetSourceCodeAsFormatted validation");
         }
 
         [Test]
-        public void BaseCodeGenerator_GetSourceCodeAsString()
+        public void CodeGeneratorObject_GetSourceCodeAsString()
         {
             var input = new List<string>
             {
@@ -80,16 +80,16 @@ namespace Expressium.UnitTests.CodeGenerators
 
             var expected = "<Model>\r\n<Attribute name='FaultLocation'>\r\n</Model>";
 
-            var result = BaseCodeGenerator.GetSourceCodeAsString(input);
-            Assert.That(result, Is.EqualTo(expected), "BaseCodeGenerator GetSourceCodeAsString validation");
+            var result = CodeGeneratorObject.GetSourceCodeAsString(input);
+            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorObject GetSourceCodeAsString validation");
         }
 
         [Test]
         public void ConfigurationObject_GenerateSourceCodeExtensionMethods()
         {
-            var listOfLines = BaseCodeGenerator.GenerateSourceCodeExtensionMethods(null, "#region Extensions", "#endregion");
+            var listOfLines = CodeGeneratorObject.GenerateSourceCodeExtensionMethods(null, "#region Extensions", "#endregion");
 
-            Assert.That(listOfLines.Count, Is.EqualTo(3), "BaseCodeGenerator GenerateSourceCodeExtensionMethods validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorObject GenerateSourceCodeExtensionMethods validation");
         }
 
         [Test]
@@ -100,25 +100,36 @@ namespace Expressium.UnitTests.CodeGenerators
             File.Delete(filePath);
             File.WriteAllText(filePath, "#region Extensions\n\n// This is my life...\n\n#endregion\n");
 
-            var listOfLines = BaseCodeGenerator.GenerateSourceCodeExtensionMethods(filePath, "#region Extensions", "#endregion");
+            var listOfLines = CodeGeneratorObject.GenerateSourceCodeExtensionMethods(filePath, "#region Extensions", "#endregion");
 
-            Assert.That(listOfLines.Count, Is.EqualTo(5), "BaseCodeGenerator GenerateSourceCodeExtensionMethods validation");
-            Assert.That(listOfLines[0], Is.EqualTo("#region Extensions"), "BaseCodeGenerator GenerateSourceCodeExtensionMethods validation");
-            Assert.That(listOfLines[2], Is.EqualTo("// This is my life..."), "BaseCodeGenerator GenerateSourceCodeExtensionMethods validation");
-            Assert.That(listOfLines[4], Is.EqualTo("#endregion"), "BaseCodeGenerator GenerateGenerateSourceCodeExtensionMethodsExtensionMethods validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(5), "CodeGeneratorObject GenerateSourceCodeExtensionMethods validation");
+            Assert.That(listOfLines[0], Is.EqualTo("#region Extensions"), "CodeGeneratorObject GenerateSourceCodeExtensionMethods validation");
+            Assert.That(listOfLines[2], Is.EqualTo("// This is my life..."), "CodeGeneratorObject GenerateSourceCodeExtensionMethods validation");
+            Assert.That(listOfLines[4], Is.EqualTo("#endregion"), "CodeGeneratorObject GenerateGenerateSourceCodeExtensionMethodsExtensionMethods validation");
         }
 
         [Test]
-        public void BaseCodeGenerator_IsSourceCodeTextInFile()
+        public void CodeGeneratorObject_IsSourceCodeModified_With_Comment()
         {
             var directory = Environment.GetEnvironmentVariable("TEMP");
-            var filePath = Path.Combine(directory, "Export.txt");
+            var filePath = Path.Combine(directory, "ExportPage.txt");
 
             File.Delete(filePath);
-            File.WriteAllText(filePath, "Hugoline was here...");
+            File.WriteAllText(filePath, "// TODO - Implement...");
 
-            Assert.That(BaseCodeGenerator.IsTextInSourceCodeFile(filePath, "Hugoline was here..."), Is.True, "BaseCodeGenerator IsTextInSourceCodeFile validation");
-            Assert.That(BaseCodeGenerator.IsTextInSourceCodeFile(filePath, "Superman was here..."), Is.False, "BaseCodeGenerator IsTextInSourceCodeFile validation");
+            Assert.That(CodeGeneratorObject.IsSourceCodeModified(filePath), Is.False, "CodeGeneratorObject IsSourceCodeModified validation");
+        }
+
+        [Test]
+        public void CodeGeneratorObject_IsSourceCodeModified_Without_Comment()
+        {
+            var directory = Environment.GetEnvironmentVariable("TEMP");
+            var filePath = Path.Combine(directory, "ImportPage.txt");
+
+            File.Delete(filePath);
+            File.WriteAllText(filePath, "// TODO - Updated...");
+
+            Assert.That(CodeGeneratorObject.IsSourceCodeModified(filePath), Is.True, "CodeGeneratorObject IsSourceCodeModified validation");
         }
     }
 }

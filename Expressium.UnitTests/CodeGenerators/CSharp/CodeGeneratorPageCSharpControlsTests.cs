@@ -21,19 +21,19 @@ namespace Expressium.UnitTests.CodeGenerators.CSharp
         }
 
         [Test]
-        public void CodeGeneratorPageCSharp_GenerateFindsByLocator()
+        public void CodeGeneratorPageCSharp_GeneratePageFactoryLocator()
         {
             var control = new ObjectRepositoryControl();
             control.Name = "Search";
             control.How = "Id";
             control.Using = "search";
 
-            var listOfLines = codeGeneratorPageCSharp.GenerateFindsByLocator(control);
+            var listOfLines = codeGeneratorPageCSharp.GeneratePageFactoryLocator(control);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageCSharp GenerateFindsByLocator validation");
-            Assert.That(listOfLines[0], Is.EqualTo("[FindsBy(How = How.Id, Using = \"search\")]"), "CodeGeneratorPageCSharp GenerateFindsByLocator validation");
-            Assert.That(listOfLines[1], Is.EqualTo("private IWebElement Search { get; set; }"), "CodeGeneratorPageCSharp GenerateFindsByLocator validation");
-            Assert.That(listOfLines[2], Is.EqualTo(""), "CodeGeneratorPageCSharp GenerateFindsByLocator validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[0], Is.EqualTo("[FindsBy(How = How.Id, Using = \"search\")]"), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[1], Is.EqualTo("private IWebElement Search { get; set; }"), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[2], Is.EqualTo(""), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
         }
 
         [Test]

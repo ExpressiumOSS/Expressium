@@ -1,36 +1,35 @@
 ﻿using Expressium.Configurations;
 using Expressium.ObjectRepositories;
-using System;
 using System.Collections.Generic;
-using System.IO;
+using System;
 using System.Linq;
+using System.IO;
 
 namespace Expressium.CodeGenerators
 {
-    public abstract class BaseCodeGenerator
+    internal class CodeGeneratorObject
     {
         protected Configuration configuration;
         protected ObjectRepository objectRepository;
 
-        public BaseCodeGenerator(Configuration configuration, ObjectRepository objectRepository)
+        internal CodeGeneratorObject(Configuration configuration, ObjectRepository objectRepository)
         {
             this.configuration = configuration;
             this.objectRepository = objectRepository;
         }
 
-        internal abstract void Generate(ObjectRepositoryPage page);
-        internal abstract string GenerateAsString(ObjectRepositoryPage page);
+        internal static bool IsSourceCodeModified(string filePath)
+        {
+            if (File.Exists(filePath) && !File.ReadAllText(filePath).Contains("// TODO - Implement"))
+                return true;
+
+            return false;
+        }
 
         internal static void SaveSourceCode(string filePath, List<string> listOfCodeLines)
         {
-            if (!Directory.Exists(Path.GetDirectoryName(filePath)))
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-            using (var streamWriter = new StreamWriter(filePath))
-            {
-                foreach (var line in listOfCodeLines)
-                    streamWriter.WriteLine(line);
-            }
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            File.WriteAllLines(filePath, listOfCodeLines);
 
             Console.WriteLine(filePath);
         }
@@ -40,7 +39,7 @@ namespace Expressium.CodeGenerators
             return string.Join(Environment.NewLine, listOfCodeLines);
         }
 
-        internal static List<string> FormatSourceCode(List<string> listOfCodeLines)
+        internal static List<string> GetSourceCodeAsFormatted(List<string> listOfCodeLines)
         {
             var listOfStatements = new List<string>
             {
@@ -122,14 +121,6 @@ namespace Expressium.CodeGenerators
             }
 
             return listOfLines;
-        }
-
-        internal static bool IsTextInSourceCodeFile(string filePath, string text)
-        {
-            if (File.Exists(filePath) && File.ReadAllText(filePath).Contains(text))
-                return true;
-
-            return false;
         }
     }
 }

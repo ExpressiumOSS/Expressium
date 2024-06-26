@@ -35,19 +35,19 @@ namespace Expressium.UnitTests.CodeGenerators.Java
         }
 
         [Test]
-        public void CodeGeneratorPageJava_GenerateFindsByLocator()
+        public void CodeGeneratorPageJava_GeneratePageFactoryLocator()
         {
             var control = new ObjectRepositoryControl();
             control.Name = "Search";
             control.How = "Id";
             control.Using = "search";
 
-            var listOfLines = codeGeneratorPageJava.GenerateFindsByLocator(control);
+            var listOfLines = codeGeneratorPageJava.GeneratePageFactoryLocator(control);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageJava GenerateFindsByLocator validation");
-            Assert.That(listOfLines[0], Is.EqualTo("@FindBy(how = How.ID, using = \"search\")"), "CodeGeneratorPageJava GenerateFindsByLocator validation");
-            Assert.That(listOfLines[1], Is.EqualTo("private WebElement search;"), "CodeGeneratorPageJava GenerateFindsByLocator validation");
-            Assert.That(listOfLines[2], Is.EqualTo(""), "CodeGeneratorPageJava GenerateFindsByLocator validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageJava GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[0], Is.EqualTo("@FindBy(how = How.ID, using = \"search\")"), "CodeGeneratorPageJava GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[1], Is.EqualTo("private WebElement search;"), "CodeGeneratorPageJava GeneratePageFactoryLocator validation");
+            Assert.That(listOfLines[2], Is.EqualTo(""), "CodeGeneratorPageJava GeneratePageFactoryLocator validation");
         }
 
         [Test]
