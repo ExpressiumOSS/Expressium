@@ -1,7 +1,6 @@
 ﻿using Expressium.CodeGenerators;
 using Expressium.Configurations;
 using Expressium.ObjectRepositories;
-using Expressium.SolutionGenerators;
 using System;
 
 namespace Expressium.CommandLineInterface
@@ -32,8 +31,8 @@ namespace Expressium.CommandLineInterface
 
             var configuration = ConfigurationUtilities.DeserializeAsJson<Configuration>(filePath);
 
-            var solutionGenerator = new SolutionGenerator(configuration);
-            solutionGenerator.GenerateAll();
+            var codeGenerator = CodeGeneratorLoaders.GetCodeGenerator(configuration, new ObjectRepository());
+            codeGenerator.GenerateSolution();
 
             Console.WriteLine("Expressium Solution Generator completed");
             Console.WriteLine(" ");
@@ -46,7 +45,7 @@ namespace Expressium.CommandLineInterface
             var configuration = ConfigurationUtilities.DeserializeAsJson<Configuration>(filePath);
             var objectRepository = ObjectRepositoryUtilities.DeserializeAsJson<ObjectRepository>(configuration.RepositoryPath);
 
-            var codeGenerator = new CodeGenerator(configuration, objectRepository);
+            var codeGenerator = CodeGeneratorLoaders.GetCodeGenerator(configuration, objectRepository);
             codeGenerator.GenerateAll();
 
             Console.WriteLine("Expressium Code Generator completed");

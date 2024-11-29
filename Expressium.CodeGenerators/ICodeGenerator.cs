@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Expressium.CodeGenerators
 {
@@ -12,5 +13,11 @@ namespace Expressium.CodeGenerators
         public string GenerateModelPreview(string name);
         public string GenerateTestPreview(string name);
         public string GenerateFactoryPreview(string name);
+
+        public void GenerateSolution();
+
+        public List<string> GetCodingLanguages();
+        public List<string> GetCodingFlavours();
+        public List<string> GetCodingStyles();
     }
 }

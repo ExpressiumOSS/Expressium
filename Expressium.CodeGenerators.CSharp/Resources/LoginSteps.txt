@@ -1,0 +1,24 @@
+﻿using TechTalk.SpecFlow;
+
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+{
+    [Binding]
+    public class LoginSteps : BaseSteps
+    {
+        public LoginSteps(ContextController contextController) : base(contextController)
+        {
+        }
+
+        [Given(@"I am logged in with valid user credentials")]
+        public void GivenIAmLoggedInWithValidUserCredentials()
+        {
+            throw new PendingStepException();
+        }
+
+        [Then(@"I should be redirected to the Home page")]
+        public void ThenIShouldBeRedirectedToTheHomePage()
+        {
+            throw new PendingStepException();
+        }
+    }
+}

@@ -1,0 +1,15 @@
+﻿package Controls;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class WebListBox extends WebComboBox {
+
+    public WebListBox(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebListBox(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+}

@@ -1,0 +1,122 @@
+﻿package Controls;
+
+import Bases.WebElements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+public class WebControl {
+    protected WebDriver driver;
+    protected By locator;
+    protected By childLocator;
+    protected WebElement element;
+    protected boolean cached = false;
+
+    public WebControl(WebDriver driver, By locator) {
+        this.driver = driver;
+        this.locator = locator;
+    }
+
+    public WebControl(WebDriver driver, By locator, By childLocator) {
+        this.driver = driver;
+        this.locator = locator;
+        this.childLocator = childLocator;
+    }
+
+    public WebElement getElement() {
+        if (element != null) {
+            return element;
+        }
+
+        if (childLocator != null) {
+            if (cached) {
+                element = WebElements.getChildElement(driver, locator, childLocator);
+                return element;
+            }
+            return WebElements.getChildElement(driver, locator, childLocator);
+        }
+
+        if (cached) {
+            element = WebElements.getElement(driver, locator);
+            return element;
+        }
+
+        return WebElements.getElement(driver, locator);
+    }
+
+    public String getAttribute(String value) {
+        return getElement().getAttribute(value);
+    }
+
+    public boolean isVisible() {
+        return getElement().isDisplayed();
+    }
+
+    public boolean isEnabled() {
+        return getElement().isEnabled();
+    }
+
+    public boolean isSelected() {
+        return getElement().isSelected();
+    }
+
+    public void waitForElementIsVisible() {
+        WebElements.waitForElementIsVisible(driver, getElement());
+    }
+
+    public void waitForElementIsEnabled() {
+        WebElements.waitForElementIsEnabled(driver, getElement());
+    }
+
+    public void waitForElementIsInvisible(int initialTimeout, int timeout) {
+        WebElements.waitForElementIsInvisible(driver, getElement(), initialTimeout, timeout);
+    }
+
+    public void highlightElementAsAction() {
+        if (WebElements.highlight) {
+            WebElements.highlightAction(driver, getElement());
+        }
+    }
+
+    public void highlightElementAsValidation() {
+        if (WebElements.highlight) {
+            WebElements.highlightValidation(driver, getElement());
+        }
+    }
+
+    public void highlightElementAsFailure() {
+        if (WebElements.highlight) {
+            WebElements.highlightFailure(driver, getElement());
+        }
+    }
+
+    public void highlightElementClear() {
+        if (WebElements.highlight) {
+            WebElements.highlightClear(driver, getElement());
+        }
+    }
+
+    public void clickElement() {
+        getElement().click();
+    }
+
+    public void clickElementContextMenu() {
+        WebElements.clickElementContextMenu(driver, getElement());
+    }
+
+    public void clickElementDoubleClick() {
+        WebElements.clickElementDoubleClick(driver, getElement());
+    }
+
+    public void scrollElementIntoViewUp() {
+        WebElements.scrollIntoViewUp(driver, getElement());
+    }
+
+    public void scrollElementIntoViewDown() {
+        WebElements.scrollIntoViewDown(driver, getElement());
+    }
+
+    public void moveToElement() {
+        WebElements.moveToElement(driver, getElement());
+    }
+}

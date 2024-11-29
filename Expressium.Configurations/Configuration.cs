@@ -42,78 +42,8 @@ namespace Expressium.Configurations
             if (string.IsNullOrWhiteSpace(RepositoryPath))
                 throw new ArgumentException("The Configuration property 'RepositoryPath' is undefined...'");
 
-            //if (!Directory.Exists(SolutionPath))
-            //    throw new ArgumentException("The Configuration 'SolutionPath' directory does not exist...");
-
-            //if (!File.Exists(ConfigurationPath))
-            //    throw new ArgumentException("The Configuration 'ConfigurationPath' file does not exist...");
-
-            //if (!File.Exists(RepositoryPath))
-            //    throw new ArgumentException("The Configuration 'RepositoryPath' file does not exist...");
-
             Enroller.Validate();
             CodeGenerator.Validate();
-        }
-
-        public bool IsCodingLanguageCSharp()
-        {
-            if (CodeGenerator.CodingLanguage == CodingLanguages.CSharp.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingLanguageJava()
-        {
-            if (CodeGenerator.CodingLanguage == CodingLanguages.Java.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingStylePageFactory()
-        {
-            if (CodeGenerator.CodingStyle == CodingStyles.PageFactory.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingStyleByLocators()
-        {
-            if (CodeGenerator.CodingStyle == CodingStyles.ByLocators.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingFlavourSpecflow()
-        {
-            if (CodeGenerator.CodingFlavour == CodingFlavours.Specflow.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingFlavourReqnroll()
-        {
-            if (CodeGenerator.CodingFlavour == CodingFlavours.Reqnroll.ToString())
-                return true;
-
-            return false;
-        }
-
-        public bool IsCodingFlavourCucumber()
-        {
-            if (CodeGenerator.CodingFlavour == CodingFlavours.Cucumber.ToString())
-                return true;
-
-            return false;
-        }
-
-        public string GetNameSpace()
-        {
-            return $"{Company}.{Project}.Web.API";
         }
 
         public Configuration Copy()

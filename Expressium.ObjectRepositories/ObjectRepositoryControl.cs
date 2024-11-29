@@ -10,6 +10,7 @@ namespace Expressium.ObjectRepositories
         public string Type { get; set; }
         public string How { get; set; }
         public string Using { get; set; }
+        public string Source { get; set; }
         public string Target { get; set; }
         public string Value { get; set; }
 

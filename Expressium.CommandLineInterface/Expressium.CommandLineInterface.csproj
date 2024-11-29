@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Expressium.CodeGenerators\Expressium.CodeGenerators.csproj" />
-    <ProjectReference Include="..\Expressium.SolutionGenerators\Expressium.SolutionGenerators.csproj" />
   </ItemGroup>
 
 </Project>

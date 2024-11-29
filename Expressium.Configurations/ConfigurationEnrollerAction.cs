@@ -23,16 +23,16 @@ namespace Expressium.Configurations
         public void Validate()
         {
             if (string.IsNullOrWhiteSpace(Name))
-                throw new ArgumentException("The EnrollerAction property 'Name' is undefined...");
+                throw new ArgumentException("The ConfigurationEnrollerAction property 'Name' is undefined...");
 
-            if (!Enum.GetNames(typeof(ControlTypes)).Any(e => Type == e))
-                throw new ArgumentException("The EnrollerAction property 'Type' is invalid...");
+            if (string.IsNullOrWhiteSpace(Type))
+                throw new ArgumentException("The ConfigurationEnrollerAction property 'Type' is undefined...");
 
-            if (!Enum.GetNames(typeof(ControlHows)).Any(e => How == e))
-                throw new ArgumentException("The EnrollerAction property 'How' is invalid...");
+            if (string.IsNullOrWhiteSpace(How))
+                throw new ArgumentException("The ConfigurationEnrollerAction property 'How' is undefined...");
 
             if (string.IsNullOrWhiteSpace(Using))
-                throw new ArgumentException("The EnrollerAction property 'Using' is undefined...");
+                throw new ArgumentException("The ConfigurationEnrollerAction property 'Using' is undefined...");
         }
     }
 }

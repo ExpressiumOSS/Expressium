@@ -23,7 +23,7 @@ namespace Expressium.Configurations
 
         public ConfigurationEnroller()
         {
-            BrowserType = BrowserTypes.Chrome.ToString();
+            BrowserType = null;
             BrowserMaximize = true;
             BrowserWindow = false;
             BrowserWindowWidth = 1920;

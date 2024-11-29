@@ -1,0 +1,74 @@
+﻿package Controls;
+
+import Bases.WebElements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
+
+public class WebComboBox extends WebControl {
+
+    public WebComboBox(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebComboBox(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+
+    public void selectByText(String value) {
+        if (value == null) {
+            return;
+        }
+
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        selectElementByText(value);
+        highlightElementClear();
+    }
+
+    public void selectByIndex(int value) {
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        selectElementByIndex(value);
+        highlightElementClear();
+    }
+
+    public void selectByValue(String value) {
+        if (value == null) {
+            return;
+        }
+
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        selectElementByValue(value);
+        highlightElementClear();
+    }
+
+    public String getSelectedText() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        return getSelectedElementOptionText();
+    }
+
+    protected void selectElementByText(String value) {
+        Select selectElement = new Select(getElement());
+        selectElement.selectByVisibleText(value);
+    }
+
+    protected void selectElementByIndex(int value) {
+        Select selectElement = new Select(getElement());
+        selectElement.selectByIndex(value);
+    }
+
+    protected void selectElementByValue(String value) {
+        Select selectElement = new Select(getElement());
+        selectElement.selectByValue(value);
+    }
+
+    protected String getSelectedElementOptionText() {
+        Select selectElement = new Select(getElement());
+        WebElement selectedOption = selectElement.getFirstSelectedOption();
+        return selectedOption != null ? selectedOption.getText().trim() : null;
+    }
+}

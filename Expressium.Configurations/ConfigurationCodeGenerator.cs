@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Expressium.Configurations
 {
@@ -19,14 +18,14 @@ namespace Expressium.Configurations
 
         public void Validate()
         {
-            if (!Enum.GetNames(typeof(CodingLanguages)).Any(e => CodingLanguage == e))
-                throw new ArgumentException("The Configuration property 'CodingLanguage' is invalid...");
+            if (string.IsNullOrWhiteSpace(CodingLanguage))
+                throw new ArgumentException("The ConfigurationCodeGenerator property 'CodingLanguage' is undefined...");
 
-            if (!Enum.GetNames(typeof(CodingFlavours)).Any(e => CodingFlavour == e))
-                throw new ArgumentException("The Configuration property 'CodingFlavour' is invalid...");
+            if (string.IsNullOrWhiteSpace(CodingFlavour))
+                throw new ArgumentException("The ConfigurationCodeGenerator property 'CodingFlavour' is undefined...");
 
-            if (!Enum.GetNames(typeof(CodingStyles)).Any(e => CodingStyle == e))
-                throw new ArgumentException("The Configuration property 'CodingStyle' is invalid...");
+            if (string.IsNullOrWhiteSpace(CodingStyle))
+                throw new ArgumentException("The ConfigurationCodeGenerator property 'CodingStyle' is undefined...");
         }
     }
 }

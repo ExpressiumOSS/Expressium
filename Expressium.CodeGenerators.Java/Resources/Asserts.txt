@@ -1,0 +1,114 @@
+﻿package Bases;
+
+import org.apache.log4j.Logger;
+import org.testng.Assert;
+
+public class Asserts {
+    private static Logger logger = Logger.getLogger(Asserts.class);
+
+    public static void assertEquals(String expected, String actual, String message) {
+        try {
+            Assert.assertEquals(expected, actual, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [%s] and was [%s] - PASSED", expected, actual));
+        } catch (AssertionError e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [%s] but was [%s] - FAILED", expected, actual));
+            throw e;
+        }
+    }
+
+    public static void assertEquals(int expected, int actual, String message) {
+        try {
+            Assert.assertEquals(expected, actual, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [%d] and was [%d] - PASSED", expected, actual));
+        } catch (AssertionError e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [%d] but was [%d] - FAILED", expected, actual));
+            throw e;
+        }
+    }
+
+    public static void assertEquals(Boolean expected, Boolean actual, String message) {
+        try {
+            Assert.assertEquals(expected, actual, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [%s] and was [%s] - PASSED", expected, actual));
+        } catch (AssertionError e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [%s] but was [%s] - FAILED", expected, actual));
+            throw e;
+        }
+    }
+
+    public static void assertTrue(Boolean expected, String message) {
+        try {
+            Assert.assertTrue(expected, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [True] and was [True] - PASSED"));
+        } catch (Exception e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [True] but was [False] - FAILED"));
+            throw e;
+        }
+    }
+
+    public static void assertFalse(Boolean expected, String message) {
+        try {
+            Assert.assertFalse(expected, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [False] and was [False] - PASSED"));
+        } catch (Exception e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [False] but was [True] - FAILED"));
+            throw e;
+        }
+    }
+
+    public static void assertNull(String expected, String message) {
+        try {
+            Assert.assertNull(expected, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be [Null] and was [Null] - PASSED"));
+        } catch (Exception e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be [Null] but was [%s] - FAILED", expected));
+            throw e;
+        }
+    }
+
+    public static void assertNotNull(String expected, String message) {
+        try {
+            Assert.assertNotNull(expected, message);
+
+            logger.info(String.format("%s", message));
+            logger.info(String.format("Expected to be different from [Null] and was [%s] - PASSED", expected));
+        } catch (Exception e) {
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be different from [Null] but was [Null] - FAILED"));
+            throw e;
+        }
+    }
+
+    public static void greaterThan(int actual, int expected, String message) {
+        try {
+            Assert.assertTrue(actual > expected, message);
+
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be greater than [%d] and was [%d] - PASSED", expected, actual));
+        } catch (Exception e) {
+
+            logger.error(String.format("%s", message));
+            logger.error(String.format("Expected to be greater than [%d] but was [%d] - FAILED", expected, actual));
+            throw e;
+        }
+    }
+
+}

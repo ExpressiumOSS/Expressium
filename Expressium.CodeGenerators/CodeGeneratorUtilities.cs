@@ -57,7 +57,7 @@ namespace Expressium.CodeGenerators
             return value;
         }
 
-        internal static string RemoveIllegalCharacters(this string value)
+        public static string RemoveIllegalCharacters(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -72,7 +72,7 @@ namespace Expressium.CodeGenerators
             return Regex.Replace(value, @"\s{2,}", " ").Trim();
         }
 
-        internal static string CapitalizeWords(this string value)
+        public static string CapitalizeWords(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -80,7 +80,7 @@ namespace Expressium.CodeGenerators
             return Regex.Replace(value, @"(^\w)|(\s\w)", m => m.Value.ToUpper());
         }
 
-        internal static string RemoveWhiteSpaces(this string value)
+        public static string RemoveWhiteSpaces(this string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -89,7 +89,12 @@ namespace Expressium.CodeGenerators
             return Regex.Replace(value, @"\s+", "");
         }
 
-        internal static string GenerateRandomString(int length)
+        public static string EscapeDoubleQuotes(this string value)
+        {
+            return value.Replace("\"", "\\\"");
+        }
+
+        public static string GenerateRandomString(int length)
         {
             var random = new Random();
 

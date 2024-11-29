@@ -1,0 +1,109 @@
+﻿package Bases;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
+
+public class BaseTable extends BasePage {
+    protected static Logger logger = Logger.getLogger(BaseTable.class);
+
+    protected By baseLocator;
+
+    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
+        super(driver);
+
+        this.baseLocator = baseLocator;
+    }
+
+    public int getNumberOfRows() {
+        logger.info("getNumberOfRows()");
+        WebElement element = WebElements.getElement(driver, baseLocator);
+        List<WebElement> rows = element.findElements(By.xpath("./tbody/tr"));
+        return rows.size();
+    }
+
+    public int getNumberOfColumns() {
+        logger.info("getNumberOfColumns()");
+        WebElement element = WebElements.getElement(driver, baseLocator);
+        List<WebElement> columns = element.findElements(By.xpath("./thead/tr/th"));
+        return columns.size();
+    }
+
+    public void clickCell(Object rowId, Object columnId) {
+        logger.info(String.format("clickCell(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "//*");
+        element.click();
+    }
+
+    public void setCellTextBox(Object rowId, Object columnId, String value) {
+        logger.info(String.format("setCellTextBox(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "//input");
+        element.sendKeys(value);
+    }
+
+    public String getCellTextBox(Object rowId, Object columnId) {
+        logger.info(String.format("getCellTextBox(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "//input");
+        return element.getAttribute("value");
+    }
+
+    public void setCellCheckBox(Object rowId, Object columnId, boolean value) {
+        logger.info(String.format("setCellCheckBox(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "//input");
+        if (element.isSelected() != value) {
+            element.click();
+        }
+    }
+
+    public boolean getCellCheckBox(Object rowId, Object columnId) {
+        logger.info(String.format("getCellCheckBox(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "//input");
+        return element.isSelected();
+    }
+
+    public String getCellText(Object rowId, Object columnId) {
+        logger.info(String.format("getCellText(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "");
+        return element.getText();
+    }
+
+    public void clickContextMenu(Object rowId, Object columnId, String menuEntry) {
+        logger.info(String.format("clickContextMenu(%s, %s)", rowId, columnId));
+        WebElement element = getCellElement(rowId, columnId, "");
+        element.click();
+
+        By contextMenuLocator = By.xpath(String.format("//li[@role='menuitem']//a[normalize-space()='%s']", menuEntry));
+        WebElement menuElement = driver.findElement(contextMenuLocator);
+        menuElement.click();
+    }
+
+    protected WebElement getCellElement(Object rowId, Object columnId, String subXPath) {
+        if (rowId instanceof Integer && columnId instanceof Integer) {
+            By childLocator = By.xpath(String.format("./tbody/tr[%d]/td[%d]%s", rowId, columnId, subXPath));
+            return WebElements.getChildElement(driver, baseLocator, childLocator);
+        } else if (rowId instanceof Integer && columnId instanceof String) {
+            return getCellElement(rowId, getColumnIndex((String) columnId), subXPath);
+        } else if (rowId instanceof String && columnId instanceof Integer) {
+            By childLocator = By.xpath(String.format("./tbody/tr[td[text()='%s']]/td[%d]%s", rowId, columnId, subXPath));
+            return WebElements.getChildElement(driver, baseLocator, childLocator);
+        } else if (rowId instanceof String && columnId instanceof String) {
+            return getCellElement(rowId, getColumnIndex((String) columnId), subXPath);
+        } else {
+            throw new IllegalArgumentException("Invalid argument types for getCellElement...");
+        }
+    }
+
+    public int getColumnIndex(String columnName) {
+        WebElement element = WebElements.getElement(driver, baseLocator);
+        List<WebElement> columnNames = element.findElements(By.xpath(String.format("./thead/tr/th")));
+        for (int i = 0; i < columnNames.size(); i++) {
+            if (columnNames.get(i).getText().equals(columnName)) {
+                return i + 1;
+            }
+        }
+        throw new RuntimeException(String.format("The column name '%s' was not found...", columnName));
+    }
+}

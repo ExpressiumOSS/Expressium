@@ -1,0 +1,77 @@
+﻿package Bases;
+
+import Controls.WebTable;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class BaseTable extends BasePage {
+    protected static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(BaseTable.class);
+
+    protected WebTable baseControl;
+
+    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
+        super(driver);
+
+        baseControl = new WebTable(driver, baseLocator);
+    }
+
+    public int getNumberOfRows() {
+        logger.info("getNumberOfRows()");
+        return baseControl.getNumberOfRows();
+    }
+
+    public int getNumberOfColumns() {
+        logger.info("getNumberOfColumns()");
+        return baseControl.getNumberOfColumns();
+    }
+
+    public void clickCell(Object rowId, Object columnId) {
+        logger.info(String.format("clickCell(%s, %s)", rowId, columnId));
+        baseControl.clickCell(rowId, columnId);
+    }
+
+    public void setCellTextBox(Object rowId, Object columnId, String value) {
+        logger.info(String.format("setCellTextBox(%s, %s)", rowId, columnId));
+        baseControl.setCellTextBox(rowId, columnId, value);
+    }
+
+    public String getCellTextBox(Object rowId, Object columnId) {
+        logger.info(String.format("getCellTextBox(%s, %s)", rowId, columnId));
+        return baseControl.getCellTextBox(rowId, columnId);
+    }
+
+    public void setCellCheckBox(Object rowId, Object columnId, boolean value) {
+        logger.info(String.format("setCellCheckBox(%s, %s)", rowId, columnId));
+        baseControl.setCellCheckBox(rowId, columnId, value);
+    }
+
+    public boolean getCellCheckBox(Object rowId, Object columnId) {
+        logger.info(String.format("getCellCheckBox(%s, %s)", rowId, columnId));
+        return baseControl.getCellCheckBox(rowId, columnId);
+    }
+
+    public void setCellRadioButton(Object rowId, Object columnId, boolean value) {
+        logger.info(String.format("setCellRadioButton(%s, %s)", rowId, columnId));
+        baseControl.setCellRadioButton(rowId, columnId, value);
+    }
+
+    public boolean getCellRadioButton(Object rowId, Object columnId) {
+        logger.info(String.format("getCellRadioButton(%s, %s)", rowId, columnId));
+        return baseControl.getCellRadioButton(rowId, columnId);
+    }
+
+    public String getCellText(Object rowId, Object columnId) {
+        logger.info(String.format("getCellText(%s, %s)", rowId, columnId));
+        return baseControl.getCellText(rowId, columnId);
+    }
+
+    public String getCellText(String cellText) {
+        logger.info(String.format("getCellText(%s)", cellText));
+        return baseControl.getCellText(cellText);
+    }
+
+    public void clickContextMenu(Object rowId, Object columnId, String menuEntry) {
+        logger.info(String.format("clickContextMenu(%s, %s)", rowId, columnId));
+        baseControl.clickContextMenu(rowId, columnId, menuEntry);
+    }
+}

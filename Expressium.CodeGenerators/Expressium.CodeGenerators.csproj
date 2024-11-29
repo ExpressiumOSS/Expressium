@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Expressium.UnitTests</_Parameter1>
+      <_Parameter1>Expressium.CodeGenerators.UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 

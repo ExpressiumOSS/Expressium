@@ -1,0 +1,109 @@
+﻿using OpenQA.Selenium;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class ScreenRecorder
+    {
+        private string screenshotsPath;         // Temporary directory for screenshots...
+        private int frameRate = 10;             // Frames per second in the video...
+        private int delayBetweenFrames = 100;   // Delay between frames in milliseconds...
+
+        private Task recordingTask;
+        private CancellationTokenSource cancellationTokenSource;
+
+        public ScreenRecorder(string screenshotsPath, int frameRate = 10, int delayBetweenFrames = 100)
+        {
+            this.screenshotsPath = screenshotsPath;
+            this.frameRate = frameRate;
+            this.delayBetweenFrames = delayBetweenFrames;
+        }
+
+        public void StartRecording(IWebDriver driver)
+        {
+            Directory.CreateDirectory(screenshotsPath);
+            cancellationTokenSource = new CancellationTokenSource();
+            recordingTask = Task.Run(() => RecordScreen(driver, cancellationTokenSource.Token));
+        }
+
+        public void StopRecording()
+        {
+            cancellationTokenSource.Cancel();
+            recordingTask.Wait();
+        }
+
+        public void SaveRecording(string filePath)
+        {
+            ConvertRecording(filePath);
+            Directory.Delete(screenshotsPath, true);
+        }
+
+        private void RecordScreen(IWebDriver driver, CancellationToken cancellationToken)
+        {
+            int frameCount = 0;
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+
+                var filePath = Path.Combine(screenshotsPath, $"frame{frameCount:D4}.png");
+                screenshot.SaveAsFile(filePath);
+
+                frameCount++;
+                Thread.Sleep(delayBetweenFrames);
+            }
+        }
+
+        private void ConvertRecording(string outputFile)
+        {
+            var ffmpegPath = "ffmpeg";
+            var arguments = $"-framerate {frameRate} -i {screenshotsPath}/frame%04d.png -c:v libx264 -pix_fmt yuv420p {outputFile}";
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = ffmpegPath,
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            process.WaitForExit();
+        }
+
+        //if (configuration.Screencast)
+        //{
+        //    var screenshotsPath = Path.Combine(configuration.LoggingPath, GetTestName(), "Screenshots");
+        //    screenRecorder = new ScreenRecorder(screenshotsPath);
+        //    screenRecorder.StartRecording(driver);
+        //}
+
+        //if (configuration.Screencast)
+        //{
+        //var filePath = Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".mp4");
+        //SaveScreencast(filePath);
+        //}
+
+        //private void SaveScreencast(string filePath)
+        //{
+        //    try
+        //    {
+        //        screenRecorder.StopRecording();
+        //        screenRecorder.SaveRecording(filePath);
+        //        logger.InfoFormat("Screencast has been saved: {0}", Path.GetFileName(filePath));
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        logger.Error("SaveScreencast has failed during execution...");
+        //        logger.Debug(exception.Message);
+        //    }
+        //}
+    }
+}
