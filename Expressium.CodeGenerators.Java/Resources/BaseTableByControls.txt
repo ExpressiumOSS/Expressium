@@ -1,16 +1,15 @@
 ﻿package Bases;
 
+import org.apache.log4j.Logger;
 import Controls.WebTable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class BaseTable extends BasePage {
-    protected static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(BaseTable.class);
-
     protected WebTable baseControl;
 
-    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
-        super(driver);
+    public BaseTable(Logger logger, WebDriver driver, By baseLocator) throws Exception {
+        super(logger, driver);
 
         baseControl = new WebTable(driver, baseLocator);
     }

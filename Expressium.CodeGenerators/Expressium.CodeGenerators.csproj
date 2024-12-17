@@ -1,18 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>Expressium.CodeGenerators</AssemblyName>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Expressium.CodeGenerators.UnitTests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Expressium.CodeGenerators.UnitTests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Expressium.Configurations\Expressium.Configurations.csproj" />
-    <ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Expressium.Configurations\Expressium.Configurations.csproj" />
+		<ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
+	</ItemGroup>
+
 </Project>

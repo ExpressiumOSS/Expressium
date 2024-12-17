@@ -46,7 +46,7 @@ namespace Expressium.CodeGenerators.Java
         {
             var listOfLines = new List<string>();
 
-            listOfLines.AddRange(GenerateImports());
+            listOfLines.AddRange(GenerateImports(page));
             listOfLines.AddRange(GenerateClass(page));
             listOfLines.Add($"{{");
             listOfLines.AddRange(GeneratedDataVariables(page));
@@ -59,21 +59,25 @@ namespace Expressium.CodeGenerators.Java
             return listOfLines;
         }
 
-        internal List<string> GenerateImports()
+        internal List<string> GenerateImports(ObjectRepositoryPage page)
         {
-            var listOfLines = new List<string>
+            var listOfLines = new List<string>();
+
+            listOfLines.Add($"package {TestFolders.UITests};");
+            listOfLines.Add($"");
+            listOfLines.Add($"import Bases.Asserts;");
+            listOfLines.Add($"import Bases.BaseTest;");
+
+            if (page.Model)
             {
-                $"package {TestFolders.UITests};",
-                "",
-                "import Bases.Asserts;",
-                "import Bases.BaseTest;",
-                "import Factories.*;",
-                "import Models.*;",
-                "import Pages.*;",
-                "import org.testng.annotations.BeforeClass;",
-                "import org.testng.annotations.Test;",
-                ""
-            };
+                listOfLines.Add($"import Factories.*;");
+                listOfLines.Add($"import Models.*;");
+            }
+
+            listOfLines.Add($"import Pages.*;");
+            listOfLines.Add($"import org.testng.annotations.BeforeClass;");
+            listOfLines.Add($"import org.testng.annotations.Test;");
+            listOfLines.Add($"");
 
             return listOfLines;
         }
@@ -108,7 +112,7 @@ namespace Expressium.CodeGenerators.Java
                     {
                         if (control.IsFillFormControl())
                         {
-                            if (control.IsTextBox() || control.IsComboBox())
+                            if (control.IsTextBox() || control.IsComboBox() || control.IsListBox())
                             {
                                 if (string.IsNullOrWhiteSpace(control.Value))
                                     listOfLines.Add($"private String {control.Name.CamelCase()} = \"{CodeGeneratorUtilities.GenerateRandomString(6)}\";");
@@ -161,7 +165,7 @@ namespace Expressium.CodeGenerators.Java
             if (listOfNavigationLines != null)
                 listOfLines.AddRange(listOfNavigationLines);
 
-            listOfLines.Add($"{page.Name.CamelCase()} = new {page.Name}(driver);");
+            listOfLines.Add($"{page.Name.CamelCase()} = new {page.Name}(logger, driver);");
 
             if (page.Model)
             {
@@ -189,7 +193,7 @@ namespace Expressium.CodeGenerators.Java
                 $"@Test",
                 $"public void validate_Page_Property_Title()",
                 $"{{",
-                $"Asserts.assertEquals(\"{page.Title}\", {page.Name.CamelCase()}.getTitle(), \"Validating the {page.Name} Title...\");",
+                $"asserts.assertEquals(\"{page.Title}\", {page.Name.CamelCase()}.getTitle(), \"Validating the {page.Name} Title...\");",
                 $"}}"
             };
 
@@ -210,9 +214,9 @@ namespace Expressium.CodeGenerators.Java
                     listOfLines.Add($"{{");
 
                     if (page.Model)
-                        listOfLines.Add($"Asserts.assertEquals({page.Name.CamelCase()}Model.get{control.Name}(), {page.Name.CamelCase()}.get{control.Name}(), \"Validating the {page.Name} property {control.Name}...\");");
+                        listOfLines.Add($"asserts.assertEquals({page.Name.CamelCase()}Model.get{control.Name}(), {page.Name.CamelCase()}.get{control.Name}(), \"Validating the {page.Name} property {control.Name}...\");");
                     else
-                        listOfLines.Add($"Asserts.assertEquals({control.Name.CamelCase()}, {page.Name.CamelCase()}.get{control.Name}(), \"Validating the {page.Name} property {control.Name}...\");");
+                        listOfLines.Add($"asserts.assertEquals({control.Name.CamelCase()}, {page.Name.CamelCase()}.get{control.Name}(), \"Validating the {page.Name} property {control.Name}...\");");
 
                     listOfLines.Add($"}}");
                 }
@@ -246,7 +250,7 @@ namespace Expressium.CodeGenerators.Java
                         if (listOfParentLines != null)
                             listOfLines.AddRange(listOfParentLines);
 
-                        listOfLines.Add($"{page.Name} {page.Name.CamelCase()} = new {page.Name}(driver);");
+                        listOfLines.Add($"{page.Name} {page.Name.CamelCase()} = new {page.Name}(logger, driver);");
                         listOfLines.Add($"{page.Name.CamelCase()}.click{control.Name}();");
                         listOfLines.Add($"");
 
@@ -270,47 +274,47 @@ namespace Expressium.CodeGenerators.Java
                     listOfLines.Add($"@Test");
                     listOfLines.Add($"public void validate_Page_{control.Name}_Number_Of_Rows()");
                     listOfLines.Add($"{{");
-                    listOfLines.Add($"Asserts.greaterThan({page.Name.CamelCase()}.get{control.Name}().getNumberOfRows(), -1, \"Validating the {page.Name} {control.Name} number of rows...\");");
+                    listOfLines.Add($"asserts.assertGreaterThan({page.Name.CamelCase()}.get{control.Name}().getNumberOfRows(), -1, \"Validating the {page.Name} {control.Name} number of rows...\");");
                     listOfLines.Add($"}}");
 
                     listOfLines.Add($"");
                     listOfLines.Add($"@Test");
                     listOfLines.Add($"public void validate_Page_{control.Name}_Number_Of_Columns()");
                     listOfLines.Add($"{{");
-                    listOfLines.Add($"Asserts.greaterThan({page.Name.CamelCase()}.get{control.Name}().getNumberOfColumns(), -1, \"Validating the {page.Name} {control.Name} number of columns...\");");
+                    listOfLines.Add($"asserts.assertGreaterThan({page.Name.CamelCase()}.get{control.Name}().getNumberOfColumns(), -1, \"Validating the {page.Name} {control.Name} number of columns...\");");
                     listOfLines.Add($"}}");
 
-                    //var numberOfHeaders = 0;
-                    //if (!string.IsNullOrWhiteSpace(control.Value))
-                    //    numberOfHeaders = control.Value.Split(';').Length;
+                    var numberOfHeaders = 0;
+                    if (!string.IsNullOrWhiteSpace(control.Value))
+                        numberOfHeaders = control.Value.Split(';').Length;
 
-                    //if (numberOfHeaders > 1)
-                    //{
-                    //    var listOfHeaders = control.Value.Split(';');
-                    //    foreach (var header in listOfHeaders)
-                    //    {
-                    //        var name = header.Trim();
+                    if (numberOfHeaders > 1)
+                    {
+                        var listOfHeaders = control.Value.Split(';');
+                        foreach (var header in listOfHeaders)
+                        {
+                            var name = header.Trim();
 
-                    //        if (CodeGeneratorUtilities.IsValidClassName(name))
-                    //        {
-                    //            listOfLines.Add($"");
-                    //            listOfLines.Add($"[Test]");
-                    //            listOfLines.Add($"public void Validate_Page_{control.Name}_Cell_Text_{name}()");
-                    //            listOfLines.Add($"{{");
-                    //            listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.{control.Name}.GetCellText(1, \"{name}\"), \"Validating the {page.Name} {control.Name} table cell Text {name}...\");");
-                    //            listOfLines.Add($"}}");
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    listOfLines.Add($"");
-                    //    listOfLines.Add($"[Test]");
-                    //    listOfLines.Add($"public void Validate_Page_{control.Name}_Cell_Text()");
-                    //    listOfLines.Add($"{{");
-                    //    listOfLines.Add($"Asserts.IsNotNull({page.Name.CamelCase()}.{control.Name}.GetCellText(1, 2), \"Validating the {page.Name} {control.Name} table cell Text...\");");
-                    //    listOfLines.Add($"}}");
-                    //}
+                            if (CodeGeneratorUtilities.IsValidClassName(name))
+                            {
+                                listOfLines.Add($"");
+                                listOfLines.Add($"@Test");
+                                listOfLines.Add($"public void validate_Page_{control.Name}_Cell_Text_{name}()");
+                                listOfLines.Add($"{{");
+                                listOfLines.Add($"asserts.assertNotNull({page.Name.CamelCase()}.get{control.Name}().getCellText(1, \"{name}\"), \"Validating the {page.Name} {control.Name} table cell Text {name}...\");");
+                                listOfLines.Add($"}}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        listOfLines.Add($"");
+                        listOfLines.Add($"@Test");
+                        listOfLines.Add($"public void validate_Page_{control.Name}_Cell_Text()");
+                        listOfLines.Add($"{{");
+                        listOfLines.Add($"asserts.assertNotNull({page.Name.CamelCase()}.get{control.Name}().getCellText(1, 2), \"Validating the {page.Name} {control.Name} table cell Text...\");");
+                        listOfLines.Add($"}}");
+                    }
                 }
             }
 

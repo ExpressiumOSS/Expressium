@@ -38,7 +38,7 @@ namespace Expressium.CodeGenerators.Java.UnitTests
             //if (IsCodingStyleByLocators())
             //    Assert.That(listOfLines.Count, Is.EqualTo(43), "CodeGeneratorPageJava GenerateSourceCode validation");
             //else
-                Assert.That(listOfLines.Count, Is.EqualTo(53), "CodeGeneratorPageJava GenerateSourceCode validation");
+                Assert.That(listOfLines.Count, Is.EqualTo(54), "CodeGeneratorPageJava GenerateSourceCode validation");
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace Expressium.CodeGenerators.Java.UnitTests
             //}
             //else
             {
-                Assert.That(listOfLines.Count, Is.EqualTo(11), "CodeGeneratorPageJava GenerateImports validation");
+                Assert.That(listOfLines.Count, Is.EqualTo(12), "CodeGeneratorPageJava GenerateImports validation");
                 Assert.That(listOfLines[2], Is.EqualTo("import Bases.*;"), "CodeGeneratorPageJava GenerateImports validation");
             }
         }
@@ -83,8 +83,8 @@ namespace Expressium.CodeGenerators.Java.UnitTests
             var listOfLines = codeGeneratorPage.GenerateContructor(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(9), "CodeGeneratorPageJava GenerateContructor validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(WebDriver driver) throws Exception"), "CodeGeneratorPageJava GenerateContructor validation");
-            Assert.That(listOfLines[4], Is.EqualTo("Menu = new MainMenuBar(driver);"), "CodeGeneratorPageJava GenerateContructor validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(Logger logger, WebDriver driver) throws Exception"), "CodeGeneratorPageJava GenerateContructor validation");
+            Assert.That(listOfLines[4], Is.EqualTo("Menu = new MainMenuBar(logger, driver);"), "CodeGeneratorPageJava GenerateContructor validation");
             Assert.That(listOfLines[6], Is.EqualTo("waitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageJava GenerateContructor validation");
         }
 

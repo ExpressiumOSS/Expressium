@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -100,6 +101,49 @@ namespace Expressium.CodeGenerators
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public static List<string> FormatSourceCode(List<string> listOfCodeLines)
+        {
+            var listOfStatements = new List<string>
+            {
+                "if",
+                "else if",
+                "else",
+                "for",
+                "while"
+            };
+
+            var indentLevel = 0;
+            var indentNextLevel = 0;
+
+            var listOfLines = new List<string>();
+
+            foreach (var codeLine in listOfCodeLines)
+            {
+                var line = codeLine.Trim();
+
+                if (line.StartsWith("}"))
+                    indentLevel--;
+
+                if (string.IsNullOrWhiteSpace(line))
+                    listOfLines.Add("");
+                else
+                    listOfLines.Add(new string(' ', 4 * (indentLevel + indentNextLevel)) + line);
+
+                if (line.EndsWith("{"))
+                    indentLevel++;
+
+                if (listOfStatements.Any(s => line.StartsWith(s)))
+                    indentNextLevel++;
+                else if (indentNextLevel > 0)
+                    indentNextLevel--;
+                else
+                {
+                }
+            }
+
+            return listOfLines;
         }
     }
 }

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Expressium.CodeGenerators.UnitTests
 {
@@ -88,6 +89,65 @@ namespace Expressium.CodeGenerators.UnitTests
         public void CodeGeneratorUtilities_CapitalizeWords(string input, string expected)
         {
             Assert.That(expected, Is.EqualTo(input.CapitalizeWords()), "CodeGeneratorUtilities CapitalizeWords validate generated output");
+        }
+
+        [Test]
+        public void CodeGeneratorUtilities_FormatSourceCode()
+        {
+            var input = new List<string>
+            {
+                "public class AssetsBar : BasePage",
+                "{",
+                "public bool AssetsBar(bool value)",
+                "{",
+                "if (value)",
+                "return true;",
+                "else if (!value)",
+                "return false;",
+                "else ",
+                "return false;",
+                "",
+                "if (x)",
+                "if (y)",
+                "return true;",
+                "",
+                "while (a==b)",
+                "continue;",
+                "",
+                "for (int i=0; i<count; i++)",
+                "bool x = true;",
+                "}",
+                "}"
+            };
+
+            var expected = new List<string>
+            {
+                "public class AssetsBar : BasePage",
+                "{",
+                "    public bool AssetsBar(bool value)",
+                "    {",
+                "        if (value)",
+                "            return true;",
+                "        else if (!value)",
+                "            return false;",
+                "        else",
+                "            return false;",
+                "",
+                "        if (x)",
+                "            if (y)",
+                "                return true;",
+                "",
+                "        while (a==b)",
+                "            continue;",
+                "",
+                "        for (int i=0; i<count; i++)",
+                "            bool x = true;",
+                "    }",
+                "}"
+            };
+
+            var result = CodeGeneratorUtilities.FormatSourceCode(input);
+            Assert.That(result, Is.EqualTo(expected), "CodeGeneratorUtilities FormatSourceCode validation");
         }
     }
 }

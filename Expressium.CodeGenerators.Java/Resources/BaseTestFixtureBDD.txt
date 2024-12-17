@@ -1,8 +1,8 @@
 ﻿package BusinessTests.Steps;
 
+import Bases.Asserts;
 import Bases.BaseTest;
-import Bases.BaseTestFixture;
-import Bases.Logger;
+import Bases.LoggerInitializer;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class BaseTestFixtureBDD extends BaseTest {
-    private Scenario scenario;
-
     private static final Field field = FieldUtils.getField(Scenario.class, "delegate", true);
     private static Method getError;
+    private Scenario scenario;
 
     @Before
     public void beforeScenario(Scenario scenario) {
@@ -29,7 +28,7 @@ public class BaseTestFixtureBDD extends BaseTest {
 
         initializeBrowser();
 
-        BaseSteps.initialize(driver);
+        BaseSteps.initialize(logger, driver, asserts);
     }
 
     @After
@@ -44,66 +43,70 @@ public class BaseTestFixtureBDD extends BaseTest {
     }
 
     public void initializeFixture(Scenario scenario) {
-        if (logging) {
-            if (loggingPath == null)
+        if (configuration.getLogging()) {
+            if (configuration.getLoggingPath() == null)
                 throw new IllegalArgumentException("Property loggingPath is undefined...");
 
-            File directory = new File(loggingPath);
+            File directory = new File(configuration.getLoggingPath());
             if (!directory.exists())
                 directory.mkdir();
 
-            File outputPath = new File(String.format("%s\\%s", loggingPath, getValidFileName(scenario.getName())));
+            File outputPath = new File(String.format("%s\\%s", configuration.getLoggingPath(), getValidFileName(scenario.getName())));
             if (!outputPath.exists())
                 outputPath.mkdir();
 
             String filePath = String.format("%s\\%s", outputPath, "TestAutomation.log");
-            Logger.initialize(filePath);
-
-            // Scenario Categories...
-            String category = scenario.getSourceTagNames().toString();
-            category = category.replace("[", "").replace("]", "").replaceAll("@", "");
-
-            logger.info(String.format("// Initialize Testcase Fixture"));
-            logger.info(String.format("Company: %s", company));
-            logger.info(String.format("Project: %s", project));
-            logger.info(String.format("Environment: %s", environmentId));
-            logger.info(String.format("Url: %s", url));
-            logger.info(String.format("Name: %s", getValidFileName(scenario.getName())));
-            logger.info(String.format("Category: ", category));
-            logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
-            logger.info(String.format(""));
+            logger = LoggerInitializer.initialize(getValidFileName(scenario.getName()), filePath);
+            asserts = new Asserts(logger);
+        } else {
+            logger = LoggerInitializer.initialize(getValidFileName(scenario.getName()), null);
+            asserts = new Asserts(logger);
         }
+
+        // Scenario Categories...
+        String category = scenario.getSourceTagNames().toString();
+        category = category.replace("[", "").replace("]", "").replaceAll("@", "");
+
+        logger.info(String.format("// Initialize Testcase Fixture"));
+        logger.info(String.format("Company: %s", configuration.getCompany()));
+        logger.info(String.format("Project: %s", configuration.getProject()));
+        logger.info(String.format("Environment: %s", configuration.getEnvironment()));
+        logger.info(String.format("Url: %s", configuration.getUrl()));
+        logger.info(String.format("Name: %s", getValidFileName(scenario.getName())));
+        logger.info(String.format("Category: ", category));
+        logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
+        logger.info(String.format(""));
     }
 
     public void finalizeFixture(Scenario scenario) {
-        if (logging) {
+        if (configuration.getLogging()) {
             logger.info(String.format(""));
             logger.info(String.format("// Finalize Testcase Fixture"));
         }
 
         if (driver != null) {
-            if (screenShot) {
+            if (configuration.getScreenshot()) {
                 String name = getValidFileName(scenario.getName());
-                String filePath = String.format("%s\\%s\\%s.%s", loggingPath, name, name, "png");
+                String filePath = String.format("%s\\%s\\%s.%s", configuration.getLoggingPath(), name, name, "png");
                 saveScreenShot(filePath);
 
                 logger.info(String.format("Screenshot has been saved: %s.%s", name, "png"));
             }
 
-            if (tearDownMessage) {
+            if (configuration.getShowAlerts()) {
                 String status;
                 if (scenario.isFailed())
                     status = "Testcase has failed during execution...";
                 else
                     status = "Testcase was successfully executed...";
 
-                showAlertMessage(status, tearDownMessageTimeOut);
+                showAlertMessage(status, configuration.getShowAlertsTimeOut());
             }
 
             driver.quit();
         }
 
-        if (logging) {
+        if (configuration.getLogging()) {
             if (scenario.isFailed())
                 logger.info(String.format("Number of failed tests: %d", 1));
             else

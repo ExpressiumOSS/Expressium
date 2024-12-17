@@ -36,7 +36,7 @@ namespace Expressium.CodeGenerators.Java
             Directory.CreateDirectory(Path.Combine(directory, nameSpaceApi, CodeFolders.Pages.ToString()));
 
             var basesFolderApi = Path.Combine(directory, nameSpaceApi, "Bases");
-            WriteToFile(Path.Combine(basesFolderApi, "Logger.java"), Resources.Logger, mapOfProperties);
+            WriteToFile(Path.Combine(basesFolderApi, "LoggerInitializer.java"), Resources.Logger, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderApi, "WebElements.java"), Resources.WebElements, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderApi, "Randomizer.java"), Resources.Randomizer, mapOfProperties);
 
@@ -76,9 +76,10 @@ namespace Expressium.CodeGenerators.Java
             var basesFolderTest = Path.Combine(directory, nameSpaceTest, "Bases");
             WriteToFile(Path.Combine(basesFolderTest, "BaseTestFixture.java"), Resources.BaseTestFixture, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderTest, "BaseTest.java"), Resources.BaseTest, mapOfProperties);
-            WriteToFile(Path.Combine(basesFolderTest, "WebDrivers.java"), Resources.WebDrivers, mapOfProperties);
+            WriteToFile(Path.Combine(basesFolderTest, "WebDriverFactory.java"), Resources.WebDriverFactory, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderTest, "ScreenRecorderUtility.java"), Resources.ScreenRecorderUtility, mapOfProperties);
             WriteToFile(Path.Combine(basesFolderTest, "Asserts.java"), Resources.Asserts, mapOfProperties);
+            WriteToFile(Path.Combine(basesFolderTest, "Configuration.java"), Resources.Configuration, mapOfProperties);
 
             var BusinessTestsFolder = Path.Combine(directory, nameSpaceTest, TestFolders.BusinessTests.ToString());
             WriteToFile(Path.Combine(BusinessTestsFolder, "Features", "Login.feature"), Resources.Feature, mapOfProperties);

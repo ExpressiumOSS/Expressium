@@ -87,7 +87,7 @@ namespace Expressium.CodeGenerators.CSharp
             WriteToFile(Path.Combine(apiTestProjectPath, "WebDriverFactory.cs"), Resources.WebDriverFactory, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "Asserts.cs"), Resources.Asserts, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "Configuration.cs"), Resources.Configuration, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "configuration.json"), Resources.ConfigurationTests, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "configuration.json"), Resources.ConfigurationJson, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "ContextController.cs"), Resources.ContextController, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
 

@@ -1,11 +1,17 @@
 ﻿package BusinessTests.Steps;
 
+import Bases.Asserts;
 import org.openqa.selenium.WebDriver;
+import org.apache.log4j.Logger;
 
 public class BaseSteps {
+    protected static Logger logger;
     protected static WebDriver driver;
+    protected static Asserts asserts;
 
-    public static void initialize(WebDriver driver) {
+    public static void initialize(Logger logger, WebDriver driver, Asserts asserts) {
+        BaseSteps.logger = logger;
         BaseSteps.driver = driver;
+        BaseSteps.asserts = asserts;
     }
 }

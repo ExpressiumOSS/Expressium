@@ -67,15 +67,18 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import org.testng.Assert;
         ///
         ///public class Asserts {
-        ///    private static Logger logger = Logger.getLogger(Asserts.class);
+        ///    protected Logger logger;
+        ///    
+        ///    public Asserts(Logger logger) {
+        ///        this.logger = logger;
+        ///    }
         ///
-        ///    public static void assertEquals(String expected, String actual, String message) {
+        ///    public void assertEquals(String expected, String actual, String message) {
         ///        try {
         ///            Assert.assertEquals(expected, actual, message);
         ///
         ///            logger.info(String.format(&quot;%s&quot;, message));
-        ///            logger.info(String.format(&quot;Expected to be [%s] and was [%s] - PASSED&quot;, expected, actual));
-        ///        } ca [rest of string was truncated]&quot;;.
+        ///            logger.info(String.format(&quot;Expected to be [%s] and was [%s] - PASSED&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Asserts {
             get {
@@ -99,7 +102,7 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import java.util.ArrayList;
         ///
         ///public class BasePage {
-        ///    protected static Logger l [rest of string was truncated]&quot;;.
+        ///    protected Logger logger;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageByControls {
             get {
@@ -122,7 +125,8 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import java.util.ArrayList;
         ///
         ///public class BasePage {
-        ///    protected static Logger logger = Logger.getLo [rest of string was truncated]&quot;;.
+        ///    protected Logger logger;
+        ///    protected WebDr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageByLocators {
             get {
@@ -145,7 +149,8 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import java.util.ArrayList;
         ///
         ///public class BasePage {
-        ///    protected static Logger logger = Logger.getLo [rest of string was truncated]&quot;;.
+        ///    protected Logger logger;
+        ///    protected WebDr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePagePageFactory {
             get {
@@ -156,13 +161,19 @@ namespace Expressium.CodeGenerators.Java.Properties {
         /// <summary>
         ///   Looks up a localized string similar to package BusinessTests.Steps;
         ///
+        ///import Bases.Asserts;
         ///import org.openqa.selenium.WebDriver;
+        ///import org.apache.log4j.Logger;
         ///
         ///public class BaseSteps {
+        ///    protected static Logger logger;
         ///    protected static WebDriver driver;
+        ///    protected static Asserts asserts;
         ///
-        ///    public static void initialize(WebDriver driver) {
+        ///    public static void initialize(Logger logger, WebDriver driver, Asserts asserts) {
+        ///        BaseSteps.logger = logger;
         ///        BaseSteps.driver = driver;
+        ///        BaseSteps.asserts = asserts;
         ///    }
         ///}.
         /// </summary>
@@ -183,17 +194,16 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import java.util.List;
         ///
         ///public class BaseTable extends BasePage {
-        ///    protected static Logger logger = Logger.getLogger(BaseTable.class);
-        ///
         ///    protected By baseLocator;
         ///
-        ///    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
-        ///        super(driver);
+        ///    public BaseTable(Logger logger, WebDriver driver, By baseLocator) throws Exception {
+        ///        super(logger, driver);
         ///
         ///        this.baseLocator = baseLocator;
         ///    }
         ///
-        ///    public int getNu [rest of string was truncated]&quot;;.
+        ///    public int getNumberOfRows() {
+        ///        logger.info(&quot;getNumberOfRows [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTable {
             get {
@@ -204,22 +214,23 @@ namespace Expressium.CodeGenerators.Java.Properties {
         /// <summary>
         ///   Looks up a localized string similar to package Bases;
         ///
+        ///import org.apache.log4j.Logger;
         ///import Controls.WebTable;
         ///import org.openqa.selenium.By;
         ///import org.openqa.selenium.WebDriver;
         ///
         ///public class BaseTable extends BasePage {
-        ///    protected static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(BaseTable.class);
-        ///
         ///    protected WebTable baseControl;
         ///
-        ///    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
-        ///        super(driver);
+        ///    public BaseTable(Logger logger, WebDriver driver, By baseLocator) throws Exception {
+        ///        super(logger, driver);
         ///
         ///        baseControl = new WebTable(driver, baseLocator);
         ///    }
         ///
-        ///    public int getNumberOfRows() {        /// [rest of string was truncated]&quot;;.
+        ///    public int getNumberOfRows() {
+        ///        logger.info(&quot;getNumberOfRows()&quot;);
+        ///        r [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTableByControls {
             get {
@@ -259,6 +270,7 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///   Looks up a localized string similar to package Bases;
         ///
         ///import org.apache.commons.io.FileUtils;
+        ///import org.apache.log4j.Logger;
         ///import org.openqa.selenium.JavascriptExecutor;
         ///import org.openqa.selenium.OutputType;
         ///import org.openqa.selenium.TakesScreenshot;
@@ -270,9 +282,7 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///
         ///import java.io.File;
         ///import java.time.LocalDateTime;
-        ///import java.time.format.DateTimeFormatter;
-        ///
-        ///public class BaseTestFix [rest of string was truncated]&quot;;.
+        ///import java.time.format.DateTimeForma [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixture {
             get {
@@ -283,9 +293,9 @@ namespace Expressium.CodeGenerators.Java.Properties {
         /// <summary>
         ///   Looks up a localized string similar to package BusinessTests.Steps;
         ///
+        ///import Bases.Asserts;
         ///import Bases.BaseTest;
-        ///import Bases.BaseTestFixture;
-        ///import Bases.Logger;
+        ///import Bases.LoggerInitializer;
         ///import io.cucumber.core.backend.TestCaseState;
         ///import io.cucumber.java.After;
         ///import io.cucumber.java.Before;
@@ -297,7 +307,7 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import java.lang.reflect.Field;
         ///import java.lang.reflect.Method;
         ///import java.time.LocalDateTime;
-        ///import java.time.format. [rest of string was truncated]&quot;;.
+        ///import java.time.form [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixtureBDD {
             get {
@@ -323,6 +333,37 @@ namespace Expressium.CodeGenerators.Java.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to package Bases;
+        ///
+        ///public class Configuration {
+        ///
+        ///    public enum Profiles {
+        ///        Development,
+        ///        Test,
+        ///        PreProduction,
+        ///        Production
+        ///    }
+        ///
+        ///    private String company;
+        ///    private String project;
+        ///    private String environment;
+        ///    private String url;
+        ///    private String username;
+        ///    private String password;
+        ///    private boolean logging;
+        ///    private String loggingPath;
+        ///    private String browserType;
+        ///    private boolean maximize;
+        ///    private boolean headless;
+        ///    privat [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Configuration {
+            get {
+                return ResourceManager.GetString("Configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feature: Login
         ///	As a User
         ///	I want to login on the web application
@@ -344,17 +385,17 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///
         ///import org.apache.log4j.*;
         ///
-        ///public class Logger {
-        ///    public static void initialize(String filePath) {
-        ///        Hierarchy hierarchy = (Hierarchy) LogManager.getLoggerRepository();
+        ///public class LoggerInitializer {
+        ///    public static Logger initialize(String name, String filePath) {
+        ///        Logger logger = Logger.getLogger(name);
         ///
         ///        PatternLayout patternLayout = new PatternLayout();
         ///        patternLayout.setConversionPattern(&quot;%d{HH:mm:ss} %p %C # %m%n&quot;);
         ///        patternLayout.activateOptions();
         ///
-        ///        ConsoleAppender console = new ConsoleAppender();
-        ///        console.setLayout(patternLayout);
-        ///        console.setThreshold( [rest of string was truncated]&quot;;.
+        ///        ConsoleAppender consoleAppender = new ConsoleAppender();
+        ///        consoleAppender.setLayout(patternLayout);
+        ///        console [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Logger {
             get {
@@ -635,16 +676,15 @@ namespace Expressium.CodeGenerators.Java.Properties {
         ///import org.openqa.selenium.firefox.FirefoxOptions;
         ///import org.openqa.selenium.firefox.FirefoxProfile;
         ///
-        ///public class WebDrivers {
+        ///public class WebDriverFactory {
         ///    public enum BrowserTypes {
         ///        Chrome,
         ///        Edge,
-        ///        Firefox
-        /// [rest of string was truncated]&quot;;.
+        ///        Fir [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string WebDrivers {
+        internal static string WebDriverFactory {
             get {
-                return ResourceManager.GetString("WebDrivers", resourceCulture);
+                return ResourceManager.GetString("WebDriverFactory", resourceCulture);
             }
         }
         

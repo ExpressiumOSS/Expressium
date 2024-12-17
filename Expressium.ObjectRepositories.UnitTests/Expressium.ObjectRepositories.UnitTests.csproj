@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
+		<ProjectReference Include="..\Expressium.ObjectRepositories\Expressium.ObjectRepositories.csproj" />
 	</ItemGroup>
 
 </Project>

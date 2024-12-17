@@ -69,7 +69,10 @@ namespace Expressium.CodeGenerators.Java
             if (IsCodingStyleByControls())
                 listOfLines.Add("import Controls.*;");
 
-            listOfLines.Add("import Models.*;");
+            if (page.Model)
+                listOfLines.Add("import Models.*;");
+
+            listOfLines.Add("import org.apache.log4j.Logger;");
             listOfLines.Add("import org.openqa.selenium.By;");
             listOfLines.Add("import org.openqa.selenium.Keys;");
             listOfLines.Add("import org.openqa.selenium.WebDriver;");
@@ -105,7 +108,7 @@ namespace Expressium.CodeGenerators.Java
             foreach (var control in page.Controls)
             {
                 if (control.IsTable())
-                    listOfLines.Add($"private BaseTable {control.Name} = new BaseTable(driver, By.{control.How.ToLower()}(\"{control.Using}\"));");
+                    listOfLines.Add($"private BaseTable {control.Name} = new BaseTable(logger, driver, By.{control.How.ToLower()}(\"{control.Using}\"));");
             }
 
             if (page.Members.Count > 0 || page.Controls.Any(c => c.IsTable()))
@@ -166,9 +169,13 @@ namespace Expressium.CodeGenerators.Java
 
         internal List<string> GenerateByControlsLocator(ObjectRepositoryControl control)
         {
+            var type = control.Type;
+            if (type == ControlTypes.Element.ToString())
+                type = "Control";
+
             var listOfLines = new List<string>
             {
-                $"private Web{control.Type} {control.Name.CamelCase()} = new Web{control.Type}(driver, By.{control.How.ToLower()}(\"{control.Using}\"));"
+                $"private Web{type} {control.Name.CamelCase()} = new Web{type}(driver, By.{control.How.ToLower()}(\"{control.Using}\"));"
             };
 
             return listOfLines;
@@ -197,16 +204,16 @@ namespace Expressium.CodeGenerators.Java
         {
             var listOfLines = new List<string>
             {
-                $"public {page.Name}(WebDriver driver) throws Exception",
+                $"public {page.Name}(Logger logger, WebDriver driver) throws Exception",
                 $"{{",
-                $"super(driver);"
+                $"super(logger, driver);"
             };
 
             if (page.Members.Count > 0)
             {
                 listOfLines.Add("");
                 foreach (var member in page.Members)
-                    listOfLines.Add($"{member.Name} = new {member.Page}(driver);");
+                    listOfLines.Add($"{member.Name} = new {member.Page}(logger, driver);");
             }
 
             if (page.Synchronizers.Count > 0)

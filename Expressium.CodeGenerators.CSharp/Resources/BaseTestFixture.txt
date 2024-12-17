@@ -134,9 +134,6 @@ namespace $Company$.$Project$.Web.API.Tests
                 configuration.Maximize, configuration.Headless, configuration.WindowSize,
                 configuration.WindowWidth, configuration.WindowHeight);
 
-            WebElements.Highlight = configuration.Highlight;
-            WebElements.HighlightTimeOut = configuration.HighlightTimeOut;
-
             if (configuration.ShowAlerts)
             {
                 var message = GetTestDescription();

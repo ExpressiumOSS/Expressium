@@ -52,6 +52,10 @@ namespace $Company$.$Project$.Web.API.Tests
             if (configuration.LoggingPath.StartsWith(".\\"))
                 configuration.LoggingPath = Path.Combine(Directory.GetCurrentDirectory(), configuration.LoggingPath.Replace(".\\", ""));
 
+            // Initialize WebElements Settings...
+            WebElements.Highlight = configuration.Highlight;
+            WebElements.HighlightTimeOut = configuration.HighlightTimeOut;
+
             return configuration;
         }
     }

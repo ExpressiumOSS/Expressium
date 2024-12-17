@@ -2,30 +2,37 @@
 
 import org.apache.log4j.*;
 
-public class Logger {
-    public static void initialize(String filePath) {
-        Hierarchy hierarchy = (Hierarchy) LogManager.getLoggerRepository();
+public class LoggerInitializer {
+    public static Logger initialize(String name, String filePath) {
+        Logger logger = Logger.getLogger(name);
 
         PatternLayout patternLayout = new PatternLayout();
         patternLayout.setConversionPattern("%d{HH:mm:ss} %p %C # %m%n");
         patternLayout.activateOptions();
 
-        ConsoleAppender console = new ConsoleAppender();
-        console.setLayout(patternLayout);
-        console.setThreshold(Level.ALL);
-        console.activateOptions();
+        ConsoleAppender consoleAppender = new ConsoleAppender();
+        consoleAppender.setLayout(patternLayout);
+        consoleAppender.setThreshold(Level.ALL);
+        consoleAppender.activateOptions();
+        logger.addAppender(consoleAppender);
 
-        RollingFileAppender roller = new RollingFileAppender();
-        roller.setAppend(false);
-        roller.setFile(filePath);
-        roller.setLayout(patternLayout);
-        roller.setThreshold(Level.ALL);
-        roller.setMaxBackupIndex(0);
-        roller.setMaxFileSize("1GB");
-        roller.activateOptions();
+        RollingFileAppender rollingFileAppender = new RollingFileAppender();
+        rollingFileAppender.setAppend(false);
+        rollingFileAppender.setFile(filePath);
+        rollingFileAppender.setLayout(patternLayout);
+        rollingFileAppender.setThreshold(Level.ALL);
+        rollingFileAppender.setMaxBackupIndex(0);
+        rollingFileAppender.setMaxFileSize("1GB");
+        rollingFileAppender.activateOptions();
+        logger.addAppender(rollingFileAppender);
 
-        hierarchy.getRootLogger().removeAllAppenders();
-        hierarchy.getRootLogger().addAppender(console);
-        hierarchy.getRootLogger().addAppender(roller);
+        if (filePath == null || filePath.trim().isEmpty()) {
+            logger.addAppender(consoleAppender);
+        } else {
+            logger.addAppender(consoleAppender);
+            logger.addAppender(rollingFileAppender);
+        }
+
+        return logger;
     }
 }

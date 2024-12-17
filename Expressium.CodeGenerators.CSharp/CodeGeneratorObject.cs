@@ -41,45 +41,7 @@ namespace Expressium.CodeGenerators.CSharp
 
         internal static List<string> GetSourceCodeAsFormatted(List<string> listOfCodeLines)
         {
-            var listOfStatements = new List<string>
-            {
-                "if",
-                "else if",
-                "else",
-                "for",
-                "while"
-            };
-
-            var indentLevel = 0;
-            var indentNextLevel = 0;
-
-            var listOfLines = new List<string>();
-
-            foreach (var codeLine in listOfCodeLines)
-            {
-                var line = codeLine.Trim();
-
-                if (line.StartsWith("}"))
-                    indentLevel--;
-
-                if (string.IsNullOrWhiteSpace(line))
-                    listOfLines.Add("");
-                else
-                    listOfLines.Add(new string(' ', 4 * (indentLevel + indentNextLevel)) + line);
-
-                if (line.EndsWith("{"))
-                    indentLevel++;
-
-                if (listOfStatements.Any(s => line.StartsWith(s)))
-                    indentNextLevel++;
-                else if (indentNextLevel > 0)
-                    indentNextLevel--;
-                else
-                {
-                }
-            }
-
-            return listOfLines;
+            return CodeGeneratorUtilities.FormatSourceCode(listOfCodeLines);
         }
 
         internal static List<string> GenerateSourceCodeExtensionMethods(string filePath, string startLine, string endLine)

@@ -12,8 +12,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 public class BasePage {
-    protected static Logger logger = Logger.getLogger(BasePage.class);
-
+    protected Logger logger;
     protected WebDriver driver;
 
     public static int pageFactoryTimeOut;
@@ -24,7 +23,8 @@ public class BasePage {
         pageWaitTimeOut = 10;
     }
 
-    public BasePage(WebDriver driver) throws Exception {
+    public BasePage(Logger logger, WebDriver driver) throws Exception {
+        this.logger = logger;
         this.driver = driver;
 
         waitForPageDocumentReadyStateEqualsComplete();

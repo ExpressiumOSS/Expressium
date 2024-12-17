@@ -39,7 +39,7 @@ namespace Expressium.CodeGenerators.Java.UnitTests
         [Test]
         public void CodeGeneratorPageJava_GenerateImports()
         {
-            var listOfLines = codeGeneratorTest.GenerateImports();
+            var listOfLines = codeGeneratorTest.GenerateImports(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(10), "CodeGeneratorPageJava GenerateImports validation");
             Assert.That(listOfLines[0], Is.EqualTo("package UITests;"), "CodeGeneratorPageJava GenerateImports validation");
@@ -89,7 +89,7 @@ namespace Expressium.CodeGenerators.Java.UnitTests
             var listOfLines = codeGeneratorTest.GeneratePageTitleTestMethod(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(5), "CodeGeneratorPageJava GeneratePageTitleTestMethod validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Asserts.assertEquals(\"Login\", loginPage.getTitle(), \"Validating the LoginPage Title...\");"), "CodeGeneratorPageJava GeneratePageTitleTestMethod validation");
+            Assert.That(listOfLines[3], Is.EqualTo("asserts.assertEquals(\"Login\", loginPage.getTitle(), \"Validating the LoginPage Title...\");"), "CodeGeneratorPageJava GeneratePageTitleTestMethod validation");
         }
 
         [Test]

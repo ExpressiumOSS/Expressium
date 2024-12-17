@@ -4,9 +4,13 @@ import org.apache.log4j.Logger;
 import org.testng.Assert;
 
 public class Asserts {
-    private static Logger logger = Logger.getLogger(Asserts.class);
+    protected Logger logger;
+    
+    public Asserts(Logger logger) {
+        this.logger = logger;
+    }
 
-    public static void assertEquals(String expected, String actual, String message) {
+    public void assertEquals(String expected, String actual, String message) {
         try {
             Assert.assertEquals(expected, actual, message);
 
@@ -19,7 +23,7 @@ public class Asserts {
         }
     }
 
-    public static void assertEquals(int expected, int actual, String message) {
+    public void assertEquals(int expected, int actual, String message) {
         try {
             Assert.assertEquals(expected, actual, message);
 
@@ -32,7 +36,7 @@ public class Asserts {
         }
     }
 
-    public static void assertEquals(Boolean expected, Boolean actual, String message) {
+    public void assertEquals(Boolean expected, Boolean actual, String message) {
         try {
             Assert.assertEquals(expected, actual, message);
 
@@ -45,7 +49,7 @@ public class Asserts {
         }
     }
 
-    public static void assertTrue(Boolean expected, String message) {
+    public void assertTrue(Boolean expected, String message) {
         try {
             Assert.assertTrue(expected, message);
 
@@ -58,7 +62,7 @@ public class Asserts {
         }
     }
 
-    public static void assertFalse(Boolean expected, String message) {
+    public void assertFalse(Boolean expected, String message) {
         try {
             Assert.assertFalse(expected, message);
 
@@ -71,7 +75,7 @@ public class Asserts {
         }
     }
 
-    public static void assertNull(String expected, String message) {
+    public void assertNull(String expected, String message) {
         try {
             Assert.assertNull(expected, message);
 
@@ -84,7 +88,7 @@ public class Asserts {
         }
     }
 
-    public static void assertNotNull(String expected, String message) {
+    public void assertNotNull(String expected, String message) {
         try {
             Assert.assertNotNull(expected, message);
 
@@ -97,7 +101,7 @@ public class Asserts {
         }
     }
 
-    public static void greaterThan(int actual, int expected, String message) {
+    public void assertGreaterThan(int actual, int expected, String message) {
         try {
             Assert.assertTrue(actual > expected, message);
 
@@ -110,5 +114,4 @@ public class Asserts {
             throw e;
         }
     }
-
 }

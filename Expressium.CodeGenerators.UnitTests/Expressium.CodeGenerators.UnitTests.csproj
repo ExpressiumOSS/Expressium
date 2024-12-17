@@ -17,5 +17,5 @@
 		<ProjectReference Include="..\Expressium.CodeGenerators.Java\Expressium.CodeGenerators.Java.csproj" />
 		<ProjectReference Include="..\Expressium.CodeGenerators\Expressium.CodeGenerators.csproj" />
 	</ItemGroup>
-	
+
 </Project>

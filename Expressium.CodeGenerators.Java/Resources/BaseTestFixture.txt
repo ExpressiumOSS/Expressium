@@ -1,6 +1,7 @@
 package Bases;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -15,70 +16,47 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class BaseTestFixture {
-    protected static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(BaseTestFixture.class);
-
+    protected Logger logger;
     protected WebDriver driver;
-
-    protected String company;
-    protected String project;
-    protected String environmentId;
-    protected String url;
-    protected String browser;
-    protected boolean maximize;
-    protected boolean headless;
-    protected boolean highlight;
-    protected int highlightTimeOut;
-    protected boolean tearDownMessage;
-    protected int tearDownMessageTimeOut;
-    protected boolean logging;
-    protected boolean screenShot;
-    protected String loggingPath;
+    protected Asserts asserts;
+    protected Configuration configuration;
 
     public BaseTestFixture() {
-        company = null;
-        project = null;
-        environmentId = null;
-        url = null;
-        logging = false;
-        loggingPath = null;
-        browser = WebDrivers.BrowserTypes.Chrome.toString();
-        maximize = true;
-        headless = false;
-        highlight = false;
-        highlightTimeOut = 1000;
-        screenShot = false;
-        tearDownMessage = true;
-        tearDownMessageTimeOut = 3000;
+        configuration = new Configuration();
     }
 
     @BeforeClass
     public void initializeFixture(ITestContext context) {
-        if (logging) {
-            if (loggingPath == null)
+        if (configuration.getLogging()) {
+            if (configuration.getLoggingPath() == null)
                 throw new IllegalArgumentException("Property loggingPath is undefined...");
 
-            File directory = new File(loggingPath);
+            File directory = new File(configuration.getLoggingPath());
             if (!directory.exists())
                 directory.mkdir();
 
-            File outputPath = new File(String.format("%s\\%s", loggingPath, getValidFileName(getTestcaseName(context))));
+            File outputPath = new File(String.format("%s\\%s", configuration.getLoggingPath(), getValidFileName(getTestcaseName(context))));
             if (!outputPath.exists())
                 outputPath.mkdir();
 
             String filePath = String.format("%s\\%s", outputPath, "TestAutomation.log");
-            Logger.initialize(filePath);
-
-            logger.info(String.format(""));
-            logger.info(String.format("// Initialize Testcase Fixture"));
-            logger.info(String.format("Company: %s", company));
-            logger.info(String.format("Project: %s", project));
-            logger.info(String.format("Environment: %s", environmentId));
-            logger.info(String.format("Url: %s", url));
-            logger.info(String.format("Name: %s", getValidFileName(getTestcaseName(context))));
-            logger.info(String.format("Category: ", context.getSuite().getName()));
-            logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
-            logger.info(String.format(""));
+            logger = LoggerInitializer.initialize(getTestcaseName(context), filePath);
+            asserts = new Asserts(logger);
+        } else {
+            logger = LoggerInitializer.initialize(getTestcaseName(context), null);
+            asserts = new Asserts(logger);
         }
+
+        logger.info(String.format(""));
+        logger.info(String.format("// Initialize Testcase Fixture"));
+        logger.info(String.format("Company: %s", configuration.getCompany()));
+        logger.info(String.format("Project: %s", configuration.getProject()));
+        logger.info(String.format("Environment: %s", configuration.getEnvironment()));
+        logger.info(String.format("Url: %s", configuration.getUrl()));
+        logger.info(String.format("Name: %s", getValidFileName(getTestcaseName(context))));
+        logger.info(String.format("Category: ", context.getSuite().getName()));
+        logger.info(String.format("Date: %s", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm").format(LocalDateTime.now())));
+        logger.info(String.format(""));
 
         for (ITestNGMethod method : context.getAllTestMethods()) {
             context.getFailedTests().removeResult(method);
@@ -90,21 +68,21 @@ public class BaseTestFixture {
 
     @AfterClass(alwaysRun = true)
     public void finalizeFixture(ITestContext context) {
-        if (logging) {
+        if (configuration.getLogging()) {
             logger.info(String.format(""));
             logger.info(String.format("// Finalize Testcase Fixture"));
         }
 
         if (driver != null) {
-            if (screenShot) {
+            if (configuration.getScreenshot()) {
                 String name = getValidFileName(getTestcaseName(context));
-                String filePath = String.format("%s\\%s\\%s.%s", loggingPath, name, name, "png");
+                String filePath = String.format("%s\\%s\\%s.%s", configuration.getLoggingPath(), name, name, "png");
                 saveScreenShot(filePath);
 
                 logger.info(String.format("Screenshot has been saved: %s.%s", name, "png"));
             }
 
-            if (tearDownMessage) {
+            if (configuration.getShowAlerts()) {
                 String status;
                 if (context.getFailedTests().size() > 0)
                     status = "Testcase has failed during execution...";
@@ -113,13 +91,13 @@ public class BaseTestFixture {
                 else
                     status = "Testcase was successfully executed...";
 
-                showAlertMessage(status, tearDownMessageTimeOut);
+                showAlertMessage(status, configuration.getShowAlertsTimeOut());
             }
 
             driver.quit();
         }
 
-        if (logging) {
+        if (configuration.getLogging()) {
             logFailedMessage(context);
             logSkippedMessage(context);
 
@@ -141,19 +119,19 @@ public class BaseTestFixture {
     }
 
     protected void initializeBrowser() {
-        if (driver == null && browser != null) {
+        if (driver == null && configuration.getBrowserType() != null) {
             logger.info("initializeBrowser");
 
-            driver = WebDrivers.getWebDriver(browser, headless);
+            driver = WebDriverFactory.initialize(configuration.getBrowserType(), configuration.getHeadless());
 
-            if (url != null)
-                driver.get(url);
+            if (configuration.getUrl() != null)
+                driver.get(configuration.getUrl());
 
-            if (maximize)
+            if (configuration.getMaximize())
                 driver.manage().window().maximize();
 
-            WebElements.highlight = highlight;
-            WebElements.highlightTimeOut = highlightTimeOut;
+            WebElements.highlight = configuration.getHighlight();
+            WebElements.highlightTimeOut = configuration.getHighlightTimeOut();
         }
     }
 

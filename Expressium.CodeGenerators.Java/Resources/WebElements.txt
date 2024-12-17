@@ -223,7 +223,7 @@ public class WebElements {
         }
     }
 
-    public static void click(WebDriver driver, WebElement element) throws Exception {
+    public static void click(WebDriver driver, WebElement element) {
         waitForElementIsEnabled(driver, element);
 
         highlightAction(driver, element);
@@ -232,32 +232,32 @@ public class WebElements {
         element.click();
     }
 
-    public static void clickLink(WebDriver driver, By locator) throws Exception {
+    public static void clickLink(WebDriver driver, By locator) {
 
         WebElement element = getElement(driver, locator);
         click(driver, element);
     }
 
-    public static void clickLink(WebDriver driver, WebElement element) throws Exception {
+    public static void clickLink(WebDriver driver, WebElement element) {
         click(driver, element);
     }
 
-    public static void clickButton(WebDriver driver, By locator) throws Exception {
+    public static void clickButton(WebDriver driver, By locator) {
 
         WebElement element = getElement(driver, locator);
         click(driver, element);
     }
 
-    public static void clickButton(WebDriver driver, WebElement element) throws Exception {
+    public static void clickButton(WebDriver driver, WebElement element) {
         click(driver, element);
     }
 
-    public static void setCheckBox(WebDriver driver, By locator, boolean value) throws Exception {
+    public static void setCheckBox(WebDriver driver, By locator, boolean value) {
         WebElement element = getElement(driver, locator);
         setCheckBox(driver, element, value);
     }
 
-    public static void setCheckBox(WebDriver driver, WebElement element, boolean value) throws Exception {
+    public static void setCheckBox(WebDriver driver, WebElement element, boolean value) {
         waitForElementIsEnabled(driver, element);
 
         if ((!element.isSelected() && value) || (element.isSelected() && !value)) {
@@ -282,12 +282,12 @@ public class WebElements {
         return element.isSelected();
     }
 
-    public static void setRadioButton(WebDriver driver, By locator, boolean value) throws Exception {
+    public static void setRadioButton(WebDriver driver, By locator, boolean value) {
         WebElement element = getElement(driver, locator);
         setRadioButton(driver, element, value);
     }
 
-    public static void setRadioButton(WebDriver driver, WebElement element, boolean value) throws Exception {
+    public static void setRadioButton(WebDriver driver, WebElement element, boolean value) {
         waitForElementIsEnabled(driver, element);
 
         if ((!element.isSelected() && value)) {
@@ -312,16 +312,16 @@ public class WebElements {
         return element.isSelected();
     }
 
-    public static void setComboBox(WebDriver driver, By locator, String value) throws Exception {
+    public static void setComboBox(WebDriver driver, By locator, String value) {
         WebElement element = getElement(driver, locator);
         setComboBox(driver, element, value);
     }
 
-    public static void setComboBox(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setComboBox(WebDriver driver, WebElement element, String value) {
         setComboBoxByText(driver, element, value);
     }
 
-    public static void setComboBoxByText(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setComboBoxByText(WebDriver driver, WebElement element, String value) {
         if (value == null)
             return;
 
@@ -336,7 +336,7 @@ public class WebElements {
         highlightClear(driver, element);
     }
 
-    public static void setComboBoxByIndex(WebDriver driver, WebElement element, int value) throws Exception {
+    public static void setComboBoxByIndex(WebDriver driver, WebElement element, int value) {
         waitForElementIsEnabled(driver, element);
 
         highlightAction(driver, element);
@@ -347,7 +347,7 @@ public class WebElements {
         highlightClear(driver, element);
     }
 
-    public static void setComboBoxByValue(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setComboBoxByValue(WebDriver driver, WebElement element, String value) {
         if (value == null)
             return;
 
@@ -361,7 +361,7 @@ public class WebElements {
         highlightClear(driver, element);
     }
 
-    public static void setComboBoxByPartialText(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setComboBoxByPartialText(WebDriver driver, WebElement element, String value) {
         if (value == null)
             return;
 
@@ -398,11 +398,11 @@ public class WebElements {
         return option.getText().trim();
     }
 
-    public static void setListBox(WebDriver driver, By locator, String value) throws Exception {
+    public static void setListBox(WebDriver driver, By locator, String value) {
         setComboBox(driver, locator, value);
     }
 
-    public static void setListBox(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setListBox(WebDriver driver, WebElement element, String value) {
         setComboBoxByText(driver, element, value);
     }
 
@@ -414,12 +414,12 @@ public class WebElements {
         return getComboBox(driver, locator);
     }
 
-    public static void setTextBox(WebDriver driver, By locator, String value) throws Exception {
+    public static void setTextBox(WebDriver driver, By locator, String value) {
         WebElement element = getElement(driver, locator);
         setTextBox(driver, element, value);
     }
 
-    public static void setTextBox(WebDriver driver, WebElement element, String value) throws Exception {
+    public static void setTextBox(WebDriver driver, WebElement element, String value) {
         if (value == null)
             return;
 

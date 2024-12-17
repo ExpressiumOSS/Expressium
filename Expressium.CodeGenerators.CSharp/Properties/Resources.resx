@@ -160,8 +160,8 @@
 	<data name="Configuration" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Configuration.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ConfigurationTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ConfigurationTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="ConfigurationJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ConfigurationJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="ContextController" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ContextController.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

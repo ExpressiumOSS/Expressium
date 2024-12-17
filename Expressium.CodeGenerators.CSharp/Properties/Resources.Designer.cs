@@ -289,33 +289,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using $Company$.$Project$.Web.API.Controls;
-        ///using log4net;
-        ///using OpenQA.Selenium;
-        ///
-        ///namespace $Company$.$Project$.Web.API
-        ///{
-        ///    public class BaseTable : BasePage
-        ///    {
-        ///        protected WebTable baseControl;
-        ///
-        ///        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
-        ///        {
-        ///            this.logger = logger;
-        ///            this.driver = driver;
-        ///
-        ///            baseControl = new WebTable(driver, baseLocator);
-        ///        }
-        ///
-        ///        public virtual int GetNumberOfR [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BaseTableByControls {
-            get {
-                return ResourceManager.GetString("BaseTableByControls", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
         ///using System;
@@ -341,6 +314,33 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         internal static string BaseTable {
             get {
                 return ResourceManager.GetString("BaseTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using $Company$.$Project$.Web.API.Controls;
+        ///using log4net;
+        ///using OpenQA.Selenium;
+        ///
+        ///namespace $Company$.$Project$.Web.API
+        ///{
+        ///    public class BaseTable : BasePage
+        ///    {
+        ///        protected WebTable baseControl;
+        ///
+        ///        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
+        ///        {
+        ///            this.logger = logger;
+        ///            this.driver = driver;
+        ///
+        ///            baseControl = new WebTable(driver, baseLocator);
+        ///        }
+        ///
+        ///        public virtual int GetNumberOfR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BaseTableByControls {
+            get {
+                return ResourceManager.GetString("BaseTableByControls", resourceCulture);
             }
         }
         
@@ -452,9 +452,9 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///      &quot;Highlight&quot;: true,
         ///      [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ConfigurationTests {
+        internal static string ConfigurationJson {
             get {
-                return ResourceManager.GetString("ConfigurationTests", resourceCulture);
+                return ResourceManager.GetString("ConfigurationJson", resourceCulture);
             }
         }
         

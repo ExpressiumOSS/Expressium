@@ -8,12 +8,10 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 public class BaseTable extends BasePage {
-    protected static Logger logger = Logger.getLogger(BaseTable.class);
-
     protected By baseLocator;
 
-    public BaseTable(WebDriver driver, By baseLocator) throws Exception {
-        super(driver);
+    public BaseTable(Logger logger, WebDriver driver, By baseLocator) throws Exception {
+        super(logger, driver);
 
         this.baseLocator = baseLocator;
     }
@@ -35,39 +33,37 @@ public class BaseTable extends BasePage {
     public void clickCell(Object rowId, Object columnId) {
         logger.info(String.format("clickCell(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "//*");
-        element.click();
+        WebElements.click(driver, element);
     }
 
     public void setCellTextBox(Object rowId, Object columnId, String value) {
         logger.info(String.format("setCellTextBox(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "//input");
-        element.sendKeys(value);
+        WebElements.setTextBox(driver, element, value);
     }
 
     public String getCellTextBox(Object rowId, Object columnId) {
         logger.info(String.format("getCellTextBox(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "//input");
-        return element.getAttribute("value");
+        return WebElements.getTextBox(driver, element);
     }
 
     public void setCellCheckBox(Object rowId, Object columnId, boolean value) {
         logger.info(String.format("setCellCheckBox(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "//input");
-        if (element.isSelected() != value) {
-            element.click();
-        }
+        WebElements.setCheckBox(driver, element, value);
     }
 
     public boolean getCellCheckBox(Object rowId, Object columnId) {
         logger.info(String.format("getCellCheckBox(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "//input");
-        return element.isSelected();
+        return WebElements.getCheckBox(driver, element);
     }
 
     public String getCellText(Object rowId, Object columnId) {
         logger.info(String.format("getCellText(%s, %s)", rowId, columnId));
         WebElement element = getCellElement(rowId, columnId, "");
-        return element.getText();
+        return WebElements.getText(driver, element);
     }
 
     public void clickContextMenu(Object rowId, Object columnId, String menuEntry) {
