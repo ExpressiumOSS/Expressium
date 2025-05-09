@@ -1,5 +1,4 @@
-﻿using Expressium.Configurations;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace Expressium.ObjectRepositories
@@ -31,6 +30,7 @@ namespace Expressium.ObjectRepositories
             Type = control.Type;
             How = control.How;
             Using = control.Using;
+            Source = control.Source;
             Target = control.Target;
             Value = control.Value;
         }
@@ -53,11 +53,6 @@ namespace Expressium.ObjectRepositories
         public override int GetHashCode()
         {
             return string.Concat(Name, Type, How, Using).GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return $"Name = {Name}, Type = {Type}, How = {How}, Using = {Using}";
         }
 
         public bool IsElement()

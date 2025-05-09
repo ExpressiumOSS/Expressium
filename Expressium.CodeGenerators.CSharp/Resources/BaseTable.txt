@@ -7,12 +7,10 @@ namespace $Company$.$Project$.Web.API
 {
     public class BaseTable : BasePage
     {
-        protected By baseLocator;
+        protected readonly By baseLocator;
 
         public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
         {
-            this.logger = logger;
-            this.driver = driver;
             this.baseLocator = baseLocator;
         }
 

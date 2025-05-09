@@ -12,14 +12,17 @@ namespace $Company$.$Project$.Web.API.Tests
     public class BaseTestFixture
     {
         protected readonly Configuration configuration;
+        protected readonly WebDriverManager driverManager;
 
         protected ILog logger;
         protected Asserts Asserts;
-        protected IWebDriver driver;
+
+        protected IWebDriver driver => driverManager.Driver;
 
         public BaseTestFixture()
         {
             configuration = Configuration.GetCurrentConfiguation();
+            driverManager = new WebDriverManager(configuration);
         }
 
         [OneTimeSetUp]
@@ -35,7 +38,7 @@ namespace $Company$.$Project$.Web.API.Tests
                     Directory.Delete(loggingPath, true);
                 Directory.CreateDirectory(loggingPath);
 
-                var loggingFilePath = Path.Combine(loggingPath, "TestAutomation.log");
+                var loggingFilePath = Path.Combine(loggingPath, GetTestName() + ".log");
                 logger = Logger.Initialize(GetTestName(), loggingFilePath);
                 Asserts = new Asserts(logger);
             }
@@ -56,7 +59,6 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.InfoFormat("Category: {0}", GetTestCategory());
             logger.InfoFormat("Description: {0}", GetTestDescription());
             logger.InfoFormat("Date: {0}", DateTime.Now.ToString("dd-MM-yyyy HH:mm"));
-            logger.InfoFormat("");
         }
 
         [OneTimeTearDown]
@@ -65,7 +67,7 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.InfoFormat("");
             logger.InfoFormat("// Finalize Test Fixture");
 
-            if (driver != null)
+            if (driverManager.IsInitialized())
             {
                 if (configuration.Screenshot)
                 {
@@ -73,13 +75,7 @@ namespace $Company$.$Project$.Web.API.Tests
                     SaveScreenshot(filePath);
                 }
 
-                if (configuration.ShowAlerts)
-                {
-                    var message = $"Test has been executed with the status {GetTestStatus().ToUpper()}";
-                    ShowAlert(message, configuration.ShowAlertsTimeOut);
-                }
-
-                FinalizeBrowser();
+                driverManager.Quit();
             }
 
             LogMessageAsError(GetTestResultMessage());
@@ -124,29 +120,6 @@ namespace $Company$.$Project$.Web.API.Tests
                 LogMessageAsError(GetTestResultMessage());
                 LogMessageAsDebug(GetTestResultStackTrace());
             }
-        }
-
-        protected virtual void InitializeBrowser()
-        {
-            logger.InfoFormat("InitializeBrowser()");
-
-            driver = WebDriverFactory.Initialize(configuration.BrowserType, configuration.Url,
-                configuration.Maximize, configuration.Headless, configuration.WindowSize,
-                configuration.WindowWidth, configuration.WindowHeight);
-
-            if (configuration.ShowAlerts)
-            {
-                var message = GetTestDescription();
-                ShowAlert(message, configuration.ShowAlertsTimeOut);
-            }
-        }
-
-        protected virtual void FinalizeBrowser()
-        {
-            logger.InfoFormat("FinalizeBrowser()");
-
-            driver.Quit();
-            driver = null;
         }
 
         protected virtual string GetTestId()
@@ -234,29 +207,13 @@ namespace $Company$.$Project$.Web.API.Tests
             }
         }
 
-        private void ShowAlert(string message, int timeOut)
-        {
-            try
-            {
-                var javaScriptExecutor = (IJavaScriptExecutor)driver;
-                javaScriptExecutor.ExecuteScript($"alert('{message}');");
-                System.Threading.Thread.Sleep(timeOut);
-                driver.SwitchTo().Alert().Accept();
-            }
-            catch (Exception exception)
-            {
-                logger.Error("ShowAlert has failed during execution...");
-                logger.Debug(exception.Message);
-            }
-        }
-
         private void LogMessageAsError(string message)
         {
             try
             {
                 if (message != null)
                 {
-                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    var listOfLines = GetStringAsListOfLines(message);
                     foreach (var line in listOfLines)
                         logger.Error(line);
                 }
@@ -274,7 +231,7 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 if (message != null)
                 {
-                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    var listOfLines = GetStringAsListOfLines(message);
                     foreach (var line in listOfLines)
                         logger.Debug(line);
                 }
@@ -291,7 +248,7 @@ namespace $Company$.$Project$.Web.API.Tests
             var listOfLines = new List<string>();
 
             char[] delimiterChars = { '\r', '\n' };
-            List<string> listOfTokens = message.Split(delimiterChars).ToList();
+            var listOfTokens = message.Split(delimiterChars).ToList();
             foreach (var token in listOfTokens)
             {
                 string text = token.Trim();

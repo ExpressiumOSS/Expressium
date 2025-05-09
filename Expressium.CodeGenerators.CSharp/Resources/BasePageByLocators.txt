@@ -8,8 +8,8 @@ namespace $Company$.$Project$.Web.API
 {
     public class BasePage
     {
-        protected ILog logger;
-        protected IWebDriver driver;
+        protected readonly ILog logger;
+        protected readonly IWebDriver driver;
 
         public static int PageTimeOut { get; set; }
 

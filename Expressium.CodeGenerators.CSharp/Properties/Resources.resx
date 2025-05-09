@@ -163,8 +163,8 @@
 	<data name="ConfigurationJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ConfigurationJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ContextController" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ContextController.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="BaseContext" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BaseContext.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="Feature" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Feature.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -196,9 +196,6 @@
 	<data name="RegressionTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\RegressionTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ScreenRecorder" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ScreenRecorder.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
 	<data name="SolutionFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\SolutionFile.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
@@ -220,9 +217,15 @@
 	<data name="WebDriverFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebDriverFactory.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
+	<data name="WebDriverManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\WebDriverManager.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>	
 	<data name="WebElements" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebElements.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
+	<data name="WebConditions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\WebConditions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+	</data>	
 	<data name="WebLink" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebLink.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>

@@ -17,9 +17,7 @@
       "WindowHeight": 1080,
       "Highlight": true,
       "HighlightTimeOut": 150,
-      "Screenshot": true,
-      "ShowAlerts": false,
-      "ShowAlertsTimeOut": 1500
+      "Screenshot": true
     }
   }
 }

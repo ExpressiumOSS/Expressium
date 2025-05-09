@@ -43,7 +43,7 @@ namespace $Company$.$Project$.Web.API.Controls
 
         protected virtual string GetElementValue()
         {
-            return GetElement().GetAttribute("value").Trim();
+            return GetElement().GetDomProperty("value").Trim();
         }
     }
 }

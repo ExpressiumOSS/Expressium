@@ -116,6 +116,16 @@ namespace Expressium.CodeGenerators.UnitTests
                 "",
                 "for (int i=0; i<count; i++)",
                 "bool x = true;",
+                "",
+                "if (value) {",
+                "return true;",
+                "}",
+                "",
+                "if (value)",
+                "{",
+                "return true;",
+                "}",
+                "",
                 "}",
                 "}"
             };
@@ -142,6 +152,16 @@ namespace Expressium.CodeGenerators.UnitTests
                 "",
                 "        for (int i=0; i<count; i++)",
                 "            bool x = true;",
+                "",
+                "        if (value) {",
+                "            return true;",
+                "        }",
+                "",
+                "        if (value)",
+                "        {",
+                "            return true;",
+                "        }",
+                "",
                 "    }",
                 "}"
             };

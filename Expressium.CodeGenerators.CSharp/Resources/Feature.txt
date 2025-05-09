@@ -5,5 +5,5 @@
 
 @BusinessTests @Id:TC200??
 Scenario: Successful User Login with Valid Credentials
-	Given I am logged in with valid user credentials
+	Given I have logged in with valid user credentials
 	Then I should be redirected to the Home page

@@ -101,6 +101,26 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
                 return ResourceManager.GetString("Asserts", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to using log4net;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests
+        ///{
+        ///    public class BaseContext
+        ///    {
+        ///        public Configuration Configuration { get; set; }
+        ///        public ILog Logger { get; set; }
+        ///        public WebDriverManager DriverManager { get; set; }
+        ///        public Asserts Asserts {  get; set; }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string BaseContext {
+            get {
+                return ResourceManager.GetString("BaseContext", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to using BoDi;
@@ -112,21 +132,21 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    [Binding]
-        ///    public class BaseHooks : BaseTest
+        ///    public class BaseHooks : BaseTestFixture
         ///    {
         ///        private readonly FeatureContext featureContext;
         ///        private readonly ScenarioContext scenarioContext;
         ///        private readonly ISpecFlowOutputHelper specFlowOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        private  [rest of string was truncated]&quot;;.
+        ///        p [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooks {
             get {
                 return ResourceManager.GetString("BaseHooks", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///using Reqnroll.BoDi;
@@ -136,16 +156,14 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///namespace $Company$.$Project$.Web.API.Tests
         ///{
         ///    [Binding]
-        ///    public class BaseHooks : BaseTest
+        ///    public class BaseHooks : BaseTestFixture
         ///    {
         ///        private readonly FeatureContext featureContext;
         ///        private readonly ScenarioContext scenarioContext;
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        private ContextController contextController;
-        ///
-        ///  [rest of string was truncated]&quot;;.
+        ///        private BaseContext contextControlle [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooksReqnRoll {
             get {
@@ -165,14 +183,14 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///{
         ///    public class BasePage
         ///    {
-        ///        protected ILog logger;
-        ///        protected IWebDriver driver;
+        ///        protected readonly ILog logger;
+        ///        protected readonly IWebDriver driver;
         ///
         ///        public static int PageTimeOut { get; set; }
         ///
         ///        public static By PageSpinnerLocator { get; set; }
         ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static [rest of string was truncated]&quot;;.
+        ///    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageByControls {
             get {
@@ -191,16 +209,14 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///{
         ///    public class BasePage
         ///    {
-        ///        protected ILog logger;
-        ///        protected IWebDriver driver;
+        ///        protected readonly ILog logger;
+        ///        protected readonly IWebDriver driver;
         ///
         ///        public static int PageTimeOut { get; set; }
         ///
         ///        public static By PageSpinnerLocator { get; set; }
         ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static int PageSpinnerTimeOut { get; set; }
-        ///
-        ///     [rest of string was truncated]&quot;;.
+        ///        public static int PageSpinnerTimeOut { g [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageByLocators {
             get {
@@ -220,14 +236,14 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///{
         ///    public class BasePage
         ///    {
-        ///        protected ILog logger;
-        ///        protected IWebDriver driver;
+        ///        protected readonly ILog logger;
+        ///        protected readonly IWebDriver driver;
         ///
         ///        public static int PageTimeOut { get; set; }
         ///
         ///        public static By PageSpinnerLocator { get; set; }
         ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static int PageS [rest of string was truncated]&quot;;.
+        ///        publi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePagePageFactory {
             get {
@@ -262,7 +278,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
                 return ResourceManager.GetString("BaseService", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
@@ -273,14 +289,14 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///    {
         ///        protected Configuration configuration;
         ///        protected ILog logger;
-        ///        protected IWebDriver driver;
+        ///        protected WebDriverManager driverManager;
         ///        protected Asserts Asserts;
         ///
-        ///        public BaseSteps(ContextController contextController)
+        ///        protected IWebDriver driver =&gt; driverManager.Driver;
+        ///
+        ///        public BaseSteps(BaseContext baseContext)
         ///        {
-        ///            configuration = contextController.Configuration;
-        ///            logger = contextController.Logger;
-        ///            Asserts = conte [rest of string was truncated]&quot;;.
+        ///            configuration = baseContext.Configuration; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseSteps {
             get {
@@ -298,18 +314,17 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///{
         ///    public class BaseTable : BasePage
         ///    {
-        ///        protected By baseLocator;
+        ///        protected readonly By baseLocator;
         ///
         ///        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
         ///        {
-        ///            this.logger = logger;
-        ///            this.driver = driver;
         ///            this.baseLocator = baseLocator;
         ///        }
         ///
         ///        public virtual int GetNumberOfRows()
         ///        {
-        ///            logge [rest of string was truncated]&quot;;.
+        ///            logger.InfoFormat(&quot;GetNumberOfRows()&quot;);
+        ///            return baseLo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTable {
             get {
@@ -326,17 +341,16 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///{
         ///    public class BaseTable : BasePage
         ///    {
-        ///        protected WebTable baseControl;
+        ///        protected readonly WebTable baseControl;
         ///
         ///        public BaseTable(ILog logger, IWebDriver driver, By baseLocator) : base(logger, driver)
         ///        {
-        ///            this.logger = logger;
-        ///            this.driver = driver;
-        ///
         ///            baseControl = new WebTable(driver, baseLocator);
         ///        }
         ///
-        ///        public virtual int GetNumberOfR [rest of string was truncated]&quot;;.
+        ///        public virtual int GetNumberOfRows()
+        ///        {
+        ///            logger.InfoFormat(&quot;GetNumberOfRow [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTableByControls {
             get {
@@ -354,17 +368,19 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///        [OneTimeSetUp]
         ///        protected void InitializeTestcase()
         ///        {
+        ///            logger.InfoFormat(&quot;&quot;);
         ///            logger.InfoFormat(&quot;// Initialize Testcase&quot;);
+        ///        }
+        ///
+        ///        public void InitializeBrowser()
+        ///        {
         ///        }
         ///
         ///        public void InitializeBrowserWithLogin()
         ///        {
         ///            InitializeBrowser();
         ///
-        ///            // TODO - Implement potential missing login sequence...
-        ///
-        ///            // var loginPage = new LoginPage(logger, driver);
-        ///     [rest of string was truncated]&quot;;.
+        ///            // TODO - Implement poten [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTest {
             get {
@@ -387,14 +403,12 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///    public class BaseTestFixture
         ///    {
         ///        protected readonly Configuration configuration;
+        ///        protected readonly WebDriverManager driverManager;
         ///
         ///        protected ILog logger;
         ///        protected Asserts Asserts;
-        ///        protected IWebDriver driver;
         ///
-        ///        public BaseTestFixture()
-        ///        {
-        ///            configurat [rest of string was truncated]&quot;;.
+        ///        protected IWebDriver driver =&gt; driver [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixture {
             get {
@@ -459,27 +473,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using log4net;
-        ///using OpenQA.Selenium;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests
-        ///{
-        ///    public class ContextController
-        ///    {
-        ///        public Configuration Configuration { get; set; }
-        ///        public ILog Logger { get; set; }
-        ///        public IWebDriver Driver { get; set; }
-        ///        public Asserts Asserts {  get; set; }
-        ///    }
-        ///}.
-        /// </summary>
-        internal static string ContextController {
-            get {
-                return ResourceManager.GetString("ContextController", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Feature: Login
         ///	As a User
         ///	I want to login on the web application
@@ -487,7 +480,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///@BusinessTests @Id:TC200??
         ///Scenario: Successful User Login with Valid Credentials
-        ///	Given I am logged in with valid user credentials
+        ///	Given I have logged in with valid user credentials
         ///	Then I should be redirected to the Home page.
         /// </summary>
         internal static string Feature {
@@ -539,7 +532,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
                 return ResourceManager.GetString("Logger", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to using TechTalk.SpecFlow;
         ///
@@ -548,24 +541,24 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///    [Binding]
         ///    public class LoginSteps : BaseSteps
         ///    {
-        ///        public LoginSteps(ContextController contextController) : base(contextController)
+        ///        public LoginSteps(BaseContext baseContext) : base(baseContext)
         ///        {
         ///        }
         ///
-        ///        [Given(@&quot;I am logged in with valid user credentials&quot;)]
-        ///        public void GivenIAmLoggedInWithValidUserCredentials()
+        ///        [Given(@&quot;I have logged in with valid user credentials&quot;)]
+        ///        public void GivenIHaveLoggedInWithValidUserCredentials()
         ///        {
         ///            throw new PendingStepException();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirected t [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirect [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginSteps {
             get {
                 return ResourceManager.GetString("LoginSteps", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///
@@ -574,17 +567,17 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///    [Binding]
         ///    public class LoginSteps : BaseSteps
         ///    {
-        ///        public LoginSteps(ContextController contextController) : base(contextController)
+        ///        public LoginSteps(BaseContext baseContext) : base(baseContext)
         ///        {
         ///        }
         ///
-        ///        [Given(@&quot;I am logged in with valid user credentials&quot;)]
-        ///        public void GivenIAmLoggedInWithValidUserCredentials()
+        ///        [Given(@&quot;I have logged in with valid user credentials&quot;)]
+        ///        public void GivenIHaveLoggedInWithValidUserCredentials()
         ///        {
         ///            ScenarioContext.Current.Pending();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirected to the Ho [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirected to th [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginStepsReqnRoll {
             get {
@@ -595,17 +588,17 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
         ///
-        ///  &lt;PropertyGroup&gt;
-        ///    &lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
-        ///  &lt;/PropertyGroup&gt;
+        ///	&lt;PropertyGroup&gt;
+        ///		&lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
+        ///	&lt;/PropertyGroup&gt;
         ///
-        ///  &lt;ItemGroup&gt;
-        ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.PageObjects.Core&quot; Version=&quot;4.14.1&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.0.3&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;112.1.0&quot; /&gt;
-        ///    &lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.26.1&quot; /&gt;
-        ///  [rest of string was truncated]&quot;;.
+        ///	&lt;ItemGroup&gt;
+        ///		&lt;PackageReference Include=&quot;DotNetSeleniumExtras.PageObjects.Core&quot; Version=&quot;4.14.1&quot; /&gt;
+        ///		&lt;!--&lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;--&gt;
+        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.0.4&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;112.1.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.29.0&quot; /&gt;
+        ///		&lt;Packag [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApi {
             get {
@@ -621,10 +614,10 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.12.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.13.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTests {
@@ -641,10 +634,10 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.12.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.13.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTestsReqnRoll {
@@ -693,29 +686,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         internal static string RegressionTest {
             get {
                 return ResourceManager.GetString("RegressionTest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using OpenQA.Selenium;
-        ///using System.Diagnostics;
-        ///using System.IO;
-        ///using System.Threading;
-        ///using System.Threading.Tasks;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests
-        ///{
-        ///    public class ScreenRecorder
-        ///    {
-        ///        private string screenshotsPath;         // Temporary directory for screenshots...
-        ///        private int frameRate = 10;             // Frames per second in the video...
-        ///        private int delayBetweenFrames = 100;   // Delay between frames in milliseconds...
-        ///
-        ///        private Task recor [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ScreenRecorder {
-            get {
-                return ResourceManager.GetString("ScreenRecorder", resourceCulture);
             }
         }
         
@@ -791,6 +761,8 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using OpenQA.Selenium;
         ///using OpenQA.Selenium.Support.UI;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
         ///
         ///namespace $Company$.$Project$.Web.API.Controls
         ///{
@@ -804,14 +776,37 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///        {
         ///        }
         ///
-        ///        public virtual void SelectByText(string value)
-        ///        {
-        ///            if (value == null)
-        ///       [rest of string was truncated]&quot;;.
+        ///        public virtual void SelectByText(string va [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebComboBox {
             get {
                 return ResourceManager.GetString("WebComboBox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///using OpenQA.Selenium.Support.UI;
+        ///using System;
+        ///using System.Linq;
+        ///
+        ///namespace $Company$.$Project$.Web.API
+        ///{
+        ///    internal class WebConditions
+        ///    {
+        ///        internal static Func&lt;IWebDriver, IWebElement&gt; ElementExists(By locator)
+        ///        {
+        ///            return (IWebDriver driver) =&gt; driver.FindElement(locator);
+        ///        }
+        ///
+        ///        internal static Func&lt;IWebDriver, IWebElement&gt; ElementIsVisible(By locator)
+        ///        {
+        ///            return delegate (IWebDriver driver)
+        ///             [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WebConditions {
+            get {
+                return ResourceManager.GetString("WebConditions", resourceCulture);
             }
         }
         
@@ -898,9 +893,37 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests
+        ///{
+        ///    public class WebDriverManager
+        ///    {
+        ///        private Configuration configuration;
+        ///        private IWebDriver driver;
+        ///
+        ///        public WebDriverManager(Configuration configuration)
+        ///        {
+        ///            this.configuration = configuration;
+        ///        }
+        ///
+        ///        public IWebDriver Driver
+        ///        {
+        ///            get
+        ///            {
+        ///                if (driver == null)
+        ///                {
+        ///                    driver = WebDriverFactor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WebDriverManager {
+            get {
+                return ResourceManager.GetString("WebDriverManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using OpenQA.Selenium;
         ///using OpenQA.Selenium.Interactions;
         ///using OpenQA.Selenium.Support.UI;
-        ///using SeleniumExtras.WaitHelpers;
         ///using System;
         ///using System.Collections.Generic;
         ///using System.Linq;
@@ -914,7 +937,8 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///        public static bool Highlight { get; set; }
         ///        public static int HighlightTimeOut { get; set; }
-        ///        public static int High [rest of string was truncated]&quot;;.
+        ///        public static int HighlightWidth { get; set; }
+        ///        p [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebElements {
             get {

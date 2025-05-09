@@ -15,11 +15,13 @@ namespace Expressium.Configurations
 
         public ConfigurationCodeGenerator CodeGenerator { get; set; }
         public ConfigurationEnroller Enroller { get; set; }
+        public ConfigurationCrawler Crawler { get; set; }
 
         public Configuration()
         {
             CodeGenerator = new ConfigurationCodeGenerator();
             Enroller = new ConfigurationEnroller();
+            Crawler = new ConfigurationCrawler();
         }
 
         public void Validate()

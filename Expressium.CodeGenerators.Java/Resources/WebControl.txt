@@ -45,7 +45,7 @@ public class WebControl {
     }
 
     public String getAttribute(String value) {
-        return getElement().getAttribute(value);
+        return getElement().getDomProperty(value);
     }
 
     public boolean isVisible() {

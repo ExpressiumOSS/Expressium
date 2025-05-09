@@ -26,6 +26,7 @@ namespace $Company$.$Project$.Web.API.Tests
                 options.AddArgument("--disable-notifications");
                 options.AddExcludedArgument("enable-automation");
                 options.AddUserProfilePreference("credentials_enable_service", false);
+                options.AddUserProfilePreference("profile.password_manager_leak_detection", false);
 
                 if (maximized)
                     options.AddArguments("start-maximized");

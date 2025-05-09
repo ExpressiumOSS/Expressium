@@ -7,7 +7,12 @@ namespace $Company$.$Project$.Web.API.Tests
         [OneTimeSetUp]
         protected void InitializeTestcase()
         {
+            logger.InfoFormat("");
             logger.InfoFormat("// Initialize Testcase");
+        }
+
+        public void InitializeBrowser()
+        {
         }
 
         public void InitializeBrowserWithLogin()

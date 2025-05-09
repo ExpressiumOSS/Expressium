@@ -31,8 +31,6 @@ namespace $Company$.$Project$.Web.API.Tests
         public bool Highlight { get; set; }
         public int HighlightTimeOut { get; set; }
         public bool Screenshot { get; set; }
-        public bool ShowAlerts { get; set; }
-        public int ShowAlertsTimeOut { get; set; }
 
         public static Configuration GetCurrentConfiguation()
         {

@@ -1,5 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace $Company$.$Project$.Web.API.Controls
 {
@@ -76,6 +78,14 @@ namespace $Company$.$Project$.Web.API.Controls
                 return selectElement.SelectedOption.Text.Trim();
 
             return null;
+        }
+
+        public List<string> GetOptions()
+        {
+            var selectElement = new SelectElement(GetElement());
+            var options = selectElement.Options;
+
+            return options.Select(x => x.Text).ToList();
         }
     }
 }

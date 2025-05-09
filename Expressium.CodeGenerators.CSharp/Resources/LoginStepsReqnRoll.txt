@@ -5,12 +5,12 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
     [Binding]
     public class LoginSteps : BaseSteps
     {
-        public LoginSteps(ContextController contextController) : base(contextController)
+        public LoginSteps(BaseContext baseContext) : base(baseContext)
         {
         }
 
-        [Given(@"I am logged in with valid user credentials")]
-        public void GivenIAmLoggedInWithValidUserCredentials()
+        [Given(@"I have logged in with valid user credentials")]
+        public void GivenIHaveLoggedInWithValidUserCredentials()
         {
             ScenarioContext.Current.Pending();
         }

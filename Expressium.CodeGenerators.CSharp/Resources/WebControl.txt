@@ -53,7 +53,7 @@ namespace $Company$.$Project$.Web.API.Controls
 
         public virtual string GetAttribute(string value)
         {
-            return GetElement().GetAttribute(value);
+            return GetElement().GetDomProperty(value);
         }
 
         public virtual bool IsVisible()

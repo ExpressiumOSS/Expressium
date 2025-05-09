@@ -373,7 +373,7 @@ public class WebElements {
         List<WebElement> optionElements = element.findElements(By.tagName("option"));
         for (WebElement optionElement : optionElements) {
             if (optionElement.getText().contains(value)) {
-                String optionIndex = optionElement.getAttribute("index");
+                String optionIndex = optionElement.getDomProperty("index");
                 select.selectByIndex(Integer.parseInt(optionIndex));
                 break;
             }

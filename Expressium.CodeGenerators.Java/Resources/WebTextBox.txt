@@ -40,6 +40,6 @@ public class WebTextBox extends WebControl {
     }
 
     protected String getElementValue() {
-        return getElement().getAttribute("value").trim();
+        return getElement().getDomProperty("value").trim();
     }
 }

@@ -7,14 +7,14 @@ using TechTalk.SpecFlow.Infrastructure;
 namespace $Company$.$Project$.Web.API.Tests
 {
     [Binding]
-    public class BaseHooks : BaseTest
+    public class BaseHooks : BaseTestFixture
     {
         private readonly FeatureContext featureContext;
         private readonly ScenarioContext scenarioContext;
         private readonly ISpecFlowOutputHelper specFlowOutputHelper;
         private readonly IObjectContainer objectContainer;
 
-        private ContextController contextController;
+        private BaseContext baseContext;
 
         public BaseHooks(FeatureContext featureContext, ScenarioContext scenarioContext, ISpecFlowOutputHelper specFlowOutputHelper, IObjectContainer objectContainer)
         {
@@ -24,38 +24,34 @@ namespace $Company$.$Project$.Web.API.Tests
             this.objectContainer = objectContainer;
         }
 
+        private void InitializeDependencyInjection()
+        {
+            baseContext = new BaseContext();
+            baseContext.Configuration = configuration;
+            baseContext.Logger = logger;
+            baseContext.Asserts = Asserts;
+            baseContext.DriverManager = driverManager;
+
+            objectContainer.RegisterInstanceAs(baseContext);
+        }
+
         [BeforeScenario]
         public void BeforeScenario()
         {
             InitializeFixture();
-
-            logger.InfoFormat("// Initialize Testcase");
-            InitializeBrowser();
-
             InitializeDependencyInjection();
-        }
-
-        private void InitializeDependencyInjection()
-        {
-            contextController = new ContextController();
-            contextController.Configuration = configuration;
-            contextController.Logger = logger;
-            contextController.Asserts = Asserts;
-            contextController.Driver = driver;
-
-            objectContainer.RegisterInstanceAs(contextController);
         }
 
         [AfterScenario]
         public void AfterScenario()
         {
-            if (configuration.Logging)
-                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\TestAutomation.log");
-
-            if (configuration.Screenshot)
-                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".png");
-
             FinalizeFixture();
+
+            if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".log")))
+                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".log");
+
+            if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".png")))
+                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".png");
         }
 
         [BeforeStep]
@@ -63,11 +59,6 @@ namespace $Company$.$Project$.Web.API.Tests
         {
             logger.InfoFormat("");
             logger.InfoFormat("// " + scenarioContext.StepContext.StepInfo.StepDefinitionType + " " + scenarioContext.StepContext.StepInfo.Text);
-        }
-
-        [AfterStep]
-        public void AfterStep()
-        {
         }
 
         protected override string GetTestId()
@@ -83,7 +74,15 @@ namespace $Company$.$Project$.Web.API.Tests
 
         protected override string GetTestName()
         {
-            string name = scenarioContext.ScenarioInfo.Title;
+            var name = scenarioContext.ScenarioInfo.Title;
+
+            if (scenarioContext.ScenarioInfo.Arguments.Count > 0)
+            {
+                var arguments = scenarioContext.ScenarioInfo.Arguments.Values;
+                foreach (var argument in arguments)
+                    name += " " + argument;
+            }
+
             name = string.Join("", name.Split(Path.GetInvalidFileNameChars()));
             return Regex.Replace(name, @"^\w| \w", (match) => match.Value.Replace(" ", "").ToUpper());
         }

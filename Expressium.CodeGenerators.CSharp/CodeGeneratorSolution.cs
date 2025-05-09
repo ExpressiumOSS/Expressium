@@ -43,24 +43,24 @@ namespace Expressium.CodeGenerators.CSharp
             WriteToFile(Path.Combine(apiProjectPath, "Logger.cs"), Resources.Logger, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "Randomizer.cs"), Resources.Randomizer, mapOfProperties);
 
+            WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
+            WriteToFile(Path.Combine(apiProjectPath, "WebConditions.cs"), Resources.WebConditions, mapOfProperties);
+
             if (IsCodingStylePageFactory())
             {
                 WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePagePageFactory, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "WebControls.cs"), Resources.WebControls, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
             }
             else if (IsCodingStyleByLocators())
             {
                 WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageByLocators, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "WebControls.cs"), Resources.WebControls, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
             }
             else if (IsCodingStyleByControls())
             {
                 WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageByControls, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTableByControls, mapOfProperties);
 
                 WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebButton.cs"), Resources.WebButton, mapOfProperties);
@@ -85,10 +85,11 @@ namespace Expressium.CodeGenerators.CSharp
             WriteToFile(Path.Combine(apiTestProjectPath, "BaseTestFixture.cs"), Resources.BaseTestFixture, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "BaseTest.cs"), Resources.BaseTest, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "WebDriverFactory.cs"), Resources.WebDriverFactory, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "WebDriverManager.cs"), Resources.WebDriverManager, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "Asserts.cs"), Resources.Asserts, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "Configuration.cs"), Resources.Configuration, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "configuration.json"), Resources.ConfigurationJson, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "ContextController.cs"), Resources.ContextController, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
 
             if (IsCodingFlavourSpecflow())

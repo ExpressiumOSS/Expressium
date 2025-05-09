@@ -1,7 +1,6 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +73,7 @@ namespace $Company$.$Project$.Web.API
                 try
                 {
                     var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetAttribute("style");
+                    var attribute = element.GetDomProperty("style");
                     attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightActionColor}; outline-offset: -1px;";
                     javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
                 }
@@ -91,7 +90,7 @@ namespace $Company$.$Project$.Web.API
                 try
                 {
                     var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetAttribute("style");
+                    var attribute = element.GetDomProperty("style");
                     attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightValidationColor}; outline-offset: -1px;";
                     javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
                 }
@@ -108,7 +107,7 @@ namespace $Company$.$Project$.Web.API
                 try
                 {
                     var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetAttribute("style");
+                    var attribute = element.GetDomProperty("style");
                     attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightFailureColor}; outline-offset: -1px;";
                     javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
                 }
@@ -139,7 +138,7 @@ namespace $Company$.$Project$.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                return wait.Until(ExpectedConditions.ElementExists(locator));
+                return wait.Until(WebConditions.ElementExists(locator));
             }
             catch
             {
@@ -152,7 +151,7 @@ namespace $Company$.$Project$.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                return wait.Until(ExpectedConditions.ElementIsVisible(locator));
+                return wait.Until(WebConditions.ElementIsVisible(locator));
             }
             catch
             {
@@ -165,8 +164,7 @@ namespace $Company$.$Project$.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
-                wait.Until(IsElementVisible(element));
+                wait.Until(WebConditions.ElementIsVisible(element));
             }
             catch
             {
@@ -174,27 +172,12 @@ namespace $Company$.$Project$.Web.API
             }
         }
 
-        private static Func<IWebDriver, bool> IsElementVisible(IWebElement element)
-        {
-            return (driver) =>
-            {
-                try
-                {
-                    return element.Displayed;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
-        }
-
         public static IWebElement WaitForElementIsEnabled(this By locator, IWebDriver driver)
         {
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                return wait.Until(ExpectedConditions.ElementToBeClickable(locator));
+                return wait.Until(WebConditions.ElementIsEnabled(locator));
             }
             catch
             {
@@ -207,28 +190,12 @@ namespace $Company$.$Project$.Web.API
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
-                wait.Until(IsElementEnabled(element));
+                wait.Until(WebConditions.ElementIsEnabled(element));
             }
             catch
             {
                 throw new ApplicationException($"Page element was expected to be enabled within {ElementTimeOut} milliseconds...");
             }
-        }
-
-        private static Func<IWebDriver, bool> IsElementEnabled(IWebElement element)
-        {
-            return (driver) =>
-            {
-                try
-                {
-                    return element.Displayed && element.Enabled;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
         }
 
         public static void WaitForElementIsInvisible(this By locator, IWebDriver driver, int initialTimeOut, int timeOut)
@@ -237,7 +204,7 @@ namespace $Company$.$Project$.Web.API
             {
                 Thread.Sleep(initialTimeOut);
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeOut));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(locator));
+                wait.Until(WebConditions.ElementIsInvisible(locator));
             }
             catch
             {
@@ -251,7 +218,7 @@ namespace $Company$.$Project$.Web.API
             {
                 Thread.Sleep(initialTimeOut);
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeOut));
-                wait.Until(IsElementInvisible(element));
+                wait.Until(WebConditions.ElementIsInvisible(element));
             }
             catch
             {
@@ -259,53 +226,17 @@ namespace $Company$.$Project$.Web.API
             }
         }
 
-        private static Func<IWebDriver, bool> IsElementInvisible(IWebElement element)
-        {
-            return (driver) =>
-            {
-                try
-                {
-                    return !element.Displayed;
-                }
-                catch (StaleElementReferenceException)
-                {
-                    return true;
-                }
-            };
-        }
-
         public static void WaitForSelectOptionIsPopulated(this SelectElement element, IWebDriver driver, string value)
         {
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(ElementTimeOut));
-                wait.Until(IsSelectOptionPopulated(element, value));
+                wait.Until(WebConditions.SelectOptionIsPopulated(element, value));
             }
             catch
             {
                 throw new ApplicationException($"Page element option '{value}' was expected to be populated within {ElementTimeOut} milliseconds...");
             }
-        }
-
-        private static Func<IWebDriver, bool> IsSelectOptionPopulated(SelectElement element, string value)
-        {
-            return (driver) =>
-            {
-                try
-                {
-                    if (element.Options.Count > 0)
-                    {
-                        if (element.Options.First(o => o.Text.Trim() == value) != null)
-                            return true;
-                    }
-
-                    return false;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
         }
 
         public static void ScrollIntoViewUp(this IWebElement element, IWebDriver driver)

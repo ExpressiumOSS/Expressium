@@ -116,12 +116,19 @@ namespace Expressium.CodeGenerators
 
             var indentLevel = 0;
             var indentNextLevel = 0;
+            var previousLine = string.Empty;
 
             var listOfLines = new List<string>();
 
             foreach (var codeLine in listOfCodeLines)
             {
                 var line = codeLine.Trim();
+
+                if (line.EndsWith("{") && !previousLine.EndsWith("{"))
+                {
+                    if (indentNextLevel > 0)
+                        indentNextLevel--;
+                }
 
                 if (line.StartsWith("}"))
                     indentLevel--;
@@ -133,14 +140,15 @@ namespace Expressium.CodeGenerators
 
                 if (line.EndsWith("{"))
                     indentLevel++;
-
-                if (listOfStatements.Any(s => line.StartsWith(s)))
+                else if (listOfStatements.Any(s => line.StartsWith(s)))
                     indentNextLevel++;
                 else if (indentNextLevel > 0)
                     indentNextLevel--;
                 else
                 {
                 }
+
+                previousLine = line;
             }
 
             return listOfLines;

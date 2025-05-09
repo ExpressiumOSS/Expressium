@@ -70,7 +70,7 @@ namespace $Company$.$Project$.Web.API
             var element = locator.GetVisibleElement(driver);
             element.HighlightValidation(driver);
 
-            return element.GetAttribute("value").Trim();
+            return element.GetDomProperty("value").Trim();
         }
 
         public static string GetTextBox(this IWebElement element, IWebDriver driver)
@@ -78,7 +78,7 @@ namespace $Company$.$Project$.Web.API
             element.WaitForElementIsVisible(driver);
             element.HighlightValidation(driver);
 
-            return element.GetAttribute("value").Trim();
+            return element.GetDomProperty("value").Trim();
         }
 
         public static void SetCheckBox(this By locator, IWebDriver driver, bool value)
