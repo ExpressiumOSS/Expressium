@@ -22,13 +22,11 @@ namespace Expressium.CodeGenerators.CSharp
 
     internal enum CodingFlavours
     {
-        Specflow,
-        Reqnroll
+        Selenium
     }
 
     internal enum CodingStyles
     {
-        PageFactory,
         ByLocators,
         ByControls
     }

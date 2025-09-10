@@ -126,18 +126,12 @@
 	</data>
 	<data name="BaseHooks" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseHooks.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
-	<data name="BaseHooksReqnRoll" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\BaseHooksReqnRoll.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
+	</data>		
 	<data name="BasePageByControls" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BasePageByControls.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
 	<data name="BasePageByLocators" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BasePageByLocators.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-	</data>
-	<data name="BasePagePageFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\BasePagePageFactory.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
 	<data name="BaseService" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseService.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -169,33 +163,24 @@
 	<data name="Feature" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Feature.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="LivingDoc" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\LivingDoc.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
 	<data name="Logger" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Logger.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="LoginSteps" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\LoginSteps.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
-	<data name="LoginStepsReqnRoll" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\LoginStepsReqnRoll.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
+	</data>		
 	<data name="ProjectFileApi" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ProjectFileApi.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
+	</data>		
 	<data name="ProjectFileApiTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ProjectFileApiTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
-	<data name="ProjectFileApiTestsReqnRoll" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ProjectFileApiTestsReqnRoll.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="Randomizer" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Randomizer.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="RegressionTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\RegressionTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
+	</data>	
 	<data name="SolutionFile" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\SolutionFile.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
@@ -244,4 +229,10 @@
 	<data name="WebTextBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebTextBox.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
+	<data name="ReqnRollJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReqnRollJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="ReqnRollExtension" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReqnRollExtension.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>	
 </root>

@@ -1,9 +1,0 @@
-﻿package Bases;
-
-public class BaseTest extends BaseTestFixture {
-    public void initializeBrowserWithLogin() throws Exception {
-        initializeBrowser();
-
-        // TODO - Implement potential missing login sequence...
-    }
-}

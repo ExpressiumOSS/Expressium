@@ -20,21 +20,21 @@ namespace Expressium.CodeGenerators.UnitTests
         public void CodeGeneratorLoaders_GetCodeGenerator_GetCodingLanguages()
         {
             var configuration = GetConfiguration();
-            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingLanguages().Count, Is.EqualTo(2), "CodeGeneratorLoaders GetCodeGeneratorsCodingLanguages validation");
+            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingLanguages().Count, Is.EqualTo(1), "CodeGeneratorLoaders GetCodeGeneratorsCodingLanguages validation");
         }
 
         [Test]
         public void CodeGeneratorLoaders_GetCodeGenerator_GetCodingFlavours()
         {
             var configuration = GetConfiguration();
-            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingFlavours(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(2), "CodeGeneratorLoaders GetCodeGeneratorsCodingFlavours validation");
+            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingFlavours(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(1), "CodeGeneratorLoaders GetCodeGeneratorsCodingFlavours validation");
         }
 
         [Test]
         public void CodeGeneratorLoaders_GetCodeGenerator_GetCodingStyles()
         {
             var configuration = GetConfiguration();
-            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingStyles(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(3), "CodeGeneratorLoaders GetCodeGeneratorsCodingStyles validation");
+            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingStyles(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(2), "CodeGeneratorLoaders GetCodeGeneratorsCodingStyles validation");
         }
 
         private Configuration GetConfiguration()
@@ -45,8 +45,8 @@ namespace Expressium.CodeGenerators.UnitTests
             configuration.ApplicationUrl = "http://www.google.com";
             configuration.SolutionPath = Environment.GetEnvironmentVariable("TEMP");
             configuration.CodeGenerator.CodingLanguage = "CSharp";
-            configuration.CodeGenerator.CodingFlavour = "Specflow";
-            configuration.CodeGenerator.CodingStyle = "PageFactory";
+            configuration.CodeGenerator.CodingFlavour = "Selenium";
+            configuration.CodeGenerator.CodingStyle = "ByControls";
 
             return configuration;
         }

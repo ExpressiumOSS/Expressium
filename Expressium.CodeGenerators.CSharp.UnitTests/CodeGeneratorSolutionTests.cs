@@ -19,8 +19,8 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
             configuration.ApplicationUrl = "http://www.dr.dk";
             configuration.SolutionPath = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), "CodeGeneratorSolutionCSharp");
             configuration.CodeGenerator.CodingLanguage = CodingLanguages.CSharp.ToString();
-            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Specflow.ToString();
-            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingFlavour = CodingFlavours.Selenium.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.ByLocators.ToString();
 
             if (Directory.Exists(configuration.SolutionPath))
                 Directory.Delete(configuration.SolutionPath, true);

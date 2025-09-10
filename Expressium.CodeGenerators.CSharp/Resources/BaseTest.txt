@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace $Company$.$Project$.Web.API.Tests
 {
@@ -7,17 +8,19 @@ namespace $Company$.$Project$.Web.API.Tests
         [OneTimeSetUp]
         protected void InitializeTestcase()
         {
-            logger.InfoFormat("");
-            logger.InfoFormat("// Initialize Testcase");
+            logger.Info("");
+            logger.Info("// Initialize Testcase");
         }
 
-        public void InitializeBrowser()
+        public virtual void InitializeBrowser()
         {
         }
 
-        public void InitializeBrowserWithLogin()
+        public virtual void InitializeBrowserWithLogin()
         {
             InitializeBrowser();
+
+            throw new ApplicationException("Implementation of InitializeBrowserWithLogin is missing...");
 
             // TODO - Implement potential missing login sequence...
 

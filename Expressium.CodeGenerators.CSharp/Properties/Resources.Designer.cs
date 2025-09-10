@@ -94,14 +94,15 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///            {
         ///                Assert.That(actual, Is.EqualTo(expected), message);
         ///
-        ///                logger.InfoFormat(&quot;{0}&quot;, messa [rest of string was truncated]&quot;;.
+        ///                logger.Info($&quot;{message}&quot;);
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Asserts {
             get {
                 return ResourceManager.GetString("Asserts", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///
@@ -123,31 +124,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using BoDi;
-        ///using System.IO;
-        ///using System.Text.RegularExpressions;
-        ///using TechTalk.SpecFlow;
-        ///using TechTalk.SpecFlow.Infrastructure;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests
-        ///{
-        ///    [Binding]
-        ///    public class BaseHooks : BaseTestFixture
-        ///    {
-        ///        private readonly FeatureContext featureContext;
-        ///        private readonly ScenarioContext scenarioContext;
-        ///        private readonly ISpecFlowOutputHelper specFlowOutputHelper;
-        ///        private readonly IObjectContainer objectContainer;
-        ///
-        ///        p [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BaseHooks {
-            get {
-                return ResourceManager.GetString("BaseHooks", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///using Reqnroll.BoDi;
         ///using System.IO;
@@ -163,11 +139,13 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
         ///        private readonly IObjectContainer objectContainer;
         ///
-        ///        private BaseContext contextControlle [rest of string was truncated]&quot;;.
+        ///        private BaseContext baseContext;
+        ///
+        ///       [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BaseHooksReqnRoll {
+        internal static string BaseHooks {
             get {
-                return ResourceManager.GetString("BaseHooksReqnRoll", resourceCulture);
+                return ResourceManager.GetString("BaseHooks", resourceCulture);
             }
         }
         
@@ -226,33 +204,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
-        ///using OpenQA.Selenium;
-        ///using OpenQA.Selenium.Support.UI;
-        ///using SeleniumExtras.PageObjects;
-        ///using System;
-        ///using System.Threading;
-        ///
-        ///namespace $Company$.$Project$.Web.API
-        ///{
-        ///    public class BasePage
-        ///    {
-        ///        protected readonly ILog logger;
-        ///        protected readonly IWebDriver driver;
-        ///
-        ///        public static int PageTimeOut { get; set; }
-        ///
-        ///        public static By PageSpinnerLocator { get; set; }
-        ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        publi [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BasePagePageFactory {
-            get {
-                return ResourceManager.GetString("BasePagePageFactory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using log4net;
         ///using RestSharp;
         ///using RestSharp.Authenticators;
         ///using System;
@@ -278,7 +229,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
                 return ResourceManager.GetString("BaseService", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
@@ -296,7 +247,8 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///        public BaseSteps(BaseContext baseContext)
         ///        {
-        ///            configuration = baseContext.Configuration; [rest of string was truncated]&quot;;.
+        ///            configuration = baseContext.Configuration;
+        ///            logg [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseSteps {
             get {
@@ -323,8 +275,8 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///        public virtual int GetNumberOfRows()
         ///        {
-        ///            logger.InfoFormat(&quot;GetNumberOfRows()&quot;);
-        ///            return baseLo [rest of string was truncated]&quot;;.
+        ///            logger.Info(&quot;GetNumberOfRows()&quot;);
+        ///            return baseLocator. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTable {
             get {
@@ -350,7 +302,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///        public virtual int GetNumberOfRows()
         ///        {
-        ///            logger.InfoFormat(&quot;GetNumberOfRow [rest of string was truncated]&quot;;.
+        ///            logger.Info(&quot;GetNumberOfRows()&quot;); [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTableByControls {
             get {
@@ -368,19 +320,19 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///        [OneTimeSetUp]
         ///        protected void InitializeTestcase()
         ///        {
-        ///            logger.InfoFormat(&quot;&quot;);
-        ///            logger.InfoFormat(&quot;// Initialize Testcase&quot;);
+        ///            logger.Info(&quot;&quot;);
+        ///            logger.Info(&quot;// Initialize Testcase&quot;);
         ///        }
         ///
-        ///        public void InitializeBrowser()
+        ///        public virtual void InitializeBrowser()
         ///        {
         ///        }
         ///
-        ///        public void InitializeBrowserWithLogin()
+        ///        public virtual void InitializeBrowserWithLogin()
         ///        {
         ///            InitializeBrowser();
         ///
-        ///            // TODO - Implement poten [rest of string was truncated]&quot;;.
+        ///            // TODO - Implement p [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTest {
             get {
@@ -490,25 +442,6 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to echo Runnning LivingDoc Documentation...
-        ///
-        ///cd .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0
-        ///
-        ///livingdoc test-assembly $Company$.$Project$.Web.API.Tests.dll -t TestExecution.json
-        ///
-        ///mkdir TestResults
-        ///
-        ///move LivingDoc.html .\TestResults\LivingDoc.html
-        ///
-        ///start .\TestResults\LivingDoc.html.
-        /// </summary>
-        internal static string LivingDoc {
-            get {
-                return ResourceManager.GetString("LivingDoc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using log4net.Appender;
         ///using log4net.Config;
@@ -532,33 +465,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
                 return ResourceManager.GetString("Logger", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to using TechTalk.SpecFlow;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
-        ///{
-        ///    [Binding]
-        ///    public class LoginSteps : BaseSteps
-        ///    {
-        ///        public LoginSteps(BaseContext baseContext) : base(baseContext)
-        ///        {
-        ///        }
-        ///
-        ///        [Given(@&quot;I have logged in with valid user credentials&quot;)]
-        ///        public void GivenIHaveLoggedInWithValidUserCredentials()
-        ///        {
-        ///            throw new PendingStepException();
-        ///        }
-        ///
-        ///        [Then(@&quot;I should be redirect [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string LoginSteps {
-            get {
-                return ResourceManager.GetString("LoginSteps", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///
@@ -577,11 +484,12 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///            ScenarioContext.Current.Pending();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirected to th [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirected to the Home page&quot;)]
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string LoginStepsReqnRoll {
+        internal static string LoginSteps {
             get {
-                return ResourceManager.GetString("LoginStepsReqnRoll", resourceCulture);
+                return ResourceManager.GetString("LoginSteps", resourceCulture);
             }
         }
         
@@ -589,16 +497,22 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
         ///
         ///	&lt;PropertyGroup&gt;
-        ///		&lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
+        ///		&lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;DotNetSeleniumExtras.PageObjects.Core&quot; Version=&quot;4.14.1&quot; /&gt;
-        ///		&lt;!--&lt;PackageReference Include=&quot;DotNetSeleniumExtras.WaitHelpers&quot; Version=&quot;3.11.0&quot; /&gt;--&gt;
-        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.0.4&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.2.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;112.1.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.29.0&quot; /&gt;
-        ///		&lt;Packag [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.35.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.35.0&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///	&lt;ItemGroup&gt;
+        ///		&lt;Folder Include=&quot;Models\&quot; /&gt;
+        ///		&lt;Folder Include=&quot;Pages\&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///&lt;/Projec [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApi {
             get {
@@ -610,39 +524,19 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
         ///
         ///	&lt;PropertyGroup&gt;
-        ///		&lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
+        ///		&lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.13.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.0.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.9&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.9&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.9&quot; /&gt;
+        ///		&lt;PackageReference Incl [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTests {
             get {
                 return ResourceManager.GetString("ProjectFileApiTests", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
-        ///
-        ///	&lt;PropertyGroup&gt;
-        ///		&lt;TargetFramework&gt;net6.0&lt;/TargetFramework&gt;
-        ///	&lt;/PropertyGroup&gt;
-        ///
-        ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.NET.Test.Sdk&quot; Version=&quot;17.13.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;NUnit&quot; [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ProjectFileApiTestsReqnRoll {
-            get {
-                return ResourceManager.GetString("ProjectFileApiTestsReqnRoll", resourceCulture);
             }
         }
         
@@ -675,7 +569,7 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///
         ///set PROFILE=Development
         ///
-        ///rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0\TestResults
+        ///rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0\TestResults
         ///
         ///dotnet nuget
         ///dotnet build
@@ -686,6 +580,43 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         internal static string RegressionTest {
             get {
                 return ResourceManager.GetString("RegressionTest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using Reqnroll;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests
+        ///{
+        ///    internal static class ReqnRollExtensions
+        ///    {
+        ///        internal static void AddAttachmentAsLink(this IReqnrollOutputHelper outputHelper, string path)
+        ///        {
+        ///            outputHelper.WriteLine($&quot;[Attachment: {path}]&quot;);
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string ReqnRollExtension {
+            get {
+                return ResourceManager.GetString("ReqnRollExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;$schema&quot;: &quot;https://schemas.reqnroll.net/reqnroll-config-latest.json&quot;,
+        ///  &quot;formatters&quot;: {
+        ///    &quot;expressium&quot;: {
+        ///      &quot;outputFilePath&quot;: &quot;LivingDoc.ndjson&quot;,
+        ///      &quot;outputFileTitle&quot;: &quot;Expressium.Coffeeshop.Web.API.Tests&quot;
+        ///    }
+        ///  }
+        ///}.
+        /// </summary>
+        internal static string ReqnRollJson {
+            get {
+                return ResourceManager.GetString("ReqnRollJson", resourceCulture);
             }
         }
         
@@ -883,7 +814,10 @@ namespace Expressium.CodeGenerators.CSharp.Properties {
         ///            Edge
         ///        }
         ///
-        ///        public static IWebDriver Initialize(string browserType, string url = null, bool maximized = true, bool headless = false, bool windowSize = false, int windowWidth  [rest of string was truncated]&quot;;.
+        ///        public static IWebDriver Initialize(Configuration configuration)
+        ///        {
+        ///            if (configuration.BrowserType == BrowserTypes.Chrome.ToString())
+        ///        [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebDriverFactory {
             get {

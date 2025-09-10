@@ -20,7 +20,7 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
             configuration = new Configuration();
             configuration.Company = "Expressium";
             configuration.Project = "Coffeeshop";
-            configuration.CodeGenerator.CodingStyle = CodingStyles.PageFactory.ToString();
+            configuration.CodeGenerator.CodingStyle = CodingStyles.ByControls.ToString();
 
             page = CreateLoginPage();
 
@@ -35,10 +35,7 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateSourceCode(page);
 
-            //if (IsCodingStyleByLocators())
-            //    Assert.That(listOfLines.Count, Is.EqualTo(43), "CodeGeneratorPageCSharp GenerateSourceCode validation");
-            //else
-                Assert.That(listOfLines.Count, Is.EqualTo(45), "CodeGeneratorPageCSharp GenerateSourceCode validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(44), "CodeGeneratorPageCSharp GenerateSourceCode validation");
         }
 
         [Test]
@@ -103,14 +100,8 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateLocators(page);
 
-            //if (IsCodingStyleByLocators())
-            //    Assert.That(listOfLines.Count, Is.EqualTo(2), "CodeGeneratorPageCSharp GenerateLocators validation");
-            //else
-            {
-                Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageCSharp GenerateLocators validation");
-                Assert.That(listOfLines[0], Is.EqualTo("[FindsBy(How = How.Id, Using = \"username\")]"), "CodeGeneratorPageCSharp GenerateLocators validation");
-                Assert.That(listOfLines[1], Is.EqualTo("private IWebElement Username { get; set; }"), "CodeGeneratorPageCSharp GenerateLocators validation");
-            }
+            Assert.That(listOfLines.Count, Is.EqualTo(2), "CodeGeneratorPageCSharp GenerateLocators validation");
+            Assert.That(listOfLines[0], Is.EqualTo("private WebTextBox Username => new WebTextBox(driver, By.Id(\"username\"));"), "CodeGeneratorPageCSharp GenerateLocators validation");
         }
 
         [Test]
@@ -146,11 +137,11 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
 
             Assert.That(listOfLines.Count, Is.EqualTo(12), "CodeGeneratorPageCSharp GenerateActionMethods validation");
             Assert.That(listOfLines[0], Is.EqualTo("public void SetUsername(string value)"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
-            Assert.That(listOfLines[2], Is.EqualTo("logger.InfoFormat(\"SetUsername({0})\", value);"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Username.SetTextBox(driver, value);"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
+            Assert.That(listOfLines[2], Is.EqualTo("logger.Info($\"SetUsername({value})\");"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
+            Assert.That(listOfLines[3], Is.EqualTo("Username.SetText(value);"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
             Assert.That(listOfLines[6], Is.EqualTo("public string GetUsername()"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
-            Assert.That(listOfLines[8], Is.EqualTo("logger.InfoFormat(\"GetUsername()\");"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
-            Assert.That(listOfLines[9], Is.EqualTo("return Username.GetTextBox(driver);"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
+            Assert.That(listOfLines[8], Is.EqualTo("logger.Info(\"GetUsername()\");"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
+            Assert.That(listOfLines[9], Is.EqualTo("return Username.GetText();"), "CodeGeneratorPageCSharp GenerateActionMethods validation");
         }
 
         [Test]

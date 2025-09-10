@@ -2,7 +2,7 @@
 
 set PROFILE=Development
 
-rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net6.0\TestResults
+rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0\TestResults
 
 dotnet nuget
 dotnet build

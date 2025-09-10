@@ -37,13 +37,13 @@ namespace $Company$.$Project$.Web.API
 
         public string GetTitle()
         {
-            logger.InfoFormat("GetTitle()");
+            logger.Info("GetTitle()");
             return driver.Title;
         }
 
         public string GetURL()
         {
-            logger.InfoFormat("GetURL()");
+            logger.Info("GetURL()");
             return new Uri(driver.Url).LocalPath;
         }
 
@@ -132,52 +132,52 @@ namespace $Company$.$Project$.Web.API
 
         public void NavigateBack()
         {
-            logger.InfoFormat("NavigateBack()");
+            logger.Info("NavigateBack()");
             driver.Navigate().Back();
         }
 
         public void NavigateForward()
         {
-            logger.InfoFormat("NavigateForward()");
+            logger.Info("NavigateForward()");
             driver.Navigate().Forward();
         }
 
         public void NavigateRefresh()
         {
-            logger.InfoFormat("NavigateRefresh()");
+            logger.Info("NavigateRefresh()");
             driver.Navigate().Refresh();
         }
 
         public void ScrollToTop(IWebDriver driver)
         {
-            logger.InfoFormat("ScrollToTop()");
+            logger.Info("ScrollToTop()");
             var javaScriptExecutor = (IJavaScriptExecutor)driver;
             javaScriptExecutor.ExecuteScript("window.scrollTo(0, 0);");
         }
 
         public void ScrollToBottom(IWebDriver driver)
         {
-            logger.InfoFormat("ScrollToBottom()");
+            logger.Info("ScrollToBottom()");
             var javaScriptExecutor = (IJavaScriptExecutor)driver;
             javaScriptExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
         }
 
         public void SwitchToAlertAccept()
         {
-            logger.InfoFormat("SwitchToAlertAccept()");
+            logger.Info("SwitchToAlertAccept()");
             driver.SwitchTo().Alert().Accept();
         }
 
         public void SwitchToAlertDismiss()
         {
-            logger.InfoFormat("SwitchToAlertDismiss()");
+            logger.Info("SwitchToAlertDismiss()");
             driver.SwitchTo().Alert().Dismiss();
         }
 
         protected int GetNumberOfBrowserTabs()
         {
             var value = driver.WindowHandles.Count;
-            logger.InfoFormat("GetNumberOfBrowserTabs() [%d]", value);
+            logger.Info($"GetNumberOfBrowserTabs() [{value}]");
             return value;
         }
 

@@ -18,9 +18,7 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 if (driver == null)
                 {
-                    driver = WebDriverFactory.Initialize(configuration.BrowserType, configuration.Url,
-                        configuration.Maximize, configuration.Headless, configuration.WindowSize,
-                        configuration.WindowWidth, configuration.WindowHeight);
+                    driver = WebDriverFactory.Initialize(configuration);
                 }
 
                 return driver;
@@ -30,6 +28,15 @@ namespace $Company$.$Project$.Web.API.Tests
         public bool IsInitialized()
         {
             return driver != null;
+        }
+
+        public void SaveScreenshot(string filePath)
+        {
+            if (driver != null)
+            {
+                var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+                screenshot.SaveAsFile(filePath);
+            }
         }
 
         public void Quit()

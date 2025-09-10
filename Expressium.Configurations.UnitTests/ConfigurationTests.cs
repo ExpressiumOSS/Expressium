@@ -73,8 +73,8 @@ namespace Expressium.Configurations.UnitTests
             configuration.ApplicationUrl = "http://www.google.com";
             configuration.SolutionPath = directory;
             configuration.CodeGenerator.CodingLanguage = "CSharp";
-            configuration.CodeGenerator.CodingFlavour = "Specflow";
-            configuration.CodeGenerator.CodingStyle = "PageFactory";
+            configuration.CodeGenerator.CodingFlavour = "Selenium";
+            configuration.CodeGenerator.CodingStyle = "ByControls";
 
             return configuration;
         }

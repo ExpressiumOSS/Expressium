@@ -20,21 +20,6 @@ namespace Expressium.CodeGenerators.CSharp.UnitTests
         }
 
         [Test]
-        public void CodeGeneratorPageCSharp_GeneratePageFactoryLocator()
-        {
-            var control = new ObjectRepositoryControl();
-            control.Name = "Search";
-            control.How = "Id";
-            control.Using = "search";
-
-            var listOfLines = codeGeneratorPage.GeneratePageFactoryLocator(control);
-
-            Assert.That(listOfLines.Count, Is.EqualTo(2), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
-            Assert.That(listOfLines[0], Is.EqualTo("[FindsBy(How = How.Id, Using = \"search\")]"), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
-            Assert.That(listOfLines[1], Is.EqualTo("private IWebElement Search { get; set; }"), "CodeGeneratorPageCSharp GeneratePageFactoryLocator validation");
-        }
-
-        [Test]
         public void CodeGeneratorPageCSharp_GenerateByLocatorsLocator()
         {
             var control = new ObjectRepositoryControl();

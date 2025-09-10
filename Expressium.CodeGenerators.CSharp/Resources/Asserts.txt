@@ -19,8 +19,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.EqualTo(expected), message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be equal [{0}] and was [{1}] - PASSED", expected, actual);
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [{expected}] and was [{actual}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -34,8 +34,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.True, message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be equal [True] and was [True] - PASSED");
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [True] and was [True] - PASSED");
             }
             catch (AssertionException)
             {
@@ -49,8 +49,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.False, message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be equal [False] and was [False] - PASSED");
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [False] and was [False] - PASSED");
             }
             catch (AssertionException)
             {
@@ -64,8 +64,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.Null, message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be equal [Null] and was [Null]");
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [Null] and was [Null]");
             }
             catch (AssertionException)
             {
@@ -79,8 +79,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.Not.Null, message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be different from [Null] and was [{0}] - PASSED", actual);
+                logger.Info($"{message}");
+                logger.Info($"Expected to be different from [Null] and was [{actual}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -94,8 +94,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.Not.Empty, message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be different from [Empty] and was [{0}] - PASSED", actual);
+                logger.Info($"{message}");
+                logger.Info($"Expected to be different from [Empty] and was [{actual}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -109,8 +109,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.GreaterThan(expected), message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be greater than [{0}] and was [{1}] - PASSED", expected, actual);
+                logger.Info($"{message}");
+                logger.Info($"Expected to be greater than [{expected}] and was [{actual}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -124,8 +124,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Is.LessThan(expected), message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to be less than [{0}] and was [{1}] - PASSED", expected, actual);
+                logger.Info($"{message}");
+                logger.Info($"Expected to be less than [{expected}] and was [{actual}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -141,8 +141,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Does.Contain(expected), message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to contain [{0}] in [{1}] - PASSED", expected, actualTruncated);
+                logger.Info($"{message}");
+                logger.Info($"Expected to contain [{expected}] in [{actualTruncated}] - PASSED");
             }
             catch (AssertionException)
             {
@@ -158,8 +158,8 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 Assert.That(actual, Does.Not.Contain(expected), message);
 
-                logger.InfoFormat("{0}", message);
-                logger.InfoFormat("Expected to not contain [{0}] in [{1}] - PASSED", expected, actualTruncated);               
+                logger.Info($"{message}");
+                logger.Info($"Expected to not contain [{expected}] in [{actualTruncated}] - PASSED");
             }
             catch (AssertionException)
             {

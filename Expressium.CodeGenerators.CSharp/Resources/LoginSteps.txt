@@ -1,4 +1,4 @@
-﻿using TechTalk.SpecFlow;
+﻿using Reqnroll;
 
 namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
 {
@@ -12,13 +12,13 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         [Given(@"I have logged in with valid user credentials")]
         public void GivenIHaveLoggedInWithValidUserCredentials()
         {
-            throw new PendingStepException();
+            ScenarioContext.Current.Pending();
         }
 
         [Then(@"I should be redirected to the Home page")]
         public void ThenIShouldBeRedirectedToTheHomePage()
         {
-            throw new PendingStepException();
+            ScenarioContext.Current.Pending(); 
         }
     }
 }

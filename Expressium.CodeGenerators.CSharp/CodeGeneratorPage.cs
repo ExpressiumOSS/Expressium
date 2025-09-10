@@ -66,9 +66,6 @@ namespace Expressium.CodeGenerators.CSharp
 
             listOfLines.Add("using OpenQA.Selenium;");
 
-            if (IsCodingStylePageFactory())
-                listOfLines.Add("using SeleniumExtras.PageObjects;");
-
             if (IsCodingStyleByControls())
                 listOfLines.Add($"using {GetNameSpace()}.Controls;");
 
@@ -130,15 +127,7 @@ namespace Expressium.CodeGenerators.CSharp
         {
             var listOfLines = new List<string>();
 
-            if (IsCodingStylePageFactory())
-            {
-                foreach (var control in page.Controls)
-                {
-                    if (!control.IsTable())
-                        listOfLines.AddRange(GeneratePageFactoryLocator(control));
-                }
-            }
-            else if (IsCodingStyleByLocators())
+            if (IsCodingStyleByLocators())
             {
                 foreach (var control in page.Controls)
                 {
@@ -160,17 +149,6 @@ namespace Expressium.CodeGenerators.CSharp
 
             if (listOfLines.Count > 0)
                 listOfLines.Add("");
-
-            return listOfLines;
-        }
-
-        internal List<string> GeneratePageFactoryLocator(ObjectRepositoryControl control)
-        {
-            var listOfLines = new List<string>
-            {
-                $"[FindsBy(How = How.{control.How}, Using = \"{control.Using.EscapeDoubleQuotes()}\")]",
-                $"private IWebElement {control.Name} {{ get; set; }}"
-            };
 
             return listOfLines;
         }
@@ -288,13 +266,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(string value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.Set{control.Type}(driver, value);",
                 $"}}",
                 "",
                 $"public string Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.Get{control.Type}(driver);",
                 $"}}",
                 ""
@@ -309,13 +287,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(bool value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.Set{control.Type}(driver, value);",
                 $"}}",
                 "",
                 $"public bool Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.Get{control.Type}(driver);",
                 $"}}",
                 ""
@@ -337,7 +315,7 @@ namespace Expressium.CodeGenerators.CSharp
                 listOfLines.Add("");
             }
 
-            listOfLines.Add($"logger.InfoFormat(\"Click{control.Name}()\");");
+            listOfLines.Add($"logger.Info($\"Click{control.Name}()\");");
             listOfLines.Add($"{control.Name}.Click{control.Type}(driver);");
             listOfLines.Add($"}}");
             listOfLines.Add("");
@@ -351,7 +329,7 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public string Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetText(driver);",
                 $"}}",
                 ""
@@ -429,13 +407,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(string value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.SetText(value);",
                 $"}}",
                 "",
                 $"public string Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetText();",
                 $"}}",
                 ""
@@ -450,13 +428,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(string value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.SelectByText(value);",
                 $"}}",
                 "",
                 $"public string Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetSelectedText();",
                 $"}}",
                 ""
@@ -471,13 +449,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(bool value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.SetChecked(value);",
                 $"}}",
                 "",
                 $"public bool Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetChecked();",
                 $"}}",
                 ""
@@ -492,13 +470,13 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public void Set{control.Name}(bool value)",
                 $"{{",
-                $"logger.InfoFormat(\"Set{control.Name}({{0}})\", value);",
+                $"logger.Info($\"Set{control.Name}({{value}})\");",
                 $"{control.Name}.SetSelected(value);",
                 $"}}",
                 "",
                 $"public bool Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetSelected();",
                 $"}}",
                 ""
@@ -520,7 +498,7 @@ namespace Expressium.CodeGenerators.CSharp
                 listOfLines.Add("");
             }
 
-            listOfLines.Add($"logger.InfoFormat(\"Click{control.Name}()\");");
+            listOfLines.Add($"logger.Info($\"Click{control.Name}()\");");
             listOfLines.Add($"{control.Name}.Click();");
             listOfLines.Add($"}}");
             listOfLines.Add("");
@@ -534,7 +512,7 @@ namespace Expressium.CodeGenerators.CSharp
             {
                 $"public string Get{control.Name}()",
                 $"{{",
-                $"logger.InfoFormat(\"Get{control.Name}()\");",
+                $"logger.Info(\"Get{control.Name}()\");",
                 $"return {control.Name}.GetText();",
                 $"}}",
                 ""

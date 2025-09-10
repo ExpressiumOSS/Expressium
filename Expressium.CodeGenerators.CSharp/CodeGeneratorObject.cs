@@ -85,30 +85,6 @@ namespace Expressium.CodeGenerators.CSharp
             return listOfLines;
         }
 
-        internal bool IsCodingFlavourSpecflow()
-        {
-            if (configuration.CodeGenerator.CodingFlavour == CodingFlavours.Specflow.ToString())
-                return true;
-
-            return false;
-        }
-
-        internal bool IsCodingFlavourReqnroll()
-        {
-            if (configuration.CodeGenerator.CodingFlavour == CodingFlavours.Reqnroll.ToString())
-                return true;
-
-            return false;
-        }
-
-        internal bool IsCodingStylePageFactory()
-        {
-            if (configuration.CodeGenerator.CodingStyle == CodingStyles.PageFactory.ToString())
-                return true;
-
-            return false;
-        }
-
         internal bool IsCodingStyleByLocators()
         {
             if (configuration.CodeGenerator.CodingStyle == CodingStyles.ByLocators.ToString())

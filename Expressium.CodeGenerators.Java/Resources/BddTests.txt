@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="BusinessTests" configfailurepolicy="continue">
-    <test name="BusinessTests">
-        <classes>
-            <class name="BusinessTests.TestRunners.BusinessTests"></class>
-        </classes>
-    </test>
-</suite>

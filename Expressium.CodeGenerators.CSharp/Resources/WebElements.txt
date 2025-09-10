@@ -25,7 +25,7 @@ namespace $Company$.$Project$.Web.API
             ElementTimeOut = 10000;
 
             Highlight = false;
-            HighlightTimeOut = 150;
+            HighlightTimeOut = 250;
             HighlightWidth = 2;
             HighlightStyle = "dashed";
             HighlightActionColor = "orange";

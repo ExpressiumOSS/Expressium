@@ -17,11 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.ObjectRepositori
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.CodeGenerators.CSharp", "Expressium.CodeGenerators.CSharp\Expressium.CodeGenerators.CSharp.csproj", "{DF45831B-6A33-4B25-AA6B-583E4CA363EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.CodeGenerators.Java", "Expressium.CodeGenerators.Java\Expressium.CodeGenerators.Java.csproj", "{6BA7712A-367E-4B93-B420-3D83D67CC0EC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.CodeGenerators.CSharp.UnitTests", "Expressium.CodeGenerators.CSharp.UnitTests\Expressium.CodeGenerators.CSharp.UnitTests.csproj", "{7E11C3A2-C192-4734-8483-123DF491018A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.CodeGenerators.Java.UnitTests", "Expressium.CodeGenerators.Java.UnitTests\Expressium.CodeGenerators.Java.UnitTests.csproj", "{AAAD332A-8013-4465-AB87-D1A1FCA512F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expressium.CodeGenerators.UnitTests", "Expressium.CodeGenerators.UnitTests\Expressium.CodeGenerators.UnitTests.csproj", "{D7B4854F-039F-423C-A5CB-6ACE97B92721}"
 EndProject
@@ -59,18 +55,10 @@ Global
 		{DF45831B-6A33-4B25-AA6B-583E4CA363EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF45831B-6A33-4B25-AA6B-583E4CA363EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF45831B-6A33-4B25-AA6B-583E4CA363EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BA7712A-367E-4B93-B420-3D83D67CC0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BA7712A-367E-4B93-B420-3D83D67CC0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BA7712A-367E-4B93-B420-3D83D67CC0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BA7712A-367E-4B93-B420-3D83D67CC0EC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E11C3A2-C192-4734-8483-123DF491018A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E11C3A2-C192-4734-8483-123DF491018A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E11C3A2-C192-4734-8483-123DF491018A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E11C3A2-C192-4734-8483-123DF491018A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAAD332A-8013-4465-AB87-D1A1FCA512F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAAD332A-8013-4465-AB87-D1A1FCA512F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAAD332A-8013-4465-AB87-D1A1FCA512F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAAD332A-8013-4465-AB87-D1A1FCA512F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D7B4854F-039F-423C-A5CB-6ACE97B92721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7B4854F-039F-423C-A5CB-6ACE97B92721}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7B4854F-039F-423C-A5CB-6ACE97B92721}.Release|Any CPU.ActiveCfg = Release|Any CPU

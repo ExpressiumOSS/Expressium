@@ -31,7 +31,6 @@ namespace Expressium.CodeGenerators.CSharp
             var solutionFileName = Path.GetFileName(directory).ToLower() + ".sln";
             WriteToFile(Path.Combine(directory, solutionFileName), Resources.SolutionFile, mapOfProperties);
             WriteToFile(Path.Combine(directory, "RegressionTest.bat"), Resources.RegressionTest, mapOfProperties);
-            WriteToFile(Path.Combine(directory, "LivingDoc.bat"), Resources.LivingDoc, mapOfProperties);
 
             // Generate Solution Api Project Files...
             var apiProjectPath = Path.Combine(directory, nameSpace);
@@ -46,13 +45,7 @@ namespace Expressium.CodeGenerators.CSharp
             WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "WebConditions.cs"), Resources.WebConditions, mapOfProperties);
 
-            if (IsCodingStylePageFactory())
-            {
-                WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePagePageFactory, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "WebControls.cs"), Resources.WebControls, mapOfProperties);
-                WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
-            }
-            else if (IsCodingStyleByLocators())
+            if (IsCodingStyleByLocators())
             {
                 WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePageByLocators, mapOfProperties);
                 WriteToFile(Path.Combine(apiProjectPath, "WebControls.cs"), Resources.WebControls, mapOfProperties);
@@ -92,33 +85,17 @@ namespace Expressium.CodeGenerators.CSharp
             WriteToFile(Path.Combine(apiTestProjectPath, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
 
-            if (IsCodingFlavourSpecflow())
-            {
-                WriteToFile(Path.Combine(apiTestProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTests, mapOfProperties);
-                WriteToFile(Path.Combine(apiTestProjectPath, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
-            }
-            else if (IsCodingFlavourReqnroll())
-            {
-                WriteToFile(Path.Combine(apiTestProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTestsReqnRoll, mapOfProperties);
-                WriteToFile(Path.Combine(apiTestProjectPath, "BaseHooks.cs"), Resources.BaseHooksReqnRoll, mapOfProperties);
-            }
-            else
-            {
-            }
+            WriteToFile(Path.Combine(apiTestProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTests, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "ReqnRoll.json"), Resources.ReqnRollJson, mapOfProperties);
+            WriteToFile(Path.Combine(apiTestProjectPath, "ReqnRollExtension.cs"), Resources.ReqnRollExtension, mapOfProperties);
 
             var featureFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Features");
             var featureStepFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Steps");
 
             WriteToFile(Path.Combine(featureFiles, "Login.feature"), Resources.Feature, mapOfProperties);
             WriteToFile(Path.Combine(featureStepFiles, "BaseSteps.cs"), Resources.BaseSteps, mapOfProperties);
-
-            if (IsCodingFlavourSpecflow())
-                WriteToFile(Path.Combine(featureStepFiles, "LoginSteps.cs"), Resources.LoginSteps, mapOfProperties);
-            else if (IsCodingFlavourReqnroll())
-                WriteToFile(Path.Combine(featureStepFiles, "LoginSteps.cs"), Resources.LoginStepsReqnRoll, mapOfProperties);
-            else
-            {
-            }
+            WriteToFile(Path.Combine(featureStepFiles, "LoginSteps.cs"), Resources.LoginSteps, mapOfProperties);
 
             // Save Configuration & Object Repository Files...
             ObjectRepositoryUtilities.SerializeAsJson(configuration.RepositoryPath, new ObjectRepository());

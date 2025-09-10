@@ -1,8 +1,7 @@
-﻿using BoDi;
+﻿using Reqnroll;
+using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
-using TechTalk.SpecFlow;
-using TechTalk.SpecFlow.Infrastructure;
 
 namespace $Company$.$Project$.Web.API.Tests
 {
@@ -11,16 +10,16 @@ namespace $Company$.$Project$.Web.API.Tests
     {
         private readonly FeatureContext featureContext;
         private readonly ScenarioContext scenarioContext;
-        private readonly ISpecFlowOutputHelper specFlowOutputHelper;
+        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
         private readonly IObjectContainer objectContainer;
 
         private BaseContext baseContext;
 
-        public BaseHooks(FeatureContext featureContext, ScenarioContext scenarioContext, ISpecFlowOutputHelper specFlowOutputHelper, IObjectContainer objectContainer)
+        public BaseHooks(FeatureContext featureContext, ScenarioContext scenarioContext, IReqnrollOutputHelper reqnrollOutputHelper, IObjectContainer objectContainer)
         {
             this.featureContext = featureContext;
             this.scenarioContext = scenarioContext;
-            this.specFlowOutputHelper = specFlowOutputHelper;
+            this.reqnrollOutputHelper = reqnrollOutputHelper;
             this.objectContainer = objectContainer;
         }
 
@@ -48,17 +47,23 @@ namespace $Company$.$Project$.Web.API.Tests
             FinalizeFixture();
 
             if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".log")))
-                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".log");
+            {
+                var attachement = $"TestResults/{GetTestName()}/{GetTestName()}.log";
+                reqnrollOutputHelper.AddAttachmentAsLink(attachement);
+            }
 
             if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".png")))
-                specFlowOutputHelper.AddAttachment(".\\" + GetTestName() + "\\" + GetTestName() + ".png");
+            {
+                var attachement = $"TestResults/{GetTestName()}/{GetTestName()}.png";
+                reqnrollOutputHelper.AddAttachmentAsLink(attachement);
+            }
         }
 
         [BeforeStep]
         public void BeforeStep()
         {
-            logger.InfoFormat("");
-            logger.InfoFormat("// " + scenarioContext.StepContext.StepInfo.StepDefinitionType + " " + scenarioContext.StepContext.StepInfo.Text);
+            logger.Info("");
+            logger.Info($"// {scenarioContext.StepContext.StepInfo.StepDefinitionType} {scenarioContext.StepContext.StepInfo.Text}");
         }
 
         protected override string GetTestId()

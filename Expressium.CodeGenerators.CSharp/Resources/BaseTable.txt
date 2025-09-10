@@ -16,19 +16,19 @@ namespace $Company$.$Project$.Web.API
 
         public virtual int GetNumberOfRows()
         {
-            logger.InfoFormat("GetNumberOfRows()");
+            logger.Info("GetNumberOfRows()");
             return baseLocator.GetChildElements(driver, By.XPath("./tbody/tr")).Count;
         }
 
         public virtual int GetNumberOfColumns()
         {
-            logger.InfoFormat("GetNumberOfColumns()");
+            logger.Info("GetNumberOfColumns()");
             return baseLocator.GetChildElements(driver, By.XPath("./thead/tr/th")).Count;
         }
 
         public virtual void ClickCell(object rowId, object columnId)
         {
-            logger.InfoFormat("ClickCell({0}, {1})", rowId, columnId);
+            logger.Info($"ClickCell({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "//*");
             element.Click(driver);
@@ -36,7 +36,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual void SetCellTextBox(object rowId, object columnId, string value)
         {
-            logger.InfoFormat("SetCellTextBox({0}, {1})", rowId, columnId);
+            logger.Info($"SetCellTextBox({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "//input");
             element.SetTextBox(driver, value);
@@ -44,7 +44,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual string GetCellTextBox(object rowId, object columnId)
         {
-            logger.InfoFormat("GetCellTextBox({0}, {1})", rowId, columnId);
+            logger.Info($"GetCellTextBox({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "//input");
             return element.GetTextBox(driver);
@@ -52,7 +52,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual void SetCellCheckBox(object rowId, object columnId, bool value)
         {
-            logger.InfoFormat("SetCellCheckBox({0}, {1})", rowId, columnId);
+            logger.Info($"SetCellCheckBox({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "//input");
             element.SetCheckBox(driver, value);
@@ -60,7 +60,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual bool GetCellCheckBox(object rowId, object columnId)
         {
-            logger.InfoFormat("GetCellCheckBox({0}, {1})", rowId, columnId);
+            logger.Info($"GetCellCheckBox({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "//input");
             return element.GetCheckBox(driver);
@@ -68,7 +68,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual string GetCellText(object rowId, object columnId)
         {
-            logger.InfoFormat("GetCellText({0}, {1})", rowId, columnId);
+            logger.Info($"GetCellText({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "");
             return element.GetText(driver);
@@ -76,7 +76,7 @@ namespace $Company$.$Project$.Web.API
 
         public virtual void ClickContextMenu(object rowId, object columnId, string menuEntry)
         {
-            logger.InfoFormat("ClickContextMenu({0}, {1})", rowId, columnId);
+            logger.Info($"ClickContextMenu({rowId}, {columnId})");
 
             var element = GetCellElement(rowId, columnId, "");
             element.Click(driver);
