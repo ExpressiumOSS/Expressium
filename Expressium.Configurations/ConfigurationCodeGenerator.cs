@@ -6,7 +6,6 @@ namespace Expressium.Configurations
     {
         public string CodingLanguage { get; set; }
         public string CodingFlavour { get; set; }
-        public string CodingStyle { get; set; }
         public string CustomControlTypes { get; set; }
         public string InitialLoginPage { get; set; }
 
@@ -23,9 +22,6 @@ namespace Expressium.Configurations
 
             if (string.IsNullOrWhiteSpace(CodingFlavour))
                 throw new ArgumentException("The ConfigurationCodeGenerator property 'CodingFlavour' is undefined...");
-
-            if (string.IsNullOrWhiteSpace(CodingStyle))
-                throw new ArgumentException("The ConfigurationCodeGenerator property 'CodingStyle' is undefined...");
         }
     }
 }

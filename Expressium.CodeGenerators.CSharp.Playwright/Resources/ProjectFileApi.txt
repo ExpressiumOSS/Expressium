@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="log4net" Version="3.2.0" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.55.0" />
+		<PackageReference Include="RestSharp" Version="112.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Models\" />
+		<Folder Include="Pages\" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebCheckBox : WebControl
+    {
+        public WebCheckBox(IPage page, ILocator locator) : base(page, locator)
+        {
+        }
+
+        public virtual async Task SetChecked(bool value)
+        {
+            if ((await locator.IsCheckedAsync() == false && value) || (await locator.IsCheckedAsync() == true && !value))
+            {
+                await locator.WaitForElementIsVisible();
+                await locator.HighlightAction(page);
+                await locator.HighlightClear(page);
+                await locator.ClickAsync();
+            }
+        }
+
+        public virtual async Task<bool> GetChecked()
+        {
+            await locator.WaitForElementIsVisible();
+            await locator.HighlightValidation(page);
+            return await locator.IsCheckedAsync();
+        }
+    }
+}

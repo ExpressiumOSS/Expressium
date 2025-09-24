@@ -1,0 +1,289 @@
+using log4net;
+using Microsoft.Playwright;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class BaseTestFixture
+    {
+        protected readonly Configuration configuration;
+        protected readonly BrowserManager browserManager;
+
+        protected ILog logger;
+        protected Asserts Asserts;
+
+        protected IPage page => browserManager.Driver;
+
+        public BaseTestFixture()
+        {
+            configuration = Configuration.GetCurrentConfiguation();
+            browserManager = new BrowserManager(configuration);
+        }
+
+        [OneTimeSetUp]
+        protected virtual void InitializeFixture()
+        {
+            if (configuration.Logging)
+            {
+                if (string.IsNullOrWhiteSpace(configuration.LoggingPath))
+                    throw new ArgumentException("Property LoggingPath is undefined...");
+
+                configuration.LoggingPath = Path.Combine(configuration.LoggingPath, GetTestName());
+                if (Directory.Exists(configuration.LoggingPath))
+                    Directory.Delete(configuration.LoggingPath, true);
+                Directory.CreateDirectory(configuration.LoggingPath);
+
+                var loggingFilePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".log");
+                logger = Logger.Initialize(GetTestName(), loggingFilePath);
+                Asserts = new Asserts(logger);
+            }
+            else
+            {
+                logger = Logger.Initialize(GetTestName());
+                Asserts = new Asserts(logger);
+            }
+
+            logger.Info("");
+            logger.Info("// Initialize Test Fixture");
+            logger.Info($"Company: {configuration.Company}");
+            logger.Info($"Project: {configuration.Project}");
+            logger.Info($"Environment: {configuration.Environment}");
+            logger.Info($"Url: {configuration.Url}");
+            logger.Info($"Name: {GetTestName()}");
+            logger.Info($"Category: {GetTestCategory()}");
+            logger.Info($"Description: {GetTestDescription()}");
+            logger.Info($"Date: {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}");
+        }
+
+        [OneTimeTearDown]
+        protected virtual void FinalizeFixture()
+        {
+            logger.Info("");
+            logger.Info("// Finalize Test Fixture");
+
+            if (browserManager.IsInitialized())
+            {
+                if (configuration.Screenshot)
+                {
+                    var filePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".png");
+                    SaveScreenshot(filePath).Wait();
+                }
+
+                string videoPath = null;
+                if (configuration.Video)
+                    videoPath = page.Video.PathAsync().GetAwaiter().GetResult();
+
+                browserManager.Quit().GetAwaiter().GetResult();
+
+                if (configuration.Video)
+                {
+                    var filePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".webm");
+                    SaveVideo(videoPath, filePath).Wait();
+                }
+            }
+
+            LogMessageAsError(GetTestResultMessage());
+            LogMessageAsDebug(GetTestResultStackTrace());
+
+            logger.Info($"Number of passed tests: {GetTestPassCount()}");
+            logger.Info($"Number of skipped tests: {GetTestSkipCount()}");
+            logger.Info($"Number of inconclusive tests: {GetTestInconclusiveCount()}");
+            logger.Info($"Number of failed tests: {GetTestFailCount()}");
+
+            string statusCode;
+
+            if (GetTestStatus() == TestStatus.Failed.ToString())
+                statusCode = "Testcase has failed during execution...";
+            else if (GetTestStatus() == TestStatus.Inconclusive.ToString())
+                statusCode = "Testcase was inconclusive executed...";
+            else if (GetTestStatus() == TestStatus.Skipped.ToString())
+                statusCode = "Testcase was skipped from execution...";
+            else
+            {
+                statusCode = "Testcase was successfully executed...";
+            }
+
+            logger.Info(statusCode + "\r\n");
+
+            if (configuration.Logging)
+                logger.Logger.Repository.Shutdown();
+        }
+
+        [SetUp]
+        protected virtual void InitializeTest()
+        {
+            logger.Info("");
+            logger.Info($"// {GetTestMethodName()}");
+        }
+
+        [TearDown]
+        protected virtual void FinalizeTest()
+        {
+            if (GetTestStatus() == TestStatus.Failed.ToString())
+            {
+                LogMessageAsError(GetTestResultMessage());
+                LogMessageAsDebug(GetTestResultStackTrace());
+            }
+        }
+
+        protected virtual string GetTestName()
+        {
+            var name = TestContext.CurrentContext.Test.Name;
+            return string.Join("", name.Split(Path.GetInvalidFileNameChars()));
+        }
+
+        protected virtual string GetTestMethodName()
+        {
+            return TestContext.CurrentContext.Test.Name.Replace("_", " ");
+        }
+
+        protected virtual string GetTestCategory()
+        {
+            if (TestContext.CurrentContext.Test.Properties.Keys.Contains("Category"))
+                return TestContext.CurrentContext.Test.Properties.Get("Category").ToString();
+
+            return null;
+        }
+
+        protected virtual string GetTestDescription()
+        {
+            if (TestContext.CurrentContext.Test.Properties.Keys.Contains("Description"))
+                return TestContext.CurrentContext.Test.Properties.Get("Description").ToString();
+
+            return TestContext.CurrentContext.Test.Name;
+        }
+
+        protected virtual string GetTestStatus()
+        {
+            return TestContext.CurrentContext.Result.Outcome.Status.ToString();
+        }
+
+        protected virtual string GetTestResultMessage()
+        {
+            return TestContext.CurrentContext.Result.Message;
+        }
+
+        protected virtual string GetTestResultStackTrace()
+        {
+            return TestContext.CurrentContext.Result.StackTrace;
+        }
+
+        protected virtual int GetTestPassCount()
+        {
+            return TestContext.CurrentContext.Result.PassCount;
+        }
+
+        protected virtual int GetTestSkipCount()
+        {
+            return TestContext.CurrentContext.Result.SkipCount;
+        }
+
+        protected virtual int GetTestInconclusiveCount()
+        {
+            return TestContext.CurrentContext.Result.InconclusiveCount;
+        }
+
+        protected virtual int GetTestFailCount()
+        {
+            return TestContext.CurrentContext.Result.FailCount;
+        }
+
+        private async Task SaveScreenshot(string filePath)
+        {
+            await page.ScreenshotAsync(new()
+            {
+                Path = filePath,
+                FullPage = true,
+            });
+
+            logger.Info($"Screenshot has been saved: {Path.GetFileName(filePath)}");
+        }
+
+        private async Task SaveVideo(string videoPath, string filePath)
+        {
+            await WaitForFileToBeReleased(videoPath);
+            File.Move(videoPath, filePath);
+
+            logger.Info($"Video has been saved: {Path.GetFileName(filePath)}");
+        }
+
+        private void LogMessageAsError(string message)
+        {
+            try
+            {
+                if (message != null)
+                {
+                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    foreach (var line in listOfLines)
+                        logger.Error(line);
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.Error("LogMessageAsError has failed during execution...");
+                logger.Debug(exception.Message);
+            }
+        }
+
+        private void LogMessageAsDebug(string message)
+        {
+            try
+            {
+                if (message != null)
+                {
+                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    foreach (var line in listOfLines)
+                        logger.Debug(line);
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.Error("LogMessageAsDebug has failed during execution...");
+                logger.Debug(exception.Message);
+            }
+        }
+
+        private List<string> GetStringAsListOfLines(string message)
+        {
+            var listOfLines = new List<string>();
+
+            char[] delimiterChars = { '\r', '\n' };
+            List<string> listOfTokens = message.Split(delimiterChars).ToList();
+            foreach (var token in listOfTokens)
+            {
+                string text = token.Trim();
+                if (!string.IsNullOrWhiteSpace(text))
+                    listOfLines.Add(token);
+            }
+
+            return listOfLines;
+        }
+
+        public static async Task WaitForFileToBeReleased(string path, int timeoutSeconds = 30)
+        {
+            DateTime start = DateTime.Now;
+            while ((DateTime.Now - start).TotalSeconds < timeoutSeconds)
+            {
+                try
+                {
+                    using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                    {
+                        return;
+                    }
+                }
+                catch (IOException)
+                {
+                    await Task.Delay(500);
+                }
+            }
+
+            throw new TimeoutException("Timed out waiting for file to be released.");
+        }
+    }
+}

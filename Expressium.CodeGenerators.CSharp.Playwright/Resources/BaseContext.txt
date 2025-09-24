@@ -1,0 +1,13 @@
+﻿using log4net;
+using Microsoft.Playwright;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class BaseContext
+    {
+        public Configuration Configuration { get; set; }
+        public ILog Logger { get; set; }
+        public BrowserManager BrowserManager { get; set; }
+        public Asserts Asserts {  get; set; }
+    }
+}

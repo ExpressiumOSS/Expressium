@@ -1,0 +1,23 @@
+﻿using log4net;
+using Microsoft.Playwright;
+
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+{
+    public class BaseSteps
+    {
+        protected Configuration configuration;
+        protected ILog logger;
+        protected BrowserManager browserManager;
+        protected Asserts Asserts;
+
+        protected IPage page => browserManager.Driver;
+
+        public BaseSteps(BaseContext baseContext)
+        {
+            configuration = baseContext.Configuration;
+            logger = baseContext.Logger;
+            browserManager = baseContext.BrowserManager;
+            Asserts = baseContext.Asserts;
+        }
+    }
+}

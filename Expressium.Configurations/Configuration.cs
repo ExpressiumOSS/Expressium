@@ -12,6 +12,7 @@ namespace Expressium.Configurations
         public string SolutionPath { get; set; }
         public string ConfigurationPath { get { return Path.Combine(SolutionPath, $"{Company}{Project}.cfg"); } }
         public string RepositoryPath { get { return Path.Combine(SolutionPath, $"{Company}{Project}.repo"); } }
+        public string EnrollerPatternsPath { get; set; }
 
         public ConfigurationCodeGenerator CodeGenerator { get; set; }
         public ConfigurationEnroller Enroller { get; set; }

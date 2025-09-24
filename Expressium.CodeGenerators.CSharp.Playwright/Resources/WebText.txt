@@ -1,0 +1,19 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebText : WebControl
+    {
+        public WebText(IPage page, ILocator locator) : base(page, locator)
+        {
+        }
+
+        public async Task<string> GetText()
+        {
+            await locator.WaitForElementIsVisible();
+            await locator.HighlightValidation(page);
+            return await locator.InnerTextAsync();
+        }
+    }
+}

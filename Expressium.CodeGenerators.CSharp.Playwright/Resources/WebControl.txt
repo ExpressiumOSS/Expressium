@@ -1,0 +1,28 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebControl
+    {
+        protected IPage page;
+        protected ILocator locator;
+        protected ILocator childLocator;
+
+        public WebControl(IPage driver, ILocator locator)
+        {
+            this.page = driver;
+            this.locator = locator;
+        }
+
+        public void WaitForPageElementIsVisible()
+        {
+            locator.WaitForElementIsVisible().GetAwaiter().GetResult();
+        }
+
+        public void WaitForPageElementIsEnabled()
+        {
+            locator.WaitForElementIsEnabled().GetAwaiter().GetResult();
+        }
+    }
+}

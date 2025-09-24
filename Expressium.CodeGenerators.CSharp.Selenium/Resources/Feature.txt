@@ -1,0 +1,10 @@
+﻿@TC-1000 @Login @BusinessTests
+Feature: Login
+	As a User
+	I want to login on the web application
+	So that I can administrate my product orders
+
+@TC-1001 @Review
+Scenario: Successful User Login with Valid Credentials
+	Given I have logged in with valid user credentials
+	Then I should be redirected to the Home page

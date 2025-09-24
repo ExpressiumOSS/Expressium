@@ -8,12 +8,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-		<PackageReference Include="NUnit" Version="4.3.2" />
-		<PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+		<PackageReference Include="NUnit" Version="4.4.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Expressium.CodeGenerators.CSharp\Expressium.CodeGenerators.CSharp.csproj" />
+		<ProjectReference Include="..\Expressium.CodeGenerators.CSharp.Playwright\Expressium.CodeGenerators.CSharp.Playwright.csproj" />
+		<ProjectReference Include="..\Expressium.CodeGenerators.CSharp.Selenium\Expressium.CodeGenerators.CSharp.Selenium.csproj" />
 		<ProjectReference Include="..\Expressium.CodeGenerators\Expressium.CodeGenerators.csproj" />
 	</ItemGroup>
 

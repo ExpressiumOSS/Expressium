@@ -74,7 +74,6 @@ namespace Expressium.Configurations.UnitTests
             configuration.SolutionPath = directory;
             configuration.CodeGenerator.CodingLanguage = "CSharp";
             configuration.CodeGenerator.CodingFlavour = "Selenium";
-            configuration.CodeGenerator.CodingStyle = "ByControls";
 
             return configuration;
         }

@@ -1,0 +1,134 @@
+﻿using Microsoft.Playwright;
+using System;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class BrowserFactory
+    {
+        public enum BrowserTypes
+        {
+            Chrome,
+            Firefox,
+            Edge,
+            Webkit
+        }
+
+        public static async Task<IPage> Initialize(Configuration configuration)
+        {
+            var playwright = await Playwright.CreateAsync();
+            var browser = await GetBrowser(playwright, configuration);
+            var context = await GetBrowserContext(browser, configuration);
+
+            var page = await context.NewPageAsync();
+            page.SetDefaultTimeout(configuration.PageTimeOut);
+
+            if (configuration.Url != null)
+                await page.GotoAsync(configuration.Url);
+
+            return page;
+        }
+
+        private static async Task<IBrowser> GetBrowser(IPlaywright playwright, Configuration configuration)
+        {
+            if (configuration.BrowserType.Equals(BrowserTypes.Chrome.ToString()))
+            {
+                return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
+            }
+            else if (configuration.BrowserType.Equals(BrowserTypes.Firefox.ToString()))
+            {
+                return await playwright.Firefox.LaunchAsync(GetBrowserContextOptions(configuration));
+            }
+            else if (configuration.BrowserType.Equals(BrowserTypes.Edge.ToString()))
+            {
+                return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
+            }
+            else if (configuration.BrowserType.Equals(BrowserTypes.Webkit.ToString()))
+            {
+                return await playwright.Webkit.LaunchAsync(GetBrowserContextOptions(configuration));
+            }
+            else
+            {
+                throw new ArgumentException("Invalid configuration Browser Type...");
+            }
+        }
+
+        private static async Task<IBrowserContext> GetBrowserContext(IBrowser browser, Configuration configuration)
+        {
+            if (configuration.Video)
+            {
+                if (configuration.Headless)
+                {
+                    var context = await browser.NewContextAsync(new BrowserNewContextOptions
+                    {
+                        ViewportSize = new ViewportSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight },
+                        RecordVideoDir = configuration.LoggingPath,
+                        RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
+                    });
+
+                    return context;
+                }
+                else
+                {
+                    var context = await browser.NewContextAsync(new BrowserNewContextOptions
+                    {
+                        ViewportSize = ViewportSize.NoViewport,
+                        RecordVideoDir = configuration.LoggingPath,
+                        RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
+                    });
+
+                    return context;
+                }
+            }
+            else
+            {
+                var context = await browser.NewContextAsync(new BrowserNewContextOptions
+                {
+                    ViewportSize = ViewportSize.NoViewport
+                });
+
+                return context;
+            }
+        }
+
+        private static BrowserTypeLaunchOptions GetBrowserContextOptions(Configuration configuration)
+        {
+            if (configuration.Maximize)
+            {
+                return new BrowserTypeLaunchOptions
+                {
+                    Headless = configuration.Headless,
+                    Timeout = configuration.BrowserTimeOut,
+                    Channel = GetBrowserContextOptionsChannel(configuration),
+                    Args = new[] { "--start-maximized" }
+                };
+            }
+            else
+            {
+                return new BrowserTypeLaunchOptions
+                {
+                    Headless = configuration.Headless,
+                    Timeout = configuration.BrowserTimeOut,
+                    Channel = GetBrowserContextOptionsChannel(configuration),
+                };
+            }
+        }
+
+        private static string GetBrowserContextOptionsChannel(Configuration configuration)
+        {
+            if (configuration.BrowserType == BrowserTypes.Chrome.ToString())
+                return "chrome";
+            else if (configuration.BrowserType == BrowserTypes.Firefox.ToString())
+                return "firefox";
+            else if (configuration.BrowserType == BrowserTypes.Edge.ToString())
+                return "msedge";
+            else if (configuration.BrowserType == BrowserTypes.Webkit.ToString())
+                return "webkit";
+            else
+            {
+            }
+
+            return null;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+﻿{
+  "Profiles": {
+    "Development": {
+      "Company": "$Company$",
+      "Project": "$Project$",
+      "Environment": "Development",
+      "Url": "$Url$",
+      "Username": "john.doe@microsoft.com",
+      "Password": "1234567890",
+      "Logging": true,
+      "LoggingPath": ".\\TestResults",
+      "BrowserType": "$BrowserType$",
+      "Maximize": true,
+      "Headless": false,
+      "WindowSize": false,
+      "WindowWidth": 1920,
+      "WindowHeight": 1080,
+      "BrowserTimeOut": 10000,
+      "PageTimeOut": 5000,
+      "Highlight": true,
+      "HighlightTimeOut": 150,
+      "Screenshot": true,
+      "Video": false
+    }
+  }
+}

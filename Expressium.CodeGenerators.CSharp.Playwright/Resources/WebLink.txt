@@ -1,0 +1,12 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebLink : WebButton
+    {
+        public WebLink(IPage page, ILocator locator) : base(page, locator)
+        {
+        }
+    }
+}

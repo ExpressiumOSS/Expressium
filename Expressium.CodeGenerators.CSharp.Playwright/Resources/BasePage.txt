@@ -1,0 +1,144 @@
+using log4net;
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+using System;
+using $Company$.$Project$.Web.API.Controls;
+
+namespace $Company$.$Project$.Web.API
+{
+    public class BasePage
+    {
+        protected ILog logger;
+        protected IPage page;
+
+        public static int PageReadyStateTimeOut { get; set; }
+
+        public static string PageSpinnerSelector { get; set; }
+        public static int PageSpinnerInitialTimeOut { get; set; }
+        public static int PageSpinnerTimeOut { get; set; }
+
+        static BasePage()
+        {
+            PageReadyStateTimeOut = 10000;
+
+            PageSpinnerSelector = null;
+            PageSpinnerInitialTimeOut = 150;
+            PageSpinnerTimeOut = 10000;
+        }
+
+        public BasePage(ILog logger, IPage page)
+        {
+            this.logger = logger;
+            this.page = page;
+
+            WaitForPageDocumentReadyStateEqualsComplete();
+            WaitForPageSpinnerIsCompleted();
+        }
+
+        public async Task<string> GetTitle()
+        {
+            logger.Info("GetTitle()");
+            return await page.TitleAsync();
+        }
+
+        public string GetURL()
+        {
+            logger.Info("GetURL()");
+            return new Uri(page.Url).LocalPath;
+        }
+
+        protected void WaitForPageDocumentReadyStateEqualsComplete()
+        {
+            page.WaitForLoadStateAsync(LoadState.DOMContentLoaded, new() { Timeout = PageReadyStateTimeOut }).GetAwaiter().GetResult();
+        }
+
+        protected void WaitForPageSpinnerIsCompleted()
+        {
+            if (PageSpinnerSelector != null)
+            {
+                System.Threading.Thread.Sleep(PageSpinnerInitialTimeOut);
+                page.Locator(PageSpinnerSelector).WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = PageSpinnerTimeOut }).GetAwaiter().GetResult();
+            }
+        }
+
+        protected void WaitForPageTitleEquals(string title)
+        {
+            page.WaitForFunctionAsync($"() => document.title === '{title}'").GetAwaiter().GetResult();
+        }
+
+        protected void WaitForPageTitleContains(string title)
+        {
+        }
+
+        protected void WaitForPageUrlEquals(string urlPath)
+        {
+        }
+
+        protected void WaitForPageUrlContains(string urlPath)
+        {
+        }
+
+        protected void WaitForPageElementIsVisible(WebControl control)
+        {
+            control.WaitForPageElementIsVisible();
+        }
+
+        protected void WaitForPageElementIsEnabled(WebControl control)
+        {
+            control.WaitForPageElementIsEnabled();
+        }
+
+        public async Task NavigateBack()
+        {
+            logger.Info("NavigateBack()");
+            await page.GoBackAsync();
+        }
+
+        public async Task NavigateForward()
+        {
+            logger.Info("NavigateForward()");
+            await page.GoForwardAsync();
+        }
+
+        public async Task NavigateRefresh()
+        {
+            logger.Info("NavigateRefresh()");
+            await page.ReloadAsync();
+        }
+
+        public async Task ScrollToTop()
+        {
+            logger.Info("ScrollToTop()");
+            await page.EvaluateAsync("window.scrollTo(0, 0);");
+        }
+
+        public async Task ScrollToBottom()
+        {
+            logger.Info("ScrollToBottom()");
+            await page.EvaluateAsync("window.scrollTo(0, document.body.scrollHeight);");
+        }
+
+        public void SwitchToAlertAccept()
+        {
+        }
+
+        public void SwitchToAlertDismiss()
+        {
+        }
+
+        public int GetNumberOfBrowserTabs()
+        {
+            int count = page.Context.Pages.Count;
+            logger.Info($"GetNumberOfBrowserTabs() [{count}]");
+            return count;
+        }
+
+        public void WaitForNewBrowserTabIsOpened(int currentTabCount)
+        {
+        }
+
+        public void SelectBrowserTab(int index)
+        {
+        }
+    }
+}

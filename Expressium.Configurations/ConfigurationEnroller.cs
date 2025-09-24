@@ -18,6 +18,7 @@ namespace Expressium.Configurations
         public bool PrependControlsLocator { get; set; }
         public bool MergeExistingControls { get; set; }
         public bool AppendNameSynchronizer { get; set; }
+        public string LocatorStrategy { get; set; } 
 
         public List<ConfigurationEnrollerAction> Actions { get; set; }
 

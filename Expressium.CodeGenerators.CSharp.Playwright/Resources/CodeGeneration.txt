@@ -1,0 +1,3 @@
+﻿@echo off
+cd /d ".\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { .\playwright.ps1 codegen $Url$ }"

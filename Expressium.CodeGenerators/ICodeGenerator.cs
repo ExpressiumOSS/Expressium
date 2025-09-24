@@ -18,6 +18,5 @@ namespace Expressium.CodeGenerators
 
         public List<string> GetCodingLanguages();
         public List<string> GetCodingFlavours();
-        public List<string> GetCodingStyles();
     }
 }

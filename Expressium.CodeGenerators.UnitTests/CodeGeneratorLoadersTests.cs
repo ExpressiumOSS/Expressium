@@ -27,14 +27,7 @@ namespace Expressium.CodeGenerators.UnitTests
         public void CodeGeneratorLoaders_GetCodeGenerator_GetCodingFlavours()
         {
             var configuration = GetConfiguration();
-            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingFlavours(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(1), "CodeGeneratorLoaders GetCodeGeneratorsCodingFlavours validation");
-        }
-
-        [Test]
-        public void CodeGeneratorLoaders_GetCodeGenerator_GetCodingStyles()
-        {
-            var configuration = GetConfiguration();
-            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingStyles(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(2), "CodeGeneratorLoaders GetCodeGeneratorsCodingStyles validation");
+            Assert.That(CodeGeneratorLoaders.GetCodeGeneratorsCodingFlavours(configuration.CodeGenerator.CodingLanguage).Count, Is.EqualTo(2), "CodeGeneratorLoaders GetCodeGeneratorsCodingFlavours validation");
         }
 
         private Configuration GetConfiguration()
@@ -46,7 +39,6 @@ namespace Expressium.CodeGenerators.UnitTests
             configuration.SolutionPath = Environment.GetEnvironmentVariable("TEMP");
             configuration.CodeGenerator.CodingLanguage = "CSharp";
             configuration.CodeGenerator.CodingFlavour = "Selenium";
-            configuration.CodeGenerator.CodingStyle = "ByControls";
 
             return configuration;
         }

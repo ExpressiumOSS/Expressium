@@ -1,0 +1,89 @@
+using $Company$.$Project$.Web.API.Controls;
+using log4net;
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API
+{
+    public class BaseTable : BasePage
+    {
+        protected WebTable baseControl;
+
+        public BaseTable(ILog logger, IPage page, ILocator baseLocator) : base(logger, page)
+        {
+            baseControl = new WebTable(page, baseLocator);
+        }
+
+        public virtual async Task<int> GetNumberOfRows()
+        {
+            logger.Info("GetNumberOfRows()");
+            return await baseControl.GetNumberOfRows();
+        }
+
+        public virtual async Task<int> GetNumberOfColumns()
+        {
+            logger.Info("GetNumberOfColumns()");
+            return await baseControl.GetNumberOfColumns();
+        }
+
+        public virtual async Task ClickCell(object rowId, object columnId)
+        {
+            logger.Info($"ClickCell({rowId}, {columnId})");
+            await baseControl.ClickCell(rowId, columnId);
+        }
+
+        public virtual async Task SetCellTextBox(object rowId, object columnId, string value)
+        {
+            logger.Info($"SetCellTextBox({rowId}, {columnId})");
+            await baseControl.SetCellTextBox(rowId, columnId, value);
+        }
+
+        public virtual async Task<string> GetCellTextBox(object rowId, object columnId)
+        {
+            logger.Info($"GetCellTextBox({rowId}, {columnId})");
+            return await baseControl.GetCellTextBox(rowId, columnId);
+        }
+
+        public virtual async Task SetCellCheckBox(object rowId, object columnId, bool value)
+        {
+            logger.Info($"SetCellCheckBox({rowId}, {columnId})");
+            await baseControl.SetCellCheckBox(rowId, columnId, value);
+        }
+
+        public virtual async Task<bool> GetCellCheckBox(object rowId, object columnId)
+        {
+            logger.Info($"GetCellCheckBox({rowId}, {columnId})");
+            return await baseControl.GetCellCheckBox(rowId, columnId);
+        }
+
+        public virtual async Task SetCellRadioButton(object rowId, object columnId, bool value)
+        {
+            logger.Info($"SetCellRadioButton({rowId}, {columnId})");
+            await baseControl.SetCellRadioButton(rowId, columnId, value);
+        }
+
+        public virtual async Task<bool> GetCellRadioButton(object rowId, object columnId)
+        {
+            logger.Info($"GetCellRadioButton({rowId}, {columnId})");
+            return await baseControl.GetCellRadioButton(rowId, columnId);
+        }
+
+        public virtual async Task<string> GetCellText(object rowId, object columnId)
+        {
+            logger.Info($"GetCellText({rowId}, {columnId})");
+            return await baseControl.GetCellText(rowId, columnId);
+        }
+
+        //public virtual async Task<string> GetCellText(string cellText)
+        //{
+        //    logger.Info($"GetCellText({cellText})");
+        //    return await baseControl.GetCellText(cellText);
+        //}
+
+        public virtual async Task ClickContextMenu(object rowId, object columnId, string menuEntry)
+        {
+            logger.Info($"ClickContextMenu({rowId}, {columnId})");
+            await baseControl.ClickContextMenu(rowId, columnId, menuEntry);
+        }
+    }
+}

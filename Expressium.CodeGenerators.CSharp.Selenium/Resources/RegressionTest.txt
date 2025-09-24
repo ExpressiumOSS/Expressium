@@ -1,0 +1,11 @@
+﻿echo Runnning Regression Test...
+
+set PROFILE=Development
+
+rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0\TestResults
+
+dotnet nuget
+dotnet build
+
+dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory="UITests"
+dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory="BusinessTests"

@@ -1,0 +1,98 @@
+﻿using Reqnroll;
+using Reqnroll.BoDi;
+using System.IO;
+using System.Text.RegularExpressions;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    [Binding]
+    public class BaseHooks : BaseTest
+    {
+        private readonly FeatureContext featureContext;
+        private readonly ScenarioContext scenarioContext;
+        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
+        private readonly IObjectContainer objectContainer;
+
+        private BaseContext baseContext;
+
+        public BaseHooks(FeatureContext featureContext, ScenarioContext scenarioContext, IReqnrollOutputHelper reqnrollOutputHelper, IObjectContainer objectContainer)
+        {
+            this.featureContext = featureContext;
+            this.scenarioContext = scenarioContext;
+            this.reqnrollOutputHelper = reqnrollOutputHelper;
+            this.objectContainer = objectContainer;
+        }
+
+        [BeforeScenario]
+        public void BeforeScenario()
+        {
+            InitializeFixture();
+
+            logger.Info("// Initialize Testcase");
+            InitializeDependencyInjection();
+        }
+
+        private void InitializeDependencyInjection()
+        {
+            baseContext = new BaseContext();
+            baseContext.Configuration = configuration;
+            baseContext.Logger = logger;
+            baseContext.BrowserManager = browserManager;
+            baseContext.Asserts = Asserts;
+
+            objectContainer.RegisterInstanceAs(baseContext);
+        }
+
+        [AfterScenario]
+        public void AfterScenario()
+        {
+            if (configuration.Logging)
+                reqnrollOutputHelper.AddAttachmentAsLink("TestResults\\" + GetTestName() + "\\" + GetTestName() + ".log");
+
+            if (configuration.Screenshot)
+                reqnrollOutputHelper.AddAttachmentAsLink("TestResults\\" + GetTestName() + "\\" + GetTestName() + ".png");
+
+            if (configuration.Video)
+                reqnrollOutputHelper.AddAttachmentAsLink("TestResults\\" + GetTestName() + "\\" + GetTestName() + ".webm");
+
+            FinalizeFixture();
+        }
+
+        [BeforeStep]
+        public void BeforeStep()
+        {
+            logger.Info("");
+            logger.Info($"// {scenarioContext.StepContext.StepInfo.StepDefinitionType} {scenarioContext.StepContext.StepInfo.Text}");
+        }
+
+        [AfterStep]
+        public void AfterStep()
+        {
+        }
+
+        protected override string GetTestName()
+        {
+            var name = scenarioContext.ScenarioInfo.Title;
+
+            if (scenarioContext.ScenarioInfo.Arguments.Count > 0)
+            {
+                var arguments = scenarioContext.ScenarioInfo.Arguments.Values;
+                foreach (var argument in arguments)
+                    name += " " + argument;
+            }
+
+            name = string.Join("", name.Split(Path.GetInvalidFileNameChars()));
+            return Regex.Replace(name, @"^\w| \w", (match) => match.Value.Replace(" ", "").ToUpper());
+        }
+
+        protected override string GetTestCategory()
+        {
+            return "ReqnRoll";
+        }
+
+        protected override string GetTestDescription()
+        {
+            return scenarioContext.ScenarioInfo.Title;
+        }
+    }
+}

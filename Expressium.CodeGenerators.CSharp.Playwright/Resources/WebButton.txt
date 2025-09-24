@@ -1,0 +1,20 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebButton : WebControl
+    {
+        public WebButton(IPage page, ILocator locator) : base(page, locator)
+        {
+        }
+
+        public virtual async Task Click()
+        {
+            await locator.WaitForElementIsVisible();
+            await locator.HighlightAction(page);
+            await locator.HighlightClear(page);
+            await locator.ClickAsync();
+        }
+    }
+}

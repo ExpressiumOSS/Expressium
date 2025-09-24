@@ -1,0 +1,43 @@
+﻿using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class BrowserManager
+    {
+        private Configuration configuration;
+        private IPage page;
+
+        public BrowserManager(Configuration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        public IPage Driver
+        {
+            get
+            {
+                if (page == null)
+                {
+                    page = BrowserFactory.Initialize(configuration).GetAwaiter().GetResult();
+                }
+
+                return page;
+            }
+        }
+
+        public bool IsInitialized()
+        {
+            return page != null;
+        }
+
+        public async Task Quit()
+        {
+            if (page != null)
+            {
+                await page.CloseAsync();
+                page = null;
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Company$.$Project$.Web.API.Controls
+{
+    public class WebComboBox : WebControl
+    {
+        public WebComboBox(IPage page, ILocator locator) : base(page, locator)
+        {
+        }
+
+        public virtual async Task SetText(string value)
+        {
+            if (value == null)
+                return;
+
+            await locator.WaitForElementIsVisible();
+            await locator.HighlightAction(page);
+            await locator.SelectOptionAsync(value);
+            await locator.HighlightClear(page);
+        }
+
+        public virtual async Task<string> GetSelected()
+        {
+            await locator.WaitForElementIsVisible();
+            await locator.HighlightValidation(page);
+            return await locator.InputValueAsync();
+        }
+    }
+}

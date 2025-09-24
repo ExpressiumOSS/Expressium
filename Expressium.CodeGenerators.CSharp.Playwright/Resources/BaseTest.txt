@@ -1,0 +1,34 @@
+﻿using NUnit.Framework;
+using System.Threading.Tasks;
+using System;
+
+namespace $Company$.$Project$.Web.API.Tests
+{
+    public class BaseTest : BaseTestFixture
+    {
+        [OneTimeSetUp]
+        protected void InitializeTestcase()
+        {
+            logger.Info("");
+            logger.Info("// Initialize Testcase");
+        }
+
+        public async Task InitializeBrowser()
+        {
+        }
+
+        public async Task InitializeBrowserWithLogin()
+        {
+            await InitializeBrowser();
+
+            throw new ApplicationException("Implementation of InitializeBrowserWithLogin is missing...");
+
+            // TODO - Implement potential missing login sequence...
+
+            // var loginPage = new LoginPage(logger, driver);
+            // await loginPage.SetUsername(configuration.Username);
+            // await loginPage.SetPassword(configuration.Password);
+            // await loginPage.ClickLogin();
+        }
+    }
+}
