@@ -49,67 +49,41 @@ namespace $Company$.$Project$.Web.API
         public static void HighlightAction(this IWebElement element, IWebDriver driver)
         {
             if (Highlight)
-            {
-                try
-                {
-                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetDomProperty("style");
-                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightActionColor}; outline-offset: -1px;";
-                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
-                }
-                catch
-                {
-                }
-            }
+                HighlightElement(element, driver, HighlightWidth, HighlightStyle, HighlightActionColor);
         }
 
         public static void HighlightValidation(this IWebElement element, IWebDriver driver)
         {
             if (Highlight)
-            {
-                try
-                {
-                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetDomProperty("style");
-                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightValidationColor}; outline-offset: -1px;";
-                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
-                }
-                catch
-                {
-                }
-            }
+                HighlightElement(element, driver, HighlightWidth, HighlightStyle, HighlightValidationColor);
         }
 
         public static void HighlightFailure(this IWebElement element, IWebDriver driver)
         {
             if (Highlight)
-            {
-                try
-                {
-                    var javaScriptExecuter = (IJavaScriptExecutor)driver;
-                    var attribute = element.GetDomProperty("style");
-                    attribute += $"; outline: {HighlightWidth}px {HighlightStyle} {HighlightFailureColor}; outline-offset: -1px;";
-                    javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
-                }
-                catch
-                {
-                }
-            }
+                HighlightElement(element, driver, HighlightWidth, HighlightStyle, HighlightFailureColor);
         }
 
         public static void HighlightClear(this IWebElement element, IWebDriver driver)
         {
             if (Highlight)
             {
-                try
-                {
-                    Thread.Sleep(HighlightTimeOut);
-                    var javaScriptExecutor = (IJavaScriptExecutor)driver;
-                    javaScriptExecutor.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "");
-                }
-                catch
-                {
-                }
+                Thread.Sleep(HighlightTimeOut);
+                HighlightElement(element, driver, 0, HighlightStyle, HighlightFailureColor);
+            }
+        }
+
+        private static void HighlightElement(this IWebElement element, IWebDriver driver, int width, string style, string color)
+        {
+            try
+            {
+                var javaScriptExecuter = (IJavaScriptExecutor)driver;
+                var attribute = element.GetDomProperty("style");
+                attribute += $"; outline: {width}px {style} {color}; outline-offset: -1px;";
+                javaScriptExecuter.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, attribute);
+            }
+            catch
+            {
             }
         }
 

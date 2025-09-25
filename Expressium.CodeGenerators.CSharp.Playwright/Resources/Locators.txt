@@ -52,8 +52,11 @@ namespace $Company$.$Project$.Web.API
 
         public static async Task HighlightClear(this ILocator locator, IPage page)
         {
-            Thread.Sleep(HighlightTimeOut);
-            await locator.HighlightLocator(page, 0, HighlightStyle, HighlightActionColor);
+            if (Highlight)
+            {
+                Thread.Sleep(HighlightTimeOut);
+                await locator.HighlightLocator(page, 0, HighlightStyle, HighlightActionColor);
+            }
         }
 
         private static async Task HighlightLocator(this ILocator locator, IPage page, int width, string style, string color)
