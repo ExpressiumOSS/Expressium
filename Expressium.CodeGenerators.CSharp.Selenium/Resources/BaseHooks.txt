@@ -46,16 +46,16 @@ namespace $Company$.$Project$.Web.API.Tests
         {
             FinalizeFixture();
 
-            if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".log")))
+            if (configuration.Loggings)
             {
-                var attachement = $"TestResults/{GetTestName()}/{GetTestName()}.log";
-                reqnrollOutputHelper.AddAttachmentAsLink(attachement);
+                var fileName = Path.Combine(Folders.Loggings.ToString(), GetTestName() + ".log");
+                reqnrollOutputHelper.AddAttachmentAsLink(fileName);
             }
 
-            if (File.Exists(Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".png")))
+            if (configuration.Screenshots)
             {
-                var attachement = $"TestResults/{GetTestName()}/{GetTestName()}.png";
-                reqnrollOutputHelper.AddAttachmentAsLink(attachement);
+                var fileName = Path.Combine(Folders.Screenshots.ToString(), GetTestName() + ".png");
+                reqnrollOutputHelper.AddAttachmentAsLink(fileName);
             }
         }
 
@@ -74,7 +74,7 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 var arguments = scenarioContext.ScenarioInfo.Arguments.Values;
                 foreach (var argument in arguments)
-                    name += " " + argument;
+                    name += argument;
             }
 
             name = string.Join("", name.Split(Path.GetInvalidFileNameChars()));
@@ -83,12 +83,21 @@ namespace $Company$.$Project$.Web.API.Tests
 
         protected override string GetTestCategory()
         {
-            return "ReqnRoll";
+            return featureContext.FeatureInfo.Title;
         }
 
         protected override string GetTestDescription()
         {
-            return scenarioContext.ScenarioInfo.Title;
+            var name = scenarioContext.ScenarioInfo.Title;
+
+            if (scenarioContext.ScenarioInfo.Arguments.Count > 0)
+            {
+                var arguments = scenarioContext.ScenarioInfo.Arguments.Values;
+                foreach (var argument in arguments)
+                    name += " " + argument;
+            }
+
+            return name;
         }
     }
 }

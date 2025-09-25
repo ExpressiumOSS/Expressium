@@ -4,11 +4,12 @@
       "Company": "$Company$",
       "Project": "$Project$",
       "Environment": "Development",
+      "Loggings": true,
+      "Screenshots": true,
+      "Videos": true,
       "Url": "$Url$",
       "Username": "john.doe@microsoft.com",
       "Password": "1234567890",
-      "Logging": true,
-      "LoggingPath": ".\\TestResults",
       "BrowserType": "$BrowserType$",
       "Maximize": true,
       "Headless": false,
@@ -18,9 +19,7 @@
       "BrowserTimeOut": 10000,
       "PageTimeOut": 5000,
       "Highlight": true,
-      "HighlightTimeOut": 150,
-      "Screenshot": true,
-      "Video": false
+      "HighlightTimeOut": 150
     }
   }
 }

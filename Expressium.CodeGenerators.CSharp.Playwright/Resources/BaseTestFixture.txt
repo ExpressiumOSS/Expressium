@@ -29,24 +29,33 @@ namespace $Company$.$Project$.Web.API.Tests
         [OneTimeSetUp]
         protected virtual void InitializeFixture()
         {
-            if (configuration.Logging)
+            if (configuration.Loggings)
             {
-                if (string.IsNullOrWhiteSpace(configuration.LoggingPath))
-                    throw new ArgumentException("Property LoggingPath is undefined...");
+                var filePath = Path.Combine(configuration.LoggingsPath, GetTestName() + ".log");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
 
-                configuration.LoggingPath = Path.Combine(configuration.LoggingPath, GetTestName());
-                if (Directory.Exists(configuration.LoggingPath))
-                    Directory.Delete(configuration.LoggingPath, true);
-                Directory.CreateDirectory(configuration.LoggingPath);
-
-                var loggingFilePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".log");
-                logger = Logger.Initialize(GetTestName(), loggingFilePath);
+                logger = Logger.Initialize(GetTestName(), filePath);
                 Asserts = new Asserts(logger);
             }
             else
             {
                 logger = Logger.Initialize(GetTestName());
                 Asserts = new Asserts(logger);
+            }
+
+            if (configuration.Screenshots)
+            {
+                var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
+
+            if (configuration.Videos)
+            {
+                var filePath = Path.Combine(configuration.VideosPath, GetTestName() + ".webm");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
             }
 
             logger.Info("");
@@ -69,21 +78,21 @@ namespace $Company$.$Project$.Web.API.Tests
 
             if (browserManager.IsInitialized())
             {
-                if (configuration.Screenshot)
+                if (configuration.Screenshots)
                 {
-                    var filePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".png");
+                    var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
                     SaveScreenshot(filePath).Wait();
                 }
 
                 string videoPath = null;
-                if (configuration.Video)
+                if (configuration.Videos)
                     videoPath = page.Video.PathAsync().GetAwaiter().GetResult();
 
                 browserManager.Quit().GetAwaiter().GetResult();
 
-                if (configuration.Video)
+                if (configuration.Videos)
                 {
-                    var filePath = Path.Combine(configuration.LoggingPath, GetTestName() + ".webm");
+                    var filePath = Path.Combine(configuration.VideosPath, GetTestName() + ".webm");
                     SaveVideo(videoPath, filePath).Wait();
                 }
             }
@@ -111,7 +120,7 @@ namespace $Company$.$Project$.Web.API.Tests
 
             logger.Info(statusCode + "\r\n");
 
-            if (configuration.Logging)
+            if (configuration.Loggings)
                 logger.Logger.Repository.Shutdown();
         }
 
@@ -134,7 +143,7 @@ namespace $Company$.$Project$.Web.API.Tests
 
         protected virtual string GetTestName()
         {
-            var name = TestContext.CurrentContext.Test.Name;
+            var name = TestContext.CurrentContext.Test.Name.Replace(" ", "");
             return string.Join("", name.Split(Path.GetInvalidFileNameChars()));
         }
 
@@ -219,7 +228,7 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 if (message != null)
                 {
-                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    var listOfLines = GetStringAsListOfLines(message);
                     foreach (var line in listOfLines)
                         logger.Error(line);
                 }
@@ -237,7 +246,7 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 if (message != null)
                 {
-                    List<string> listOfLines = GetStringAsListOfLines(message);
+                    var listOfLines = GetStringAsListOfLines(message);
                     foreach (var line in listOfLines)
                         logger.Debug(line);
                 }
@@ -254,7 +263,7 @@ namespace $Company$.$Project$.Web.API.Tests
             var listOfLines = new List<string>();
 
             char[] delimiterChars = { '\r', '\n' };
-            List<string> listOfTokens = message.Split(delimiterChars).ToList();
+            var listOfTokens = message.Split(delimiterChars).ToList();
             foreach (var token in listOfTokens)
             {
                 string text = token.Trim();

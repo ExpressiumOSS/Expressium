@@ -32,21 +32,13 @@ namespace $Company$.$Project$.Web.API.Tests
         private static async Task<IBrowser> GetBrowser(IPlaywright playwright, Configuration configuration)
         {
             if (configuration.BrowserType.Equals(BrowserTypes.Chrome.ToString()))
-            {
                 return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
-            }
             else if (configuration.BrowserType.Equals(BrowserTypes.Firefox.ToString()))
-            {
                 return await playwright.Firefox.LaunchAsync(GetBrowserContextOptions(configuration));
-            }
             else if (configuration.BrowserType.Equals(BrowserTypes.Edge.ToString()))
-            {
                 return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
-            }
             else if (configuration.BrowserType.Equals(BrowserTypes.Webkit.ToString()))
-            {
                 return await playwright.Webkit.LaunchAsync(GetBrowserContextOptions(configuration));
-            }
             else
             {
                 throw new ArgumentException("Invalid configuration Browser Type...");
@@ -55,14 +47,14 @@ namespace $Company$.$Project$.Web.API.Tests
 
         private static async Task<IBrowserContext> GetBrowserContext(IBrowser browser, Configuration configuration)
         {
-            if (configuration.Video)
+            if (configuration.Videos)
             {
                 if (configuration.Headless)
                 {
                     var context = await browser.NewContextAsync(new BrowserNewContextOptions
                     {
                         ViewportSize = new ViewportSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight },
-                        RecordVideoDir = configuration.LoggingPath,
+                        RecordVideoDir = configuration.VideosPath,
                         RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
                     });
 
@@ -73,7 +65,7 @@ namespace $Company$.$Project$.Web.API.Tests
                     var context = await browser.NewContextAsync(new BrowserNewContextOptions
                     {
                         ViewportSize = ViewportSize.NoViewport,
-                        RecordVideoDir = configuration.LoggingPath,
+                        RecordVideoDir = configuration.VideosPath,
                         RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
                     });
 

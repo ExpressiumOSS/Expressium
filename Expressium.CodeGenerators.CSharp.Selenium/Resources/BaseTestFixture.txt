@@ -28,24 +28,26 @@ namespace $Company$.$Project$.Web.API.Tests
         [OneTimeSetUp]
         protected virtual void InitializeFixture()
         {
-            if (configuration.Logging)
+            if (configuration.Loggings)
             {
-                if (string.IsNullOrWhiteSpace(configuration.LoggingPath))
-                    throw new ArgumentException("Property LoggingPath is undefined...");
+                var filePath = Path.Combine(configuration.LoggingsPath, GetTestName() + ".log");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
 
-                var loggingPath = Path.Combine(configuration.LoggingPath, GetTestName());
-                if (Directory.Exists(loggingPath))
-                    Directory.Delete(loggingPath, true);
-                Directory.CreateDirectory(loggingPath);
-
-                var loggingFilePath = Path.Combine(loggingPath, GetTestName() + ".log");
-                logger = Logger.Initialize(GetTestName(), loggingFilePath);
+                logger = Logger.Initialize(GetTestName(), filePath);
                 Asserts = new Asserts(logger);
             }
             else
             {
                 logger = Logger.Initialize(GetTestName());
                 Asserts = new Asserts(logger);
+            }
+
+            if (configuration.Screenshots)
+            {
+                var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
             }
 
             logger.Info("");
@@ -68,9 +70,9 @@ namespace $Company$.$Project$.Web.API.Tests
 
             if (driverManager.IsInitialized())
             {
-                if (configuration.Screenshot)
+                if (configuration.Screenshots)
                 {
-                    var filePath = Path.Combine(configuration.LoggingPath, GetTestName(), GetTestName() + ".png");
+                    var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
                     driverManager.SaveScreenshot(filePath);
                     logger.Info($"Screenshot has been saved: {Path.GetFileName(filePath)}");
                 }
@@ -101,7 +103,7 @@ namespace $Company$.$Project$.Web.API.Tests
 
             logger.Info(statusCode + "\r\n");
 
-            if (configuration.Logging)
+            if (configuration.Loggings)
                 logger.Logger.Repository.Shutdown();
         }
 
@@ -124,7 +126,7 @@ namespace $Company$.$Project$.Web.API.Tests
 
         protected virtual string GetTestName()
         {
-            var name = TestContext.CurrentContext.Test.Name;
+            var name = TestContext.CurrentContext.Test.Name.Replace(" ", "");
             return string.Join("", name.Split(Path.GetInvalidFileNameChars()));
         }
 
