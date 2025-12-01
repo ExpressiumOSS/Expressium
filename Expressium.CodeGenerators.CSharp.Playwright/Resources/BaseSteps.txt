@@ -8,7 +8,7 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         protected Configuration configuration;
         protected ILog logger;
         protected BrowserManager browserManager;
-        protected Asserts Asserts;
+        protected Asserts asserts;
 
         protected IPage page => browserManager.Driver;
 
@@ -17,7 +17,7 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
             configuration = baseContext.Configuration;
             logger = baseContext.Logger;
             browserManager = baseContext.BrowserManager;
-            Asserts = baseContext.Asserts;
+            asserts = baseContext.Asserts;
         }
     }
 }

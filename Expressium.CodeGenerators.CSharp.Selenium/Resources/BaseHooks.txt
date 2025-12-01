@@ -1,9 +1,10 @@
-﻿using Reqnroll;
+﻿using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+using Reqnroll;
 using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
 {
     [Binding]
     public class BaseHooks : BaseTestFixture
@@ -28,8 +29,8 @@ namespace $Company$.$Project$.Web.API.Tests
             baseContext = new BaseContext();
             baseContext.Configuration = configuration;
             baseContext.Logger = logger;
-            baseContext.Asserts = Asserts;
-            baseContext.DriverManager = driverManager;
+            baseContext.Asserts = asserts;
+            baseContext.BrowserManager = browserManager;
 
             objectContainer.RegisterInstanceAs(baseContext);
         }

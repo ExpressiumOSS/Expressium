@@ -65,13 +65,13 @@ namespace $Company$.$Project$.Web.API
             {
                 try
                 {
-                    var name = locator.ToString();
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        var selector = name.Substring(name.IndexOf("@") + 1);
-                        var outline = string.Format("outline: {0}px {1} {2}; outline-offset: -1px;", width, style, color);
-                        await page.AddStyleTagAsync(new() { Content = $"{selector} {{ {outline} }}" });
-                    }
+                    await locator.EvaluateAsync(
+                            @"(el, args) => {
+                            el.style.outline = `${args.outlineWidth}px ${args.outlineStyle} ${args.outlineColor}`;
+                            el.style.outlineOffset = args.outlineOffset;
+                        }",
+                        new { outlineWidth = width, outlineStyle = style, outlineColor = color, outlineOffset = -1 }
+                    );
                 }
                 catch
                 {

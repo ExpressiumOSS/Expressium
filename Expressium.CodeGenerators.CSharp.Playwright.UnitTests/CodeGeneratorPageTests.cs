@@ -107,7 +107,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
         }
 
         [Test]
-        public void CodeGeneratorPageCSharp_GenerateContructor_With_Table()
+        public void CodeGeneratorPageCSharp_GenerateContructor_With_Table_Id()
         {
             var tabelPage = page.Copy();
             tabelPage.AddControl(new ObjectRepositoryControl() { Name = "Grid", Type = "Table", How = "Id", Using = "products" });
@@ -117,7 +117,22 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
             Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IPage page) : base(logger, page)"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, page);"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"products\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"#products\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[5], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+        }
+
+        [Test]
+        public void CodeGeneratorPageCSharp_GenerateContructor_With_Table_XPath()
+        {
+            var tabelPage = page.Copy();
+            tabelPage.AddControl(new ObjectRepositoryControl() { Name = "Grid", Type = "Table", How = "XPath", Using = "//table[@id='products']" });
+
+            var listOfLines = codeGeneratorPage.GenerateContructor(tabelPage);
+
+            Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IPage page) : base(logger, page)"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, page);"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"//table[@id='products']\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[5], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 

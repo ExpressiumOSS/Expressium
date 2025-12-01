@@ -25,7 +25,7 @@ namespace $Company$.$Project$.Web.API.Tests
 
             // TODO - Implement potential missing login sequence...
 
-            // var loginPage = new LoginPage(logger, driver);
+            // var loginPage = new LoginPage(logger, page);
             // await loginPage.SetUsername(configuration.Username);
             // await loginPage.SetPassword(configuration.Password);
             // await loginPage.ClickLogin();

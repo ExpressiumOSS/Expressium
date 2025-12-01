@@ -106,13 +106,13 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         ///{
         ///    public class BaseContext
         ///    {
         ///        public Configuration Configuration { get; set; }
         ///        public ILog Logger { get; set; }
-        ///        public WebDriverManager DriverManager { get; set; }
+        ///        public BrowserManager BrowserManager { get; set; }
         ///        public Asserts Asserts {  get; set; }
         ///    }
         ///}.
@@ -124,12 +124,13 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using Reqnroll;
+        ///   Looks up a localized string similar to using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+        ///using Reqnroll;
         ///using Reqnroll.BoDi;
         ///using System.IO;
         ///using System.Text.RegularExpressions;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
         ///{
         ///    [Binding]
         ///    public class BaseHooks : BaseTestFixture
@@ -137,11 +138,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///        private readonly FeatureContext featureContext;
         ///        private readonly ScenarioContext scenarioContext;
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
-        ///        private readonly IObjectContainer objectContainer;
-        ///
-        ///        private BaseContext baseContext;
-        ///
-        ///       [rest of string was truncated]&quot;;.
+        ///        private readonly IObje [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooks {
             get {
@@ -178,34 +175,6 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
-        ///using RestSharp;
-        ///using RestSharp.Authenticators;
-        ///using System;
-        ///using System.Diagnostics;
-        ///using System.Net;
-        ///
-        ///namespace $Company$.$Project$.Web.API
-        ///{
-        ///    public class BaseService
-        ///    {
-        ///        protected ILog logger;
-        ///
-        ///        protected string username;
-        ///        protected string password;
-        ///
-        ///        public string RequestUrl { get; private set; }
-        ///        public string RequestMethod { get; private set; }
-        ///        public string ResponseStatusCode { get; private set; }
-        ///        public s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BaseService {
-            get {
-                return ResourceManager.GetString("BaseService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using log4net;
         ///using OpenQA.Selenium;
         ///
         ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
@@ -214,10 +183,10 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///    {
         ///        protected Configuration configuration;
         ///        protected ILog logger;
-        ///        protected WebDriverManager driverManager;
-        ///        protected Asserts Asserts;
+        ///        protected BrowserManager browserManager;
+        ///        protected Asserts asserts;
         ///
-        ///        protected IWebDriver driver =&gt; driverManager.Driver;
+        ///        protected IWebDriver driver =&gt; browserManager.Driver;
         ///
         ///        public BaseSteps(BaseContext baseContext)
         ///        {
@@ -302,16 +271,74 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///    public class BaseTestFixture
         ///    {
         ///        protected readonly Configuration configuration;
-        ///        protected readonly WebDriverManager driverManager;
+        ///        protected readonly BrowserManager browserManager;
         ///
         ///        protected ILog logger;
-        ///        protected Asserts Asserts;
+        ///        protected Asserts asserts;
         ///
-        ///        protected IWebDriver driver =&gt; driver [rest of string was truncated]&quot;;.
+        ///        protected IWebDriver driver =&gt; browser [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixture {
             get {
                 return ResourceManager.GetString("BaseTestFixture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///using OpenQA.Selenium.Chrome;
+        ///using OpenQA.Selenium.Edge;
+        ///using OpenQA.Selenium.Firefox;
+        ///using System;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests
+        ///{
+        ///    public class BrowserFactory
+        ///    {
+        ///        public enum BrowserTypes
+        ///        {
+        ///            Chrome,
+        ///            Firefox,
+        ///            Edge
+        ///        }
+        ///
+        ///        public static IWebDriver Initialize(Configuration configuration)
+        ///        {
+        ///            if (configuration.BrowserType == BrowserTypes.Chrome.ToString())
+        ///          [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BrowserFactory {
+            get {
+                return ResourceManager.GetString("BrowserFactory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests
+        ///{
+        ///    public class BrowserManager
+        ///    {
+        ///        private Configuration configuration;
+        ///        private IWebDriver driver;
+        ///
+        ///        public BrowserManager(Configuration configuration)
+        ///        {
+        ///            this.configuration = configuration;
+        ///        }
+        ///
+        ///        public IWebDriver Driver
+        ///        {
+        ///            get
+        ///            {
+        ///                if (driver == null)
+        ///                {
+        ///                    driver = BrowserFactory.Init [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BrowserManager {
+            get {
+                return ResourceManager.GetString("BrowserManager", resourceCulture);
             }
         }
         
@@ -322,6 +349,12 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///
         ///namespace $Company$.$Project$.Web.API.Tests
         ///{
+        ///    public enum Folders
+        ///    {
+        ///        Loggings,
+        ///        Screenshots
+        ///    }
+        ///
         ///    public class Configuration
         ///    {
         ///        public enum Profiles
@@ -334,9 +367,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///
         ///        public string Company { get; set; }
         ///        public string Project { get; set; }
-        ///        public string Environment { get; set; }
-        ///        public string Url { get; set; }
-        ///        public s [rest of string was truncated]&quot;;.
+        ///        public string Env [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Configuration {
             get {
@@ -351,11 +382,11 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///      &quot;Company&quot;: &quot;$Company$&quot;,
         ///      &quot;Project&quot;: &quot;$Project$&quot;,
         ///      &quot;Environment&quot;: &quot;Development&quot;,
+        ///      &quot;Loggings&quot;: true,
+        ///      &quot;Screenshots&quot;: true,
         ///      &quot;Url&quot;: &quot;$Url$&quot;,
         ///      &quot;Username&quot;: &quot;john.doe@microsoft.com&quot;,
         ///      &quot;Password&quot;: &quot;1234567890&quot;,
-        ///      &quot;Logging&quot;: true,
-        ///      &quot;LoggingPath&quot;: &quot;.\\TestResults&quot;,
         ///      &quot;BrowserType&quot;: &quot;$BrowserType$&quot;,
         ///      &quot;Maximize&quot;: true,
         ///      &quot;Headless&quot;: false,
@@ -363,7 +394,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///      &quot;WindowWidth&quot;: 1920,
         ///      &quot;WindowHeight&quot;: 1080,
         ///      &quot;Highlight&quot;: true,
-        ///      [rest of string was truncated]&quot;;.
+        ///      &quot;Highlight [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationJson {
             get {
@@ -372,12 +403,13 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feature: Login
+        ///   Looks up a localized string similar to @TC-1000 @Login @BusinessTests
+        ///Feature: Login
         ///	As a User
         ///	I want to login on the web application
         ///	So that I can administrate my product orders
         ///
-        ///@BusinessTests @Id:TC200??
+        ///@TC-1001 @Review
         ///Scenario: Successful User Login with Valid Credentials
         ///	Given I have logged in with valid user credentials
         ///	Then I should be redirected to the Home page.
@@ -428,11 +460,11 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///        [Given(@&quot;I have logged in with valid user credentials&quot;)]
         ///        public void GivenIHaveLoggedInWithValidUserCredentials()
         ///        {
-        ///            ScenarioContext.Current.Pending();
+        ///            throw new PendingStepException();
         ///        }
         ///
         ///        [Then(@&quot;I should be redirected to the Home page&quot;)]
-        ///   [rest of string was truncated]&quot;;.
+        ///    [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginSteps {
             get {
@@ -450,8 +482,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;ItemGroup&gt;
         ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.2.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;112.1.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.35.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.35.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.36.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.36.0&quot; /&gt;
         ///	&lt;/ItemGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
@@ -475,7 +507,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.0.1&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.1.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.9&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.9&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.9&quot; /&gt;
@@ -533,7 +565,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
         ///{
         ///    internal static class ReqnRollExtensions
         ///    {
@@ -544,9 +576,9 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///    }
         ///}.
         /// </summary>
-        internal static string ReqnRollExtension {
+        internal static string ReqnRollExtensions {
             get {
-                return ResourceManager.GetString("ReqnRollExtension", resourceCulture);
+                return ResourceManager.GetString("ReqnRollExtensions", resourceCulture);
             }
         }
         
@@ -690,6 +722,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using OpenQA.Selenium;
+        ///using System.Collections.Generic;
         ///
         ///namespace $Company$.$Project$.Web.API.Controls
         ///{
@@ -710,69 +743,11 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///            this.locator = locator;
         ///        }
         ///
-        ///        public WebControl(IWebDriver driver, By loca [rest of string was truncated]&quot;;.
+        ///        public We [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebControl {
             get {
                 return ResourceManager.GetString("WebControl", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using OpenQA.Selenium;
-        ///using OpenQA.Selenium.Chrome;
-        ///using OpenQA.Selenium.Edge;
-        ///using OpenQA.Selenium.Firefox;
-        ///using System;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests
-        ///{
-        ///    public class WebDriverFactory
-        ///    {
-        ///        public enum BrowserTypes
-        ///        {
-        ///            Chrome,
-        ///            Firefox,
-        ///            Edge
-        ///        }
-        ///
-        ///        public static IWebDriver Initialize(Configuration configuration)
-        ///        {
-        ///            if (configuration.BrowserType == BrowserTypes.Chrome.ToString())
-        ///        [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string WebDriverFactory {
-            get {
-                return ResourceManager.GetString("WebDriverFactory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using OpenQA.Selenium;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests
-        ///{
-        ///    public class WebDriverManager
-        ///    {
-        ///        private Configuration configuration;
-        ///        private IWebDriver driver;
-        ///
-        ///        public WebDriverManager(Configuration configuration)
-        ///        {
-        ///            this.configuration = configuration;
-        ///        }
-        ///
-        ///        public IWebDriver Driver
-        ///        {
-        ///            get
-        ///            {
-        ///                if (driver == null)
-        ///                {
-        ///                    driver = WebDriverFactor [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string WebDriverManager {
-            get {
-                return ResourceManager.GetString("WebDriverManager", resourceCulture);
             }
         }
         
@@ -892,7 +867,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///
         ///        public virtual int GetNumberOfRows()
         ///        {
-        ///            return GetElement().GetChildElements(driver, By.XPath(&quot;./tbody/tr [rest of string was truncated]&quot;;.
+        ///            var control = new WebControl(driver, locator);
+        ///            retur [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebTable {
             get {

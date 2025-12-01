@@ -110,7 +110,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorTest.GenerateTitleTestMethod(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(5), "CodeGeneratorTestCSharp GenerateTitleTestMethod validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Asserts.EqualTo(loginPage.GetTitle(), \"Login\", \"Validating the LoginPage Title...\");"), "CodeGeneratorTestCSharp GenerateTitleTestMethod validation");
+            Assert.That(listOfLines[3], Is.EqualTo("asserts.EqualTo(loginPage.GetTitle(), \"Login\", \"Validating the LoginPage Title...\");"), "CodeGeneratorTestCSharp GenerateTitleTestMethod validation");
         }
 
         [Test]

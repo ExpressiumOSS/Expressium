@@ -146,7 +146,18 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
 
             var listOfLines = new List<string>();
 
-            if (control.How == ControlHows.Id.ToString() || control.How == ControlHows.Name.ToString())
+            if (control.How == ControlHows.Label.ToString())
+            {
+                var ariaRoleType = GetAriaRoleType(type);
+            
+                listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.GetByRole(AriaRole.{ariaRoleType}, new() {{ Name = \"{control.Using.EscapeDoubleQuotes()}\", Exact = true }}));");
+            }
+            else if (control.How == ControlHows.Id.ToString())
+            {
+                //listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.Locator(\"#{control.Using.EscapeDoubleQuotes()}\"));");
+                listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.Locator(\"[{control.How.ToLower()}='{control.Using.EscapeDoubleQuotes()}']\"));");
+            }
+            else if (control.How == ControlHows.Name.ToString())
             {
                 listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.Locator(\"[{control.How.ToLower()}='{control.Using.EscapeDoubleQuotes()}']\"));");
             }
@@ -160,14 +171,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             }
             else if (control.How == ControlHows.XPath.ToString())
             {
-                var ariaRoles = true;
-                var ariaRoleType = GetAriaRoleType(type);
-                var ariaRoleLabel = GetAriaRoleLabel(control.Using);
-
-                if (ariaRoles && ariaRoleLabel != null && ariaRoleType != null)
-                    listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.GetByRole(AriaRole.{ariaRoleType}, new() {{ Name = \"{ariaRoleLabel.EscapeDoubleQuotes()}\", Exact = true }}));");
-                else
-                    listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.Locator(\"{control.Using.EscapeDoubleQuotes()}\"));");
+                listOfLines.Add($"private Web{type} {control.Name} => new Web{type}(page, page.Locator(\"{control.Using.EscapeDoubleQuotes()}\"));");
             }
 
             return listOfLines;
@@ -186,7 +190,28 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             foreach (var control in page.Controls)
             {
                 if (control.IsTable())
-                    listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\"{control.Using}\"));");
+                {
+                    if (control.How == ControlHows.Id.ToString())
+                    {
+                        listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\"#{control.Using.EscapeDoubleQuotes()}\"));");
+                    }
+                    else if (control.How == ControlHows.Name.ToString())
+                    {
+                        listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\"[{control.How.ToLower()}='{control.Using.EscapeDoubleQuotes()}']\"));");
+                    }
+                    else if (control.How == ControlHows.ClassName.ToString())
+                    {
+                        listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\".{control.Using.EscapeDoubleQuotes()}\"));");
+                    }
+                    else if (control.How == ControlHows.CssSelector.ToString())
+                    {
+                        listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\"{control.Using.EscapeDoubleQuotes()}\"));");
+                    }
+                    else if (control.How == ControlHows.XPath.ToString())
+                    {
+                        listOfLines.Add($"{control.Name} = new BaseTable(logger, page, page.Locator(\"{control.Using.EscapeDoubleQuotes()}\"));");
+                    }
+                }
             }
 
             if (page.Synchronizers.Count > 0 && (page.Members.Count > 0 || page.Controls.Any(c => c.IsTable())))
@@ -402,77 +427,6 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             };
 
             return listOfLines;
-        }
-
-        internal string GetAriaRoleLabel(string xPath)
-        {
-            var pattern = @"//label\[text\(\)='\s*(.*?)\s*'\]/[\w\-]+::(\w+)";
-            //label[text()='SomeText']/following-sibling::input
-            var match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//label\[normalize-space\(\)='\s*(.*?)\s*'\]/[\w\-]+::(\w+)";
-            //label[normalize-space()='SomeText']/following-sibling::input
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//label\[text\(\)='\s*(.*?)\s*'\]/(\w+)";
-            //label[text()='SomeText']/input
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//label\[normalize-space\(\)='\s*(.*?)\s*'\]/(\w+)";
-            //label[normalize-space()='SomeText']/input
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//a\[text\(\)='\s*(.*?)\s*'\]";
-            //a[text()='SomeText']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//a\[normalize-space\(\)='\s*(.*?)\s*'\]";
-            //a[normalize-space()='SomeText']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//button\[text\(\)='\s*(.*?)\s*'\]";
-            //button[text()='SomeText']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//button\[normalize-space\(\)='\s*(.*?)\s*'\]";
-            //button[normalize-space()='SomeText']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//input\[@type='button'\s+and\s+@value='(.*?)'\]";
-            //input[@type='button' and @value='Search']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//input\[@type='reset'\s+and\s+@value='(.*?)'\]";
-            //input[@type='button' and @value='Reset']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            pattern = @"//input\[@type='submit'\s+and\s+@value='(.*?)'\]";
-            //input[@type='button' and @value='Submit']
-            match = System.Text.RegularExpressions.Regex.Match(xPath, pattern);
-            if (match.Success)
-                return match.Groups[1].Value;
-
-            return null;
         }
 
         internal string GetAriaRoleType(string type)

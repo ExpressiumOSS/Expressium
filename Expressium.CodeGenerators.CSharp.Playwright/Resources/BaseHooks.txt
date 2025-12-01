@@ -1,9 +1,10 @@
-﻿using Reqnroll;
+﻿using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+using Reqnroll;
 using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
 {
     [Binding]
     public class BaseHooks : BaseTest
@@ -38,7 +39,7 @@ namespace $Company$.$Project$.Web.API.Tests
             baseContext.Configuration = configuration;
             baseContext.Logger = logger;
             baseContext.BrowserManager = browserManager;
-            baseContext.Asserts = Asserts;
+            baseContext.Asserts = asserts;
 
             objectContainer.RegisterInstanceAs(baseContext);
         }

@@ -22,7 +22,8 @@ namespace Expressium.ObjectRepositories
         Name,
         ClassName,
         CssSelector,
-        XPath
+        XPath,
+        Label
     }
 
     public enum SynchronizerTypes

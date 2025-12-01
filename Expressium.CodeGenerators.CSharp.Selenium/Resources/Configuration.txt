@@ -54,6 +54,12 @@ namespace $Company$.$Project$.Web.API.Tests
             if (configuration == null)
                 throw new ApplicationException($"Configuration profile '{profile}' is unknown...");
 
+            if (string.IsNullOrWhiteSpace(configuration.Username))
+                configuration.Username = System.Environment.GetEnvironmentVariable("USERNAME");
+
+            if (string.IsNullOrWhiteSpace(configuration.Password))
+                configuration.Password = System.Environment.GetEnvironmentVariable("PASSWORD");
+
             if (configuration.Loggings && !Directory.Exists(configuration.LoggingsPath))
                 Directory.CreateDirectory(configuration.LoggingsPath);
 

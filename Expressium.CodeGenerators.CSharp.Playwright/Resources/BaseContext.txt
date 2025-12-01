@@ -1,7 +1,7 @@
 ﻿using log4net;
 using Microsoft.Playwright;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
 {
     public class BaseContext
     {

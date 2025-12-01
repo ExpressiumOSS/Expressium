@@ -1,12 +1,12 @@
 ﻿using log4net;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
 {
     public class BaseContext
     {
         public Configuration Configuration { get; set; }
         public ILog Logger { get; set; }
-        public WebDriverManager DriverManager { get; set; }
+        public BrowserManager BrowserManager { get; set; }
         public Asserts Asserts {  get; set; }
     }
 }

@@ -7,17 +7,17 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
     {
         protected Configuration configuration;
         protected ILog logger;
-        protected WebDriverManager driverManager;
-        protected Asserts Asserts;
+        protected BrowserManager browserManager;
+        protected Asserts asserts;
 
-        protected IWebDriver driver => driverManager.Driver;
+        protected IWebDriver driver => browserManager.Driver;
 
         public BaseSteps(BaseContext baseContext)
         {
             configuration = baseContext.Configuration;
             logger = baseContext.Logger;
-            driverManager = baseContext.DriverManager;
-            Asserts = baseContext.Asserts;
+            browserManager = baseContext.BrowserManager;
+            asserts = baseContext.Asserts;
         }
     }
 }

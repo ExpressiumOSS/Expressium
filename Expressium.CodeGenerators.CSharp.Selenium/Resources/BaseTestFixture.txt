@@ -12,17 +12,17 @@ namespace $Company$.$Project$.Web.API.Tests
     public class BaseTestFixture
     {
         protected readonly Configuration configuration;
-        protected readonly WebDriverManager driverManager;
+        protected readonly BrowserManager browserManager;
 
         protected ILog logger;
-        protected Asserts Asserts;
+        protected Asserts asserts;
 
-        protected IWebDriver driver => driverManager.Driver;
+        protected IWebDriver driver => browserManager.Driver;
 
         public BaseTestFixture()
         {
             configuration = Configuration.GetCurrentConfiguation();
-            driverManager = new WebDriverManager(configuration);
+            browserManager = new BrowserManager(configuration);
         }
 
         [OneTimeSetUp]
@@ -35,12 +35,12 @@ namespace $Company$.$Project$.Web.API.Tests
                     File.Delete(filePath);
 
                 logger = Logger.Initialize(GetTestName(), filePath);
-                Asserts = new Asserts(logger);
+                asserts = new Asserts(logger);
             }
             else
             {
                 logger = Logger.Initialize(GetTestName());
-                Asserts = new Asserts(logger);
+                asserts = new Asserts(logger);
             }
 
             if (configuration.Screenshots)
@@ -68,16 +68,16 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.Info("");
             logger.Info("// Finalize Test Fixture");
 
-            if (driverManager.IsInitialized())
+            if (browserManager.IsInitialized())
             {
                 if (configuration.Screenshots)
                 {
                     var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
-                    driverManager.SaveScreenshot(filePath);
+                    browserManager.SaveScreenshot(filePath);
                     logger.Info($"Screenshot has been saved: {Path.GetFileName(filePath)}");
                 }
 
-                driverManager.Quit();
+                browserManager.Quit();
             }
 
             LogMessageAsError(GetTestResultMessage());

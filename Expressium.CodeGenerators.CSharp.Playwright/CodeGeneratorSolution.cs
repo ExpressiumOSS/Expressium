@@ -72,18 +72,19 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             WriteToFile(Path.Combine(apiTestProjectPath, "Asserts.cs"), Resources.Asserts, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "Configuration.cs"), Resources.Configuration, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "configuration.json"), Resources.ConfigurationJson, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
 
             WriteToFile(Path.Combine(apiTestProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTests, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
             WriteToFile(Path.Combine(apiTestProjectPath, "ReqnRoll.json"), Resources.ReqnRollJson, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "ReqnRollExtension.cs"), Resources.ReqnRollExtension, mapOfProperties);
 
+            var featureHookFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Hooks");
             var featureFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Features");
             var featureStepFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Steps");
 
+            WriteToFile(Path.Combine(featureHookFiles, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
+            WriteToFile(Path.Combine(featureHookFiles, "ReqnRollExtensions.cs"), Resources.ReqnRollExtensions, mapOfProperties);
             WriteToFile(Path.Combine(featureFiles, "Login.feature"), Resources.Feature, mapOfProperties);
+            WriteToFile(Path.Combine(featureStepFiles, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
             WriteToFile(Path.Combine(featureStepFiles, "BaseSteps.cs"), Resources.BaseSteps, mapOfProperties);
             WriteToFile(Path.Combine(featureStepFiles, "LoginSteps.cs"), Resources.LoginSteps, mapOfProperties);
 

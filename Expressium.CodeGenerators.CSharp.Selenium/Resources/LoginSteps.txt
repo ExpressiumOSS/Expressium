@@ -12,13 +12,13 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         [Given(@"I have logged in with valid user credentials")]
         public void GivenIHaveLoggedInWithValidUserCredentials()
         {
-            ScenarioContext.Current.Pending();
+            throw new PendingStepException();
         }
 
         [Then(@"I should be redirected to the Home page")]
         public void ThenIShouldBeRedirectedToTheHomePage()
         {
-            ScenarioContext.Current.Pending(); 
+            throw new PendingStepException(); 
         }
     }
 }

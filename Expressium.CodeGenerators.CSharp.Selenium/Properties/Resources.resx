@@ -130,9 +130,6 @@
 	<data name="BasePage" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BasePage.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>	
-	<data name="BaseService" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\BaseService.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>
 	<data name="BaseSteps" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseSteps.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
@@ -190,11 +187,11 @@
 	<data name="WebControl" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebControl.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
-	<data name="WebDriverFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\WebDriverFactory.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="BrowserFactory" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BrowserFactory.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="WebDriverManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\WebDriverManager.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="BrowserManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BrowserManager.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
 	<data name="WebElements" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebElements.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -223,7 +220,7 @@
 	<data name="ReqnRollJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ReqnRollJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ReqnRollExtension" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ReqnRollExtension.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-	</data>	
+	<data name="ReqnRollExtensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReqnRollExtensions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
 </root>
