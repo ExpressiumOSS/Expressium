@@ -30,11 +30,7 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
             InitializeFixture();
 
             logger.Info("// Initialize Testcase");
-            InitializeDependencyInjection();
-        }
 
-        private void InitializeDependencyInjection()
-        {
             baseContext = new BaseContext();
             baseContext.Configuration = configuration;
             baseContext.Logger = logger;

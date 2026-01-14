@@ -6,7 +6,7 @@
       "Environment": "Development",
       "Loggings": true,
       "Screenshots": true,
-      "Videos": true,
+      "Videos": false,
       "Url": "$Url$",
       "Username": "john.doe@microsoft.com",
       "Password": "1234567890",

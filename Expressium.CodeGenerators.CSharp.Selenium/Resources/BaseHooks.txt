@@ -24,8 +24,11 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
             this.objectContainer = objectContainer;
         }
 
-        private void InitializeDependencyInjection()
+        [BeforeScenario]
+        public void BeforeScenario()
         {
+            InitializeFixture();
+
             baseContext = new BaseContext();
             baseContext.Configuration = configuration;
             baseContext.Logger = logger;
@@ -33,13 +36,6 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
             baseContext.BrowserManager = browserManager;
 
             objectContainer.RegisterInstanceAs(baseContext);
-        }
-
-        [BeforeScenario]
-        public void BeforeScenario()
-        {
-            InitializeFixture();
-            InitializeDependencyInjection();
         }
 
         [AfterScenario]

@@ -3,7 +3,7 @@
   "formatters": {
     "expressium": {
       "outputFilePath": "LivingDoc.ndjson",
-      "outputFileTitle": "Expressium.Coffeeshop.Web.API.Tests"
+      "outputFileTitle": "$Company$.$Project$.Web.API.Tests"
     }
   }
 }

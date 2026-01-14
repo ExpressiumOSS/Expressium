@@ -10,7 +10,7 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         protected BrowserManager browserManager;
         protected Asserts asserts;
 
-        protected IPage page => browserManager.Driver;
+        protected IPage page => browserManager.GetPage();
 
         public BaseSteps(BaseContext baseContext)
         {

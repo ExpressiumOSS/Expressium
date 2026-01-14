@@ -482,8 +482,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;ItemGroup&gt;
         ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.2.0&quot; /&gt;
         ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;112.1.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.36.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.36.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.38.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.38.0&quot; /&gt;
         ///	&lt;/ItemGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
@@ -507,11 +507,11 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.1.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Incl [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.1.4&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference I [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTests {
             get {
@@ -583,12 +583,32 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using Reqnroll;
+        ///
+        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+        ///{
+        ///    internal static class ReqnRollExtensions
+        ///    {
+        ///        internal static void AddAttachmentAsLink(this IReqnrollOutputHelper outputHelper, string path)
+        ///        {
+        ///            outputHelper.WriteLine($&quot;[Attachment: {path}]&quot;);
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string ReqnRollExtensions2 {
+            get {
+                return ResourceManager.GetString("ReqnRollExtensions2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;$schema&quot;: &quot;https://schemas.reqnroll.net/reqnroll-config-latest.json&quot;,
         ///  &quot;formatters&quot;: {
         ///    &quot;expressium&quot;: {
         ///      &quot;outputFilePath&quot;: &quot;LivingDoc.ndjson&quot;,
-        ///      &quot;outputFileTitle&quot;: &quot;Expressium.Coffeeshop.Web.API.Tests&quot;
+        ///      &quot;outputFileTitle&quot;: &quot;$Company$.$Project$.Web.API.Tests&quot;
         ///    }
         ///  }
         ///}.
@@ -686,7 +706,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///        {
         ///        }
         ///
-        ///        public virtual void SetText(string value)        /// [rest of string was truncated]&quot;;.
+        ///        public virtual void SetText(string value)
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebComboBox {
             get {

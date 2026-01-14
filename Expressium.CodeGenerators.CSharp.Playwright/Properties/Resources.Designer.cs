@@ -186,12 +186,12 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        protected BrowserManager browserManager;
         ///        protected Asserts asserts;
         ///
-        ///        protected IPage page =&gt; browserManager.Driver;
+        ///        protected IPage page =&gt; browserManager.GetPage();
         ///
         ///        public BaseSteps(BaseContext baseContext)
         ///        {
         ///            configuration = baseContext.Configuration;
-        ///            logger [rest of string was truncated]&quot;;.
+        ///            log [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseSteps {
             get {
@@ -294,6 +294,9 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///{
         ///    public class BrowserFactory
         ///    {
+        ///        private static IPlaywright playwright;
+        ///        private static IBrowser browser;
+        ///
         ///        public enum BrowserTypes
         ///        {
         ///            Chrome,
@@ -304,8 +307,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public static async Task&lt;IPage&gt; Initialize(Configuration configuration)
         ///        {
-        ///            var playwright = await Playwright.CreateAsync();
-        ///            var browser = await GetBrowser(playwright [rest of string was truncated]&quot;;.
+        ///            if (playwri [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserFactory {
             get {
@@ -329,13 +331,10 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            this.configuration = configuration;
         ///        }
         ///
-        ///        public IPage Driver
+        ///        public IPage GetPage()
         ///        {
-        ///            get
-        ///            {
-        ///                if (page == null)
-        ///                {
-        ///                    page = [rest of string was truncated]&quot;;.
+        ///            if (page == null)
+        ///                page = BrowserFactory.Initialize(configuration).GetAwaiter().G [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserManager {
             get {
@@ -397,7 +396,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///      &quot;Environment&quot;: &quot;Development&quot;,
         ///      &quot;Loggings&quot;: true,
         ///      &quot;Screenshots&quot;: true,
-        ///      &quot;Videos&quot;: true,
+        ///      &quot;Videos&quot;: false,
         ///      &quot;Url&quot;: &quot;$Url$&quot;,
         ///      &quot;Username&quot;: &quot;john.doe@microsoft.com&quot;,
         ///      &quot;Password&quot;: &quot;1234567890&quot;,
@@ -407,7 +406,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///      &quot;WindowSize&quot;: false,
         ///      &quot;WindowWidth&quot;: 1920,
         ///      &quot;WindowHeight&quot;: 1080,
-        ///      &quot;BrowserTimeO [rest of string was truncated]&quot;;.
+        ///      &quot;BrowserTime [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationJson {
             get {
@@ -541,11 +540,11 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.1.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.9&quot; /&gt;
-        ///		&lt;PackageReference Incl [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.1.4&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;9.0.10&quot; /&gt;
+        ///		&lt;PackageReference I [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTests {
             get {
@@ -622,7 +621,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///  &quot;formatters&quot;: {
         ///    &quot;expressium&quot;: {
         ///      &quot;outputFilePath&quot;: &quot;LivingDoc.ndjson&quot;,
-        ///      &quot;outputFileTitle&quot;: &quot;Expressium.Coffeeshop.Web.API.Tests&quot;
+        ///      &quot;outputFileTitle&quot;: &quot;$Company$.$Project$.Web.API.Tests&quot;
         ///    }
         ///  }
         ///}.

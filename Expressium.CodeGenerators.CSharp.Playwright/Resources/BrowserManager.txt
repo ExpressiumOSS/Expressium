@@ -13,17 +13,12 @@ namespace $Company$.$Project$.Web.API.Tests
             this.configuration = configuration;
         }
 
-        public IPage Driver
+        public IPage GetPage()
         {
-            get
-            {
-                if (page == null)
-                {
-                    page = BrowserFactory.Initialize(configuration).GetAwaiter().GetResult();
-                }
+            if (page == null)
+                page = BrowserFactory.Initialize(configuration).GetAwaiter().GetResult();
 
-                return page;
-            }
+            return page;
         }
 
         public bool IsInitialized()

@@ -18,7 +18,7 @@ namespace $Company$.$Project$.Web.API.Tests
         protected ILog logger;
         protected Asserts asserts;
 
-        protected IPage page => browserManager.Driver;
+        protected IPage page => browserManager.GetPage();
 
         public BaseTestFixture()
         {

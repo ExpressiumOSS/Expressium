@@ -6,6 +6,9 @@ namespace $Company$.$Project$.Web.API.Tests
 {
     public class BrowserFactory
     {
+        private static IPlaywright playwright;
+        private static IBrowser browser;
+
         public enum BrowserTypes
         {
             Chrome,
@@ -16,8 +19,12 @@ namespace $Company$.$Project$.Web.API.Tests
 
         public static async Task<IPage> Initialize(Configuration configuration)
         {
-            var playwright = await Playwright.CreateAsync();
-            var browser = await GetBrowser(playwright, configuration);
+            if (playwright == null)
+                playwright = await Playwright.CreateAsync();
+            
+            if (browser == null)
+                browser = await GetBrowser(playwright, configuration);
+
             var context = await GetBrowserContext(browser, configuration);
 
             var page = await context.NewPageAsync();
@@ -32,13 +39,13 @@ namespace $Company$.$Project$.Web.API.Tests
         private static async Task<IBrowser> GetBrowser(IPlaywright playwright, Configuration configuration)
         {
             if (configuration.BrowserType.Equals(BrowserTypes.Chrome.ToString()))
-                return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
+                return await playwright.Chromium.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
             else if (configuration.BrowserType.Equals(BrowserTypes.Firefox.ToString()))
-                return await playwright.Firefox.LaunchAsync(GetBrowserContextOptions(configuration));
+                return await playwright.Firefox.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
             else if (configuration.BrowserType.Equals(BrowserTypes.Edge.ToString()))
-                return await playwright.Chromium.LaunchAsync(GetBrowserContextOptions(configuration));
+                return await playwright.Chromium.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
             else if (configuration.BrowserType.Equals(BrowserTypes.Webkit.ToString()))
-                return await playwright.Webkit.LaunchAsync(GetBrowserContextOptions(configuration));
+                return await playwright.Webkit.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
             else
             {
                 throw new ArgumentException("Invalid configuration Browser Type...");
@@ -83,7 +90,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
         }
 
-        private static BrowserTypeLaunchOptions GetBrowserContextOptions(Configuration configuration)
+        private static BrowserTypeLaunchOptions GetBrowserTypeLaunchOptions(Configuration configuration)
         {
             if (configuration.Maximize)
             {
@@ -121,6 +128,21 @@ namespace $Company$.$Project$.Web.API.Tests
             }
 
             return null;
+        }
+
+        public static async Task Dispose()
+        {
+            if (browser != null)
+            {
+                await browser.CloseAsync();
+                browser = null;
+            }
+
+            if (playwright != null)
+            {
+                playwright.Dispose();
+                playwright = null;
+            }
         }
     }
 }
