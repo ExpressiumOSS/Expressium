@@ -10,13 +10,13 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
         }
 
         [Given(@"I am logged in with valid user credentials")]
-        public void GivenIAmLoggedInWithValidUserCredentials()
+        public async Task GivenIAmLoggedInWithValidUserCredentials()
         {
             throw new PendingStepException();
         }
 
         [Then(@"I should be redirected to the Home page")]
-        public void ThenIShouldBeRedirectedToTheHomePage()
+        public async Task ThenIShouldBeRedirectedToTheHomePage()
         {
             throw new PendingStepException(); 
         }

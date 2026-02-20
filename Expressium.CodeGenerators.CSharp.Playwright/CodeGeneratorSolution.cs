@@ -30,6 +30,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             // Generate Solution Files...
             var solutionFileName = Path.GetFileName(directory).ToLower() + ".sln";
             WriteToFile(Path.Combine(directory, solutionFileName), Resources.SolutionFile, mapOfProperties);
+            WriteToFile(Path.Combine(directory, ".gitignore"), Resources.GitIgnore, mapOfProperties);
             WriteToFile(Path.Combine(directory, "RegressionTest.bat"), Resources.RegressionTest, mapOfProperties);
             WriteToFile(Path.Combine(directory, "CodeGeneration.bat"), Resources.CodeGeneration, mapOfProperties);
 

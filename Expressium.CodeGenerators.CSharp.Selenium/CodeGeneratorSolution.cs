@@ -29,6 +29,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
 
             // Generate Solution Files...
             var solutionFileName = Path.GetFileName(directory).ToLower() + ".sln";
+            WriteToFile(Path.Combine(directory, ".gitignore"), Resources.GitIgnore, mapOfProperties);
             WriteToFile(Path.Combine(directory, solutionFileName), Resources.SolutionFile, mapOfProperties);
             WriteToFile(Path.Combine(directory, "RegressionTest.bat"), Resources.RegressionTest, mapOfProperties);
 
@@ -44,7 +45,6 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
 
             WriteToFile(Path.Combine(apiProjectPath, "WebElements.cs"), Resources.WebElements, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "WebConditions.cs"), Resources.WebConditions, mapOfProperties);
-
             WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePage, mapOfProperties);
             WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
 
