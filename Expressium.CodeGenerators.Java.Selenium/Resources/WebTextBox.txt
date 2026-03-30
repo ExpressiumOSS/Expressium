@@ -1,0 +1,30 @@
+package $Package$.controls;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class WebTextBox extends WebControl {
+    public WebTextBox(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebTextBox(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+
+    public void setText(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        getElement().clear();
+        getElement().sendKeys(value);
+        highlightElementClear();
+    }
+
+    public String getText() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        String val = getElement().getDomProperty("value");
+        return val != null ? val.trim() : "";
+    }
+}
