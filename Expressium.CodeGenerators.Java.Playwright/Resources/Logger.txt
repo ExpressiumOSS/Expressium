@@ -1,0 +1,10 @@
+package $Package$;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class LoggerUtility {
+    public static Logger initialize(String name) {
+        return LoggerFactory.getLogger(name);
+    }
+}

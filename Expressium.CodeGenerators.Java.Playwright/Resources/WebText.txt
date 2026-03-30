@@ -1,0 +1,16 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebText extends WebControl {
+    public WebText(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public String getText() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        String val = locator.textContent();
+        return val != null ? val.trim() : "";
+    }
+}

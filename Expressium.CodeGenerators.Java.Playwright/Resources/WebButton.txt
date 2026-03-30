@@ -1,0 +1,16 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebButton extends WebControl {
+    public WebButton(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public void click() {
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        highlightElementClear();
+        clickElement();
+    }
+}

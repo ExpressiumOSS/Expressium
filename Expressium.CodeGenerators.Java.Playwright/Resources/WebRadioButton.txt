@@ -1,0 +1,24 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebRadioButton extends WebControl {
+    public WebRadioButton(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public void setSelected(boolean value) {
+        waitForElementIsEnabled();
+        if (!isChecked() && value) {
+            highlightElementAsAction();
+            clickElement();
+            highlightElementClear();
+        }
+    }
+
+    public boolean getSelected() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        return isChecked();
+    }
+}
