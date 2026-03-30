@@ -1,0 +1,103 @@
+package $Package$.controls;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
+import java.util.List;
+
+public class WebControl {
+    protected WebDriver driver;
+    protected By locator;
+    protected By childLocator;
+
+    public static int elementTimeOut = 10000;
+    public static boolean highlight = false;
+    public static int highlightTimeOut = 150;
+
+    public WebControl(WebDriver driver, By locator) {
+        this.driver = driver;
+        this.locator = locator;
+    }
+
+    public WebControl(WebDriver driver, By locator, By childLocator) {
+        this.driver = driver;
+        this.locator = locator;
+        this.childLocator = childLocator;
+    }
+
+    public WebElement getElement() {
+        if (childLocator != null) {
+            WebElement parent = driver.findElement(locator);
+            return parent.findElement(childLocator);
+        }
+        return driver.findElement(locator);
+    }
+
+    public List<WebElement> getChildElements(By childBy) {
+        return driver.findElement(locator).findElements(childBy);
+    }
+
+    public String getAttribute(String value) {
+        return getElement().getDomProperty(value);
+    }
+
+    public boolean isVisible() {
+        return getElement().isDisplayed();
+    }
+
+    public boolean isEnabled() {
+        return getElement().isEnabled();
+    }
+
+    public boolean isSelected() {
+        return getElement().isSelected();
+    }
+
+    public void waitForElementIsVisible() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(elementTimeOut));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    public void waitForElementIsEnabled() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(elementTimeOut));
+        wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    public void highlightElementAsAction() {
+        if (highlight) {
+            try {
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].style.border='3px solid blue';", getElement());
+                Thread.sleep(highlightTimeOut);
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].style.border='';", getElement());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void highlightElementAsValidation() {
+        if (highlight) {
+            try {
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].style.border='3px solid green';", getElement());
+                Thread.sleep(highlightTimeOut);
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].style.border='';", getElement());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void highlightElementClear() {
+        if (highlight) {
+            try {
+                ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].style.border='';", getElement());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void clickElement() {
+        getElement().click();
+    }
+}

@@ -1,0 +1,45 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.SelectOption;
+import java.util.List;
+
+public class WebComboBox extends WebControl {
+    public WebComboBox(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public void setText(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        locator.selectOption(new SelectOption().setLabel(value));
+        highlightElementClear();
+    }
+
+    public void selectByIndex(int value) {
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        locator.selectOption(new SelectOption().setIndex(value));
+        highlightElementClear();
+    }
+
+    public void selectByValue(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        locator.selectOption(value);
+        highlightElementClear();
+    }
+
+    public String getSelected() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        Object result = locator.evaluate("el => el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : ''");
+        return result != null ? result.toString().trim() : null;
+    }
+
+    public List<String> getOptions() {
+        return locator.locator("option").allTextContents();
+    }
+}

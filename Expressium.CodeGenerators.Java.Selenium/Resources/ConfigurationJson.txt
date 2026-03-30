@@ -1,0 +1,22 @@
+{
+  "Profiles": {
+    "Development": {
+      "company": "$Company$",
+      "project": "$Project$",
+      "environment": "Development",
+      "loggings": true,
+      "screenshots": true,
+      "url": "$Url$",
+      "username": "john.doe@microsoft.com",
+      "password": "1234567890",
+      "browserType": "$BrowserType$",
+      "maximize": true,
+      "headless": false,
+      "windowSize": false,
+      "windowWidth": 1920,
+      "windowHeight": 1080,
+      "highlight": true,
+      "highlightTimeOut": 150
+    }
+  }
+}

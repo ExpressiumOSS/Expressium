@@ -1,0 +1,39 @@
+package $Package$;
+
+import com.microsoft.playwright.*;
+
+public class BrowserFactory {
+    public enum BrowserTypes {
+        Chrome, Firefox, Edge
+    }
+
+    public static Browser initialize(Playwright playwright, Configuration configuration) {
+        if (BrowserTypes.Chrome.name().equals(configuration.browserType))
+            return initializeChromeBrowser(playwright, configuration);
+        else if (BrowserTypes.Firefox.name().equals(configuration.browserType))
+            return initializeFirefoxBrowser(playwright, configuration);
+        else if (BrowserTypes.Edge.name().equals(configuration.browserType))
+            return initializeEdgeBrowser(playwright, configuration);
+        else
+            throw new IllegalArgumentException("Specified browser type '" + configuration.browserType + "' is unknown...");
+    }
+
+    private static Browser initializeChromeBrowser(Playwright playwright, Configuration configuration) {
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions();
+        options.setHeadless(configuration.headless);
+        return playwright.chromium().launch(options);
+    }
+
+    private static Browser initializeFirefoxBrowser(Playwright playwright, Configuration configuration) {
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions();
+        options.setHeadless(configuration.headless);
+        return playwright.firefox().launch(options);
+    }
+
+    private static Browser initializeEdgeBrowser(Playwright playwright, Configuration configuration) {
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions();
+        options.setChannel("msedge");
+        options.setHeadless(configuration.headless);
+        return playwright.chromium().launch(options);
+    }
+}

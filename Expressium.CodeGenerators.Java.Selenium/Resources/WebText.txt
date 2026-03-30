@@ -1,0 +1,20 @@
+package $Package$.controls;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class WebText extends WebControl {
+    public WebText(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebText(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+
+    public String getText() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        return getElement().getText().trim();
+    }
+}

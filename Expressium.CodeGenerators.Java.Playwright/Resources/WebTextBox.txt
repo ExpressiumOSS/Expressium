@@ -1,0 +1,25 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebTextBox extends WebControl {
+    public WebTextBox(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public void setText(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        locator.clear();
+        locator.fill(value);
+        highlightElementClear();
+    }
+
+    public String getText() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        String val = locator.inputValue();
+        return val != null ? val.trim() : "";
+    }
+}

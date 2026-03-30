@@ -1,0 +1,9 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebLink extends WebButton {
+    public WebLink(Page page, Locator locator) {
+        super(page, locator);
+    }
+}
