@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solution | Expressium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="Stylesheet.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <!-- Top Menu -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="Index.html"><img class="logo" src="Images/Logo.png" />Expressium</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Index.html">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Features
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="Solution.html">Solution</a></li>
+                            <li><a class="dropdown-item" href="Enrollment.html">Enrollment</a></li>
+                            <li><a class="dropdown-item" href="CodeGeneration.html">Code Generation</a></li>
+                            <li><a class="dropdown-item" href="Editing.html">Editing</a></li>
+                            <li><a class="dropdown-item" href="Configuration.html">Configuration</a></li>
+                            <li><a class="dropdown-item" href="Customization.html">Customization</a></li>
+                            <li><a class="dropdown-item" href="Tutorial.html">Tutorial</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Download.html">Download</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="About.html">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Subheadline Area -->
+    <nav class="navbar navbar-expand-lg navbar-dark subheadline">
+        <div class="container">
+            Creating an IDE Solution
+        </div>
+    </nav>
+
+    <!-- Content Area -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+
+                <h2>Solution Genrator</h2>
+                <p>
+                    The Solution Generator creates a new IDE solution as a fresh starting point for a custom test automation framework.
+                    This solution includes a complete predefined structure with projects, packages, folders, and generic classes,
+                    ready for adding new page objects and automated tests.
+                    The solution also contains a configuration and a repository file for preserving and maintaining
+                    enrollments created with the Expressium application.
+                    Once the solution is created, any of the generic files in the root folder of the projects can be edited
+                    to extend the test automation framework's functionality as needed.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+
+                <div class="slideshow-container">
+
+                    <div class="slides">
+                        <img class="picture" src="images/SolutionDialog.png" alt="Solution Dialog" />
+                    </div>
+
+                    <div class="slides">
+                        <img class="picture" src="images/SolutionExplorer.png" alt="Solution Explorer" />
+                    </div>
+
+                    <div class="slides">
+                        <img class="picture" src="images/VisualStudioSolution.png" alt="Visual Studio Solution" />
+                    </div>
+
+                    <a class="prev" onclick="plusSlides(-1)">❮</a>
+                    <a class="next" onclick="plusSlides(1)">❯</a>
+
+                    <div style="text-align:center">
+                        <span class="dot" onclick="currentSlide(1)"></span>
+                        <span class="dot" onclick="currentSlide(2)"></span>
+                        <span class="dot" onclick="currentSlide(3)"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br />
+
+    <!-- Subheadline Area -->
+    <nav class="navbar navbar-expand-lg navbar-dark subheadline">
+        <div class="container">
+            <div></div>
+            <div align="right">
+                <a href="" style="pointer-events: none;" class="pagning">&laquo; Previous</a>
+                <a href="Enrollment.html" class="pagning">Next &raquo;</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p>&copy; 2026 Expressium All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("slides");
+            let dots = document.getElementsByClassName("dot");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+        }
+    </script>
+</body>
+</html>
