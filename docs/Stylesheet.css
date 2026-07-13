@@ -1,0 +1,199 @@
+﻿body {
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background-color: lightsteelblue;
+}
+
+.navbar-brand {
+    color: black;
+    font-size: xx-large;
+    font-weight: 500;
+}
+
+.navbar .nav-link, .navbar {
+    color: #444444;
+    font-size: large;
+    font-weight: 400;
+}
+
+.navbar .nav-link:hover {
+    color: #ffffff;
+}
+
+.nav-link {
+    color: steelblue;
+}
+
+a {
+    color: steelblue;
+}
+
+footer {
+    font-size: smaller;
+    color: dimgray;
+    background-color: whitesmoke;
+    padding-top: 14px;
+    padding-bottom: 1px;
+}
+
+.picture {
+    padding: 10px;
+    border: 1px solid #555;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.logo {
+    padding-right: 10px;
+    padding-bottom: 6px;
+    width: 60px;
+}
+
+video {
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 60%;
+}
+
+.center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    padding: 14px;
+    font-weight: bold;
+    font-size: smaller;
+    background-color: steelblue;
+    color: whitesmoke;
+    text-align: center;
+    font-style: italic;
+}
+
+.subheadline {
+    background-color: steelblue;
+    color: whitesmoke;
+    font-size: large;
+}
+
+.subnav {
+    padding: 10px;
+    font-weight: bold;
+    font-size: smaller;
+    background-color: steelblue;
+    background-color: #8c8c8c;
+    color: whitesmoke;
+    padding-left: 8%;
+}
+
+h1 {
+    color: dimgray;
+    font-size: xx-large;
+}
+
+h2 {
+    font-size: x-large;
+}
+
+h3, h4 {
+    font-size: large;
+}
+
+/* Slideshow container */
+.slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+}
+
+/* Next & previous slideshow buttons */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(150,150,150,0.8);
+    text-decoration: none;
+}
+
+.slides {
+    padding-bottom: 20px;
+}
+
+/* Position the "next button" to the right */
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+/* The dots/bullets/indicators */
+.dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+    .active, .dot:hover {
+        background-color: #717171;
+    }
+
+pre {
+    font-family: monospace;
+    font-size: smaller;
+    /*    width: 70%;*/
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    overflow-y: hidden;
+    border: 1px solid #777;
+    padding: 10px;
+    background-color: whitesmoke;
+}
+
+.highlight {
+    background-color: lightgoldenrodyellow;
+}
+
+table {
+    border-collapse: collapse;
+    border: 1px solid;
+    text-align: left;
+}
+
+td {
+    border: 1px solid;
+}
+
+th, td {
+    padding: 5px;
+}
+
+th {
+    background-color: steelblue;
+    color: white;
+}
+
+.pagning {
+    color: white;
+    text-decoration: none;
+    padding-left: 10px;
+}
