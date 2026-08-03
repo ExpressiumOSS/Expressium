@@ -1,147 +1,147 @@
 ﻿using Microsoft.Playwright;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
+    public enum BrowserTypes
+    {
+        Chrome,
+        Chromium,
+        Firefox,
+        Edge,
+        Webkit
+    }
+
     public class BrowserFactory
     {
-        private static IPlaywright playwright;
         private static IBrowser browser;
+        private static readonly SemaphoreSlim initLock = new SemaphoreSlim(1, 1);
 
-        public enum BrowserTypes
+        public static async Task<(IPage page, IBrowserContext context)> Initialize(Configuration configuration)
         {
-            Chrome,
-            Firefox,
-            Edge,
-            Webkit
-        }
+            var playwright = await PlaywrightProvider.GetInstanceAsync();
 
-        public static async Task<IPage> Initialize(Configuration configuration)
-        {
-            if (playwright == null)
-                playwright = await Playwright.CreateAsync();
-            
-            if (browser == null)
-                browser = await GetBrowser(playwright, configuration);
+            await initLock.WaitAsync();
+            try
+            {
+                if (browser == null)
+                    browser = await GetBrowser(playwright, configuration);
+            }
+            finally
+            {
+                initLock.Release();
+            }
 
             var context = await GetBrowserContext(browser, configuration);
 
+            if (configuration.Traces)
+            {
+                await context.Tracing.StartAsync(new TracingStartOptions
+                {
+                    Screenshots = true,
+                    Snapshots = true,
+                    Sources = true
+                });
+            }
+
             var page = await context.NewPageAsync();
-            page.SetDefaultTimeout(configuration.PageTimeOut);
+            page.SetDefaultTimeout(configuration.PageTimeout);
 
             if (configuration.Url != null)
                 await page.GotoAsync(configuration.Url);
 
-            return page;
+            return (page, context);
         }
 
         private static async Task<IBrowser> GetBrowser(IPlaywright playwright, Configuration configuration)
         {
-            if (configuration.BrowserType.Equals(BrowserTypes.Chrome.ToString()))
-                return await playwright.Chromium.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
-            else if (configuration.BrowserType.Equals(BrowserTypes.Firefox.ToString()))
-                return await playwright.Firefox.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
-            else if (configuration.BrowserType.Equals(BrowserTypes.Edge.ToString()))
-                return await playwright.Chromium.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
-            else if (configuration.BrowserType.Equals(BrowserTypes.Webkit.ToString()))
-                return await playwright.Webkit.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
-            else
+            if (!Enum.TryParse<BrowserTypes>(configuration.BrowserType, ignoreCase: true, out var browserType))
+                throw new ArgumentException($"Specified browser type '{configuration.BrowserType}' is unknown...");
+
+            switch (browserType)
             {
-                throw new ArgumentException("Invalid configuration Browser Type...");
+                case BrowserTypes.Chrome:
+                case BrowserTypes.Chromium:
+                case BrowserTypes.Edge:
+                    return await playwright.Chromium.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
+                case BrowserTypes.Firefox:
+                    return await playwright.Firefox.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
+                case BrowserTypes.Webkit:
+                    return await playwright.Webkit.LaunchAsync(GetBrowserTypeLaunchOptions(configuration));
+                default:
+                    throw new ArgumentException($"Specified browser type '{configuration.BrowserType}' is unknown...");
             }
         }
 
         private static async Task<IBrowserContext> GetBrowserContext(IBrowser browser, Configuration configuration)
         {
+            var options = new BrowserNewContextOptions
+            {
+                ViewportSize = configuration.Headless
+                    ? new ViewportSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
+                    : ViewportSize.NoViewport
+            };
+
             if (configuration.Videos)
             {
-                if (configuration.Headless)
+                options.RecordVideoDir = configuration.VideosPath;
+                options.RecordVideoSize = new RecordVideoSize
                 {
-                    var context = await browser.NewContextAsync(new BrowserNewContextOptions
-                    {
-                        ViewportSize = new ViewportSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight },
-                        RecordVideoDir = configuration.VideosPath,
-                        RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
-                    });
-
-                    return context;
-                }
-                else
-                {
-                    var context = await browser.NewContextAsync(new BrowserNewContextOptions
-                    {
-                        ViewportSize = ViewportSize.NoViewport,
-                        RecordVideoDir = configuration.VideosPath,
-                        RecordVideoSize = new RecordVideoSize { Width = configuration.WindowWidth, Height = configuration.WindowHeight }
-                    });
-
-                    return context;
-                }
+                    Width = configuration.WindowWidth,
+                    Height = configuration.WindowHeight
+                };
             }
-            else
-            {
-                var context = await browser.NewContextAsync(new BrowserNewContextOptions
-                {
-                    ViewportSize = ViewportSize.NoViewport
-                });
 
-                return context;
-            }
+            return await browser.NewContextAsync(options);
         }
 
         private static BrowserTypeLaunchOptions GetBrowserTypeLaunchOptions(Configuration configuration)
         {
+            var options = new BrowserTypeLaunchOptions
+            {
+                Headless = configuration.Headless,
+                Timeout = configuration.BrowserTimeout,
+                Channel = GetLaunchOptionsChannel(configuration)
+            };
+
             if (configuration.Maximize)
-            {
-                return new BrowserTypeLaunchOptions
-                {
-                    Headless = configuration.Headless,
-                    Timeout = configuration.BrowserTimeOut,
-                    Channel = GetBrowserContextOptionsChannel(configuration),
-                    Args = new[] { "--start-maximized" }
-                };
-            }
-            else
-            {
-                return new BrowserTypeLaunchOptions
-                {
-                    Headless = configuration.Headless,
-                    Timeout = configuration.BrowserTimeOut,
-                    Channel = GetBrowserContextOptionsChannel(configuration),
-                };
-            }
+                options.Args = new[] { "--start-maximized" };
+
+            return options;
         }
 
-        private static string GetBrowserContextOptionsChannel(Configuration configuration)
+        private static string GetLaunchOptionsChannel(Configuration configuration)
         {
-            if (configuration.BrowserType == BrowserTypes.Chrome.ToString())
-                return "chrome";
-            else if (configuration.BrowserType == BrowserTypes.Firefox.ToString())
-                return "firefox";
-            else if (configuration.BrowserType == BrowserTypes.Edge.ToString())
-                return "msedge";
-            else if (configuration.BrowserType == BrowserTypes.Webkit.ToString())
-                return "webkit";
-            else
-            {
-            }
+            if (!Enum.TryParse<BrowserTypes>(configuration.BrowserType, ignoreCase: true, out var browserType))
+                return null;
 
-            return null;
+            return browserType switch
+            {
+                BrowserTypes.Chrome => "chrome",
+                BrowserTypes.Edge => "msedge",
+                BrowserTypes.Chromium => null,
+                BrowserTypes.Firefox => null,
+                BrowserTypes.Webkit => null,
+                _ => null
+            };
         }
 
         public static async Task Dispose()
         {
-            if (browser != null)
+            await initLock.WaitAsync();
+            try
             {
-                await browser.CloseAsync();
-                browser = null;
+                if (browser != null)
+                {
+                    await browser.CloseAsync();
+                    browser = null;
+                }
             }
-
-            if (playwright != null)
+            finally
             {
-                playwright.Dispose();
-                playwright = null;
+                initLock.Release();
             }
         }
     }

@@ -34,7 +34,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateSourceCode(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(45), "CodeGeneratorPageCSharp GenerateSourceCode validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(50), "CodeGeneratorPageCSharp GenerateSourceCode validation");
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
             var listOfLines = codeGeneratorPage.GenerateUsings(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateUsings validation");
-            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.API.Models;"), "CodeGeneratorPageCSharp GenerateUsings validation");
+            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.Models;"), "CodeGeneratorPageCSharp GenerateUsings validation");
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
             var listOfLines = codeGeneratorPage.GenerateNameSpace();
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "CodeGeneratorPageCSharp GenerateNameSpace validation");
-            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.API.Pages"), "CodeGeneratorPageCSharp GenerateNameSpace validation");
+            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.Pages"), "CodeGeneratorPageCSharp GenerateNameSpace validation");
         }
 
         [Test]
@@ -100,10 +100,12 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateContructor(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(7), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(12), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IPage page) : base(logger, page)"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, page);"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[4], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[5], Is.EqualTo("public async Task IsLoaded()"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[8], Is.EqualTo("await WaitForPageDomContentLoaded();"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[9], Is.EqualTo("await WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 
         [Test]
@@ -114,11 +116,13 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
 
             var listOfLines = codeGeneratorPage.GenerateContructor(tabelPage);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(13), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IPage page) : base(logger, page)"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, page);"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"#products\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[5], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[6], Is.EqualTo("public async Task IsLoaded()"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[9], Is.EqualTo("await WaitForPageDomContentLoaded();"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[10], Is.EqualTo("await WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 
         [Test]
@@ -129,11 +133,13 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.UnitTests
 
             var listOfLines = codeGeneratorPage.GenerateContructor(tabelPage);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(13), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IPage page) : base(logger, page)"), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, page);"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"//table[@id='products']\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[5], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, page, page.Locator(\"//table[@id='products']\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");            
+            Assert.That(listOfLines[6], Is.EqualTo("public async Task IsLoaded()"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[9], Is.EqualTo("await WaitForPageDomContentLoaded();"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[10], Is.EqualTo("await WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 
         [Test]

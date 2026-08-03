@@ -34,7 +34,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             try
             {
-                return Path.Combine(configuration.SolutionPath, GetNameSpace() + ".Tests", TestFolders.UITests.ToString(), page.Name + "Tests.cs");
+                return Path.Combine(configuration.SolutionPath, GetNameSpace() + ".Tests", TestFolders.UiTests.ToString(), page.Name + "Tests.cs");
             }
             catch
             {
@@ -89,7 +89,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             var listOfLines = new List<string>
             {
-                $"namespace {GetNameSpace()}.Tests.{TestFolders.UITests}"
+                $"namespace {GetNameSpace()}.Tests.{TestFolders.UiTests}"
             };
 
             return listOfLines;
@@ -99,7 +99,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             var listOfLines = new List<string>
             {
-                $"[Category(\"{TestFolders.UITests}\")]",
+                $"[Category(\"{TestFolders.UiTests}\")]",
                 $"[Description(\"Validate Navigation & Content of {page.Name}\")]"
             };
 
@@ -110,7 +110,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             var listOfLines = new List<string>
             {
-               $"public class {page.Name}Tests : BaseTest"
+               $"public class {page.Name}Tests : BasePageTest"
             };
 
             return listOfLines;

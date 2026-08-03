@@ -1,18 +1,18 @@
 using OpenQA.Selenium;
 using System.Collections.Generic;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebControl
     {
-        protected IWebDriver driver;
+        protected readonly IWebDriver driver;
 
-        protected By locator;
-        protected By childLocator;
+        protected readonly By locator;
+        protected readonly By childLocator;
 
         protected IWebElement element;
 
-        protected bool cashed = false;
+        protected bool cached = false;
 
         public WebControl(IWebDriver driver, By locator)
         {
@@ -34,7 +34,7 @@ namespace $Company$.$Project$.Web.API.Controls
 
             if (childLocator != null)
             {
-                if (cashed)
+                if (cached)
                 {
                     element = locator.GetChildElement(driver, childLocator);
                     return element;
@@ -43,7 +43,7 @@ namespace $Company$.$Project$.Web.API.Controls
                 return locator.GetChildElement(driver, childLocator);
             }
 
-            if (cashed)
+            if (cached)
             {
                 element = locator.GetElement(driver);
                 return element;
@@ -87,9 +87,9 @@ namespace $Company$.$Project$.Web.API.Controls
             GetElement().WaitForElementIsEnabled(driver);
         }
 
-        public void WaitForElementIsInvisible(int initialTimeOut, int timeOut)
+        public void WaitForElementIsInvisible(int initialTimeout, int timeout)
         {
-            GetElement().WaitForElementIsInvisible(driver, initialTimeOut, timeOut);
+            GetElement().WaitForElementIsInvisible(driver, initialTimeout, timeout);
         }
 
         public void HighlightElementAsAction()

@@ -3,8 +3,10 @@ using log4net.Appender;
 using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
+using log4net.Layout.Pattern;
+using System.IO;
 
-namespace $Company$.$Project$.Web.API
+namespace $Namespace$.Tests.Infrastructure
 {
     public class Logger
     {
@@ -13,7 +15,8 @@ namespace $Company$.$Project$.Web.API
             var repository = LoggerManager.CreateRepository(name);
 
             var patternLayout = new PatternLayout();
-            patternLayout.ConversionPattern = "%date{HH:mm:ss} %level %type # %message%newline";
+            patternLayout.AddConverter("shortType", typeof(ShortTypePatternConverter));
+            patternLayout.ConversionPattern = "%date{HH:mm:ss} %level %shortType # %message%newline";
             patternLayout.ActivateOptions();
 
             var consoleAppender = new ConsoleAppender();
@@ -40,6 +43,24 @@ namespace $Company$.$Project$.Web.API
             }
 
             return LogManager.GetLogger(name, name);
+        }
+
+        private class ShortTypePatternConverter : PatternLayoutConverter
+        {
+            protected override void Convert(TextWriter writer, LoggingEvent loggingEvent)
+            {
+                var className = loggingEvent.LocationInformation.ClassName;
+
+                var plusIndex = className.IndexOf('+');
+                if (plusIndex >= 0)
+                    className = className.Substring(0, plusIndex);
+
+                //var lastDotIndex = className.LastIndexOf('.');
+                //if (lastDotIndex >= 0)
+                //    className = className.Substring(lastDotIndex + 1);
+
+                writer.Write(className);
+            }
         }
     }
 }

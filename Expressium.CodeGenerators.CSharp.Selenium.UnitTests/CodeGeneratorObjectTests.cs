@@ -19,7 +19,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
 
             var codeGeneratorObject = new CodeGeneratorObject(configuration, null);
             var result = codeGeneratorObject.GetNameSpace();
-            var expected = "Expressium.Coffeeshop.Web.API";
+            var expected = "Expressium.Coffeeshop.Web";
 
             Assert.That(result, Is.EqualTo(expected), "Configuration GetNameSpace validate generated output");
         }

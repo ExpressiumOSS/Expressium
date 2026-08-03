@@ -1,8 +1,8 @@
 ﻿using Reqnroll;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+namespace $Namespace$.Tests.BusinessTests.Hooks
 {
-    internal static class ReqnRollExtensions
+    internal static class ReqnrollExtensions
     {
         internal static void AddAttachmentAsLink(this IReqnrollOutputHelper outputHelper, string path)
         {

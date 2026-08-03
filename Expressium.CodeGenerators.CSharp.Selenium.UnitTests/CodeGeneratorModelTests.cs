@@ -61,7 +61,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorModel.GenerateNameSpace();
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "codeGeneratorModelCSharp GenerateNameSpace validation");
-            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.API.Models"), "codeGeneratorModelCSharp GenerateNameSpace validation");
+            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.Models"), "codeGeneratorModelCSharp GenerateNameSpace validation");
         }
 
         [Test]

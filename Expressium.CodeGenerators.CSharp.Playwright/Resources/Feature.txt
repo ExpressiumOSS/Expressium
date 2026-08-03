@@ -5,6 +5,6 @@ Feature: Login
 	So that I can administrate my product orders
 
 @TC-1001 @Review
-Scenario: Successful User Login with Valid Credentials
+Scenario: Login with Valid Credentials
 	Given I am logged in with valid user credentials
 	Then I should be redirected to the Home page

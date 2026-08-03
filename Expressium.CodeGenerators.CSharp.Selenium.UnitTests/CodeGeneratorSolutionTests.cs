@@ -40,7 +40,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
         [Test]
         public void CodeGeneratorSolution_GenerateAll_Configuration_File()
         {
-            var projectApiTestPath = $"{configuration.SolutionPath}\\{configuration.Company}.{configuration.Project}.Web.API.Tests";
+            var projectApiTestPath = $"{configuration.SolutionPath}\\{configuration.Company}.{configuration.Project}.Web.Tests";
             var configFile = File.ReadAllText(Path.Combine(projectApiTestPath, "Configuration.json"));
 
             Assert.That(configFile, Does.Contain(configuration.Company), "CodeGeneratorSolution solution configuration contains Company...");

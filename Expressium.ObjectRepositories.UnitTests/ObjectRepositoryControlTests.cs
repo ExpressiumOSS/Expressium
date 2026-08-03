@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using Expressium.ObjectRepositories;
 using System;
 
 namespace Expressium.ObjectRepositories.UnitTests
@@ -16,7 +15,7 @@ namespace Expressium.ObjectRepositories.UnitTests
             control.How = "XPath";
             control.Using = "//a[text)='Home']";
 
-            var exception = Assert.Throws<ArgumentException>(() => control.Validate());
+            var exception = Assert.Throws<ArgumentException>((Action)(() => control.Validate()));
             Assert.That(exception.Message, Is.EqualTo("The ObjectRepositoryControl property 'Name' is undefined..."), "ObjectRepositoryControl Validate undefine property Name");
         }
 
@@ -29,8 +28,8 @@ namespace Expressium.ObjectRepositories.UnitTests
             control.How = "XPath";
             control.Using = "//a[text)='Home']";
 
-            Assert.That(control.IsComboBox, Is.True, "ObjectRepositoryControl Validate valid property Type");
-            Assert.DoesNotThrow(() => control.Validate(), "ObjectRepositoryControl Validate valid property Type");
+            Assert.That(control.IsComboBox(), Is.True, "ObjectRepositoryControl Validate valid property Type");
+            Assert.That((Action)(() => control.Validate()), Throws.Nothing, "ObjectRepositoryControl Validate valid property Type");
         }
 
         [Test]
@@ -42,7 +41,7 @@ namespace Expressium.ObjectRepositories.UnitTests
             control.How = "XPath";
             control.Using = "//a[text)='Home']";
 
-            var exception = Assert.Throws<ArgumentException>(() => control.Validate());
+            var exception = Assert.Throws<ArgumentException>((Action)(() => control.Validate()));
             Assert.That(exception.Message, Is.EqualTo("The ObjectRepositoryControl property 'Type' is invalid..."), "ObjectRepositoryControl Validate invalid property Type");
         }
 
@@ -55,7 +54,7 @@ namespace Expressium.ObjectRepositories.UnitTests
             control.How = "TPath";
             control.Using = "//a[text)='Home']";
 
-            var exception = Assert.Throws<ArgumentException>(() => control.Validate());
+            var exception = Assert.Throws<ArgumentException>((Action)(() => control.Validate()));
             Assert.That(exception.Message, Is.EqualTo("The ObjectRepositoryControl property 'How' is invalid..."), "ObjectRepositoryControl Validate invalid property How");
         }
 
@@ -68,7 +67,7 @@ namespace Expressium.ObjectRepositories.UnitTests
             control.How = "XPath";
             control.Using = "";
 
-            var exception = Assert.Throws<ArgumentException>(() => control.Validate());
+            var exception = Assert.Throws<ArgumentException>((Action)(() => control.Validate()));
             Assert.That(exception.Message, Is.EqualTo("The ObjectRepositoryControl property 'Using' is undefined..."), "ObjectRepositoryControl Validate undefine property Using");
         }
 

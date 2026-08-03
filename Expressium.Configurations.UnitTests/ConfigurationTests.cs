@@ -53,14 +53,15 @@ namespace Expressium.Configurations.UnitTests
                 File.Delete(configuration.RepositoryPath);
 
             ConfigurationUtilities.SerializeAsJson(configuration.RepositoryPath, configuration);
-            Assert.DoesNotThrow(() => configuration.Validate(), "Configuration Validate validate valid configuration");
+            Assert.That((Action)(() => configuration.Validate()), Throws.Nothing, "Configuration Validate validate valid configuration");
 
             //configuration.CodeGenerator.CodingLanguage = "English";
             //var exception = Assert.Throws<ArgumentException>(() => configuration.Validate());
             //Assert.That(exception.Message, Is.EqualTo("The Configuration property 'CodingLanguage' is invalid..."), "Configuration Validate invalid property CodingLanguage");
 
             configuration.CodeGenerator.CodingLanguage = null;
-            var exception = Assert.Throws<ArgumentException>(() => configuration.Validate());
+
+            var exception = Assert.Throws<ArgumentException>((Action)(() => configuration.Validate()));
             Assert.That(exception.Message, Is.EqualTo("The ConfigurationCodeGenerator property 'CodingLanguage' is undefined..."), "Configuration Validate invalid property CodingLanguage");
         }
 

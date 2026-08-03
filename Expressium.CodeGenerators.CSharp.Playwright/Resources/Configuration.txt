@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
+﻿using System.IO;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public enum Folders
     {
         Loggings,
         Screenshots,
-        Videos
+        Videos,
+        Traces
     }
 
     public class Configuration
@@ -30,6 +29,8 @@ namespace $Company$.$Project$.Web.API.Tests
         public string ScreenshotsPath { get { return Path.Combine(Directory.GetCurrentDirectory(), Folders.Screenshots.ToString()); } }
         public bool Videos { get; set; }
         public string VideosPath { get { return Path.Combine(Directory.GetCurrentDirectory(), Folders.Videos.ToString()); } }
+        public bool Traces { get; set; }
+        public string TracesPath { get { return Path.Combine(Directory.GetCurrentDirectory(), Folders.Traces.ToString()); } }
         public string Url { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
@@ -39,46 +40,12 @@ namespace $Company$.$Project$.Web.API.Tests
         public bool WindowSize { get; set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
-        public int BrowserTimeOut { get; set; }
-        public int PageTimeOut { get; set; }
+        public int BrowserTimeout { get; set; }
+        public int PageTimeout { get; set; }
         public bool Highlight { get; set; }
-        public int HighlightTimeOut { get; set; }
-
-        public static Configuration GetCurrentConfiguation()
-        {
-            var profile = System.Environment.GetEnvironmentVariable("PROFILE");
-
-            if (profile == null || !Enum.IsDefined(typeof(Profiles), profile))
-                profile = Profiles.Development.ToString();
-
-            var configuration = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("configuration.json").Build()
-               .GetSection("Profiles").GetSection(profile).Get<Configuration>();
-
-            if (configuration == null)
-                throw new ApplicationException($"Configuration profile '{profile}' is unknown...");
-
-            if (string.IsNullOrWhiteSpace(configuration.Username))
-                configuration.Username = System.Environment.GetEnvironmentVariable("USERNAME");
-
-            if (string.IsNullOrWhiteSpace(configuration.Password))
-                configuration.Password = System.Environment.GetEnvironmentVariable("PASSWORD");
-
-            if (configuration.Loggings && !Directory.Exists(configuration.LoggingsPath))
-                Directory.CreateDirectory(configuration.LoggingsPath);
-
-            if (configuration.Screenshots && !Directory.Exists(configuration.ScreenshotsPath))
-                Directory.CreateDirectory(configuration.ScreenshotsPath);
-
-            if (configuration.Videos && !Directory.Exists(configuration.VideosPath))
-                Directory.CreateDirectory(configuration.VideosPath);
-
-            // Initialize Locators Settings...
-            Locators.Highlight = configuration.Highlight;
-            Locators.HighlightTimeOut = configuration.HighlightTimeOut;
-
-            return configuration;
-        }
+        public int HighlightTimeout { get; set; }
+        public string ApiBaseUrl { get; set; }
+        public int ApiTimeout { get; set; }
+        public bool IgnoreHttpsErrors { get; set; }
     }
 }

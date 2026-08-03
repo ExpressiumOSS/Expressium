@@ -136,14 +136,17 @@
 	<data name="BaseTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseTable.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
-	<data name="BaseTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\BaseTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="BasePageTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BasePageTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
 	<data name="BaseTestFixture" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseTestFixture.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
 	<data name="Configuration" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Configuration.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="ConfigurationLoader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ConfigurationLoader.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="ConfigurationJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\ConfigurationJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -169,8 +172,8 @@
 	<data name="Randomizer" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Randomizer.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="RegressionTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\RegressionTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="BatchFileTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BatchFileTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
 	<data name="CodeGeneration" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\CodeGeneration.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -196,8 +199,11 @@
 	<data name="BrowserManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BrowserManager.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
-	<data name="Locators" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\Locators.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+	<data name="PlaywrightProvider" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\PlaywrightProvider.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="WebLocators" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\WebLocators.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
 	<data name="WebLink" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebLink.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -217,13 +223,34 @@
 	<data name="WebTextBox" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\WebTextBox.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
 	</data>
-	<data name="ReqnRollJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ReqnRollJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="ReqnrollJson" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReqnrollJson.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ReqnRollExtensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ReqnRollExtensions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="ReqnrollExtensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReqnrollExtensions.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
 	<data name="GitIgnore" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\GitIgnore.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="SkillBddTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\SkillBddTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="SkillUiTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\SkillUiTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="SkillApiTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\SkillApiTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>	
+	<data name="BaseService" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BaseService.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="BaseServiceTest" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\BaseServiceTest.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="ApiManager" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ApiManager.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="ReadMe" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ReadMe.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
 </root>

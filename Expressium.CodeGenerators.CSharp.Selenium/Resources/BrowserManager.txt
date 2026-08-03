@@ -1,10 +1,10 @@
 ﻿using OpenQA.Selenium;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public class BrowserManager
     {
-        private Configuration configuration;
+        private readonly Configuration configuration;
         private IWebDriver driver;
 
         public BrowserManager(Configuration configuration)
@@ -17,24 +17,19 @@ namespace $Company$.$Project$.Web.API.Tests
             get
             {
                 if (driver == null)
-                {
                     driver = BrowserFactory.Initialize(configuration);
-                }
 
                 return driver;
             }
         }
 
-        public bool IsInitialized()
-        {
-            return driver != null;
-        }
+        public bool HasDriver => driver != null;
 
         public void SaveScreenshot(string filePath)
         {
-            if (driver != null)
+            if (driver is ITakesScreenshot screenshotDriver)
             {
-                var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+                var screenshot = screenshotDriver.GetScreenshot();
                 screenshot.SaveAsFile(filePath);
             }
         }
@@ -44,7 +39,6 @@ namespace $Company$.$Project$.Web.API.Tests
             if (driver != null)
             {
                 driver.Quit();
-                driver.Dispose();
                 driver = null;
             }
         }

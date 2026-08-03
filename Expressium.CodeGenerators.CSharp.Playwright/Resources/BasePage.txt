@@ -2,37 +2,34 @@ using log4net;
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 using System;
-using $Company$.$Project$.Web.API.Controls;
+using $Namespace$.Controls;
 
-namespace $Company$.$Project$.Web.API
+namespace $Namespace$.Pages
 {
     public class BasePage
     {
         protected ILog logger;
         protected IPage page;
 
-        public static int PageReadyStateTimeOut { get; set; }
+        public static int PageReadyStateTimeout { get; set; }
 
         public static string PageSpinnerSelector { get; set; }
-        public static int PageSpinnerInitialTimeOut { get; set; }
-        public static int PageSpinnerTimeOut { get; set; }
+        public static int PageSpinnerInitialTimeout { get; set; }
+        public static int PageSpinnerTimeout { get; set; }
 
         static BasePage()
         {
-            PageReadyStateTimeOut = 10000;
+            PageReadyStateTimeout = 10000;
 
             PageSpinnerSelector = null;
-            PageSpinnerInitialTimeOut = 150;
-            PageSpinnerTimeOut = 10000;
+            PageSpinnerInitialTimeout = 150;
+            PageSpinnerTimeout = 10000;
         }
 
         public BasePage(ILog logger, IPage page)
         {
             this.logger = logger;
             this.page = page;
-
-            WaitForPageDocumentReadyStateEqualsComplete();
-            WaitForPageSpinnerIsCompleted();
         }
 
         public async Task<string> GetTitle()
@@ -47,45 +44,48 @@ namespace $Company$.$Project$.Web.API
             return new Uri(page.Url).LocalPath;
         }
 
-        protected void WaitForPageDocumentReadyStateEqualsComplete()
+        protected async Task WaitForPageDomContentLoaded()
         {
-            page.WaitForLoadStateAsync(LoadState.DOMContentLoaded, new() { Timeout = PageReadyStateTimeOut }).GetAwaiter().GetResult();
+            await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded, new() { Timeout = PageReadyStateTimeout });
         }
 
-        protected void WaitForPageSpinnerIsCompleted()
+        protected async Task WaitForPageSpinnerIsCompleted()
         {
             if (PageSpinnerSelector != null)
             {
-                System.Threading.Thread.Sleep(PageSpinnerInitialTimeOut);
-                page.Locator(PageSpinnerSelector).WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = PageSpinnerTimeOut }).GetAwaiter().GetResult();
+                await Task.Delay(PageSpinnerInitialTimeout);
+                await page.Locator(PageSpinnerSelector).WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = PageSpinnerTimeout });
             }
         }
 
-        protected void WaitForPageTitleEquals(string title)
+        protected async Task WaitForPageTitleEquals(string title)
         {
-            page.WaitForFunctionAsync($"() => document.title === '{title}'").GetAwaiter().GetResult();
+            await page.WaitForFunctionAsync($"() => document.title === '{title}'");
         }
 
-        protected void WaitForPageTitleContains(string title)
+        protected async Task WaitForPageTitleContains(string title)
         {
+            await page.WaitForFunctionAsync($"() => document.title.includes('{title}')");
         }
 
-        protected void WaitForPageUrlEquals(string urlPath)
+        protected async Task WaitForPageUrlEquals(string urlPath)
         {
+            await page.WaitForFunctionAsync($"() => window.location.pathname === '{urlPath}'");
         }
 
-        protected void WaitForPageUrlContains(string urlPath)
+        protected async Task WaitForPageUrlContains(string urlPath)
         {
+            await page.WaitForFunctionAsync($"() => window.location.pathname.includes('{urlPath}')");
         }
 
-        protected void WaitForPageElementIsVisible(WebControl control)
+        protected async Task WaitForPageElementIsVisible(WebControl control)
         {
-            control.WaitForPageElementIsVisible();
+            await control.WaitForPageElementIsVisible();
         }
 
-        protected void WaitForPageElementIsEnabled(WebControl control)
+        protected async Task WaitForPageElementIsEnabled(WebControl control)
         {
-            control.WaitForPageElementIsEnabled();
+            await control.WaitForPageElementIsEnabled();
         }
 
         public async Task NavigateBack()

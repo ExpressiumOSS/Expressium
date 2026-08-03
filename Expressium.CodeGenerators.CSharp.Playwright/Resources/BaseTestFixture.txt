@@ -6,14 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using $Namespace$.Controls;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public class BaseTestFixture
     {
         protected readonly Configuration configuration;
         protected readonly BrowserManager browserManager;
+        protected readonly ApiManager apiManager;
 
         protected ILog logger;
         protected Asserts asserts;
@@ -22,12 +25,16 @@ namespace $Company$.$Project$.Web.API.Tests
 
         public BaseTestFixture()
         {
-            configuration = Configuration.GetCurrentConfiguation();
+            configuration = ConfigurationLoader.GetConfiguration();
             browserManager = new BrowserManager(configuration);
+            apiManager = new ApiManager(configuration);
+
+            WebLocators.Highlight = configuration.Highlight;
+            WebLocators.HighlightTimeout = configuration.HighlightTimeout;
         }
 
         [OneTimeSetUp]
-        protected virtual void InitializeFixture()
+        protected virtual async Task InitializeFixture()
         {
             if (configuration.Loggings)
             {
@@ -58,12 +65,17 @@ namespace $Company$.$Project$.Web.API.Tests
                     File.Delete(filePath);
             }
 
-            logger.Info("");
+            if (configuration.Traces)
+            {
+                var filePath = Path.Combine(configuration.TracesPath, GetTestName() + ".zip");
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+            }
+
             logger.Info("// Initialize Test Fixture");
             logger.Info($"Company: {configuration.Company}");
             logger.Info($"Project: {configuration.Project}");
             logger.Info($"Environment: {configuration.Environment}");
-            logger.Info($"Url: {configuration.Url}");
             logger.Info($"Name: {GetTestName()}");
             logger.Info($"Category: {GetTestCategory()}");
             logger.Info($"Description: {GetTestDescription()}");
@@ -71,31 +83,40 @@ namespace $Company$.$Project$.Web.API.Tests
         }
 
         [OneTimeTearDown]
-        protected virtual void FinalizeFixture()
+        protected virtual async Task FinalizeFixture()
         {
             logger.Info("");
             logger.Info("// Finalize Test Fixture");
 
-            if (browserManager.IsInitialized())
+            if (browserManager.Initialized)
             {
                 if (configuration.Screenshots)
                 {
                     var filePath = Path.Combine(configuration.ScreenshotsPath, GetTestName() + ".png");
-                    SaveScreenshot(filePath).Wait();
+                    await SaveScreenshot(filePath);
+                }
+
+                if (configuration.Traces)
+                {
+                    var filePath = Path.Combine(configuration.TracesPath, GetTestName() + ".zip");
+                    await SaveTrace(filePath);
                 }
 
                 string videoPath = null;
                 if (configuration.Videos)
-                    videoPath = page.Video.PathAsync().GetAwaiter().GetResult();
+                    videoPath = await page.Video.PathAsync();
 
-                browserManager.Quit().GetAwaiter().GetResult();
+                await browserManager.Quit();
 
                 if (configuration.Videos)
                 {
                     var filePath = Path.Combine(configuration.VideosPath, GetTestName() + ".webm");
-                    SaveVideo(videoPath, filePath).Wait();
+                    await SaveVideo(videoPath, filePath);
                 }
             }
+
+            if (apiManager.Initialized)
+                await apiManager.Quit();
 
             LogMessageAsError(GetTestResultMessage());
             LogMessageAsDebug(GetTestResultStackTrace());
@@ -222,6 +243,20 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.Info($"Video has been saved: {Path.GetFileName(filePath)}");
         }
 
+        private async Task SaveTrace(string filePath)
+        {
+            if (GetTestStatus() == TestStatus.Failed.ToString() || GetTestFailCount() > 0)
+            {
+                await page.Context.Tracing.StopAsync(new() { Path = filePath });
+
+                logger.Info($"Trace has been saved: {Path.GetFileName(filePath)}");
+            }
+            else
+            {
+                await page.Context.Tracing.StopAsync();
+            }
+        }
+
         private void LogMessageAsError(string message)
         {
             try
@@ -276,8 +311,9 @@ namespace $Company$.$Project$.Web.API.Tests
 
         public static async Task WaitForFileToBeReleased(string path, int timeoutSeconds = 30)
         {
-            DateTime start = DateTime.Now;
-            while ((DateTime.Now - start).TotalSeconds < timeoutSeconds)
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
+
+            while (!cts.Token.IsCancellationRequested)
             {
                 try
                 {
@@ -288,11 +324,18 @@ namespace $Company$.$Project$.Web.API.Tests
                 }
                 catch (IOException)
                 {
-                    await Task.Delay(500);
+                    try
+                    {
+                        await Task.Delay(500, cts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
                 }
             }
 
-            throw new TimeoutException("Timed out waiting for file to be released.");
+            throw new TimeoutException($"Timed out after {timeoutSeconds}s waiting for file to be released: {path}");
         }
     }
 }

@@ -42,9 +42,9 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorTest.GenerateUsings(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(6), "CodeGeneratorTestCSharp GenerateUsings validation");
-            Assert.That(listOfLines[1], Is.EqualTo("using Expressium.Coffeeshop.Web.API.Models;"), "CodeGeneratorTestCSharp GenerateUsings validation");
-            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.API.Pages;"), "CodeGeneratorTestCSharp GenerateUsings validation");
-            Assert.That(listOfLines[3], Is.EqualTo("using Expressium.Coffeeshop.Web.API.Tests.Factories;"), "CodeGeneratorTestCSharp GenerateUsings validation");
+            Assert.That(listOfLines[1], Is.EqualTo("using Expressium.Coffeeshop.Web.Models;"), "CodeGeneratorTestCSharp GenerateUsings validation");
+            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.Pages;"), "CodeGeneratorTestCSharp GenerateUsings validation");
+            Assert.That(listOfLines[3], Is.EqualTo("using Expressium.Coffeeshop.Web.Tests.Factories;"), "CodeGeneratorTestCSharp GenerateUsings validation");
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorTest.GenerateNameSpace();
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "CodeGeneratorTestCSharp GenerateNameSpace validation");
-            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.API.Tests.UITests"), "CodeGeneratorTestCSharp GenerateNameSpace validation");
+            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.Tests.UiTests"), "CodeGeneratorTestCSharp GenerateNameSpace validation");
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorTest.GenerateClass(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "CodeGeneratorTestCSharp GenerateClass validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public class LoginPageTests : BaseTest"), "CodeGeneratorTestCSharp GenerateClass validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public class LoginPageTests : BasePageTest"), "CodeGeneratorTestCSharp GenerateClass validation");
         }
 
         [Test]

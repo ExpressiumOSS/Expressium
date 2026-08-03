@@ -1,0 +1,49 @@
+using Microsoft.Playwright;
+using System.Threading.Tasks;
+
+namespace $Namespace$.Tests.Infrastructure
+{
+    public class ApiManager
+    {
+        private readonly Configuration configuration;
+        private IAPIRequestContext request;
+
+        public ApiManager(Configuration configuration)
+        {
+            this.configuration = configuration;
+        }
+
+        public bool Initialized { get; private set; }
+
+        public IAPIRequestContext GetRequest()
+        {
+            if (request == null)
+            {
+                request = Initialize(configuration).GetAwaiter().GetResult();
+                Initialized = true;
+            }
+
+            return request;
+        }
+
+        private static async Task<IAPIRequestContext> Initialize(Configuration configuration)
+        {
+            var playwright = await PlaywrightProvider.GetInstanceAsync();
+            return await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+            {
+                BaseURL = configuration.ApiBaseUrl,
+                Timeout = configuration.ApiTimeout > 0 ? configuration.ApiTimeout : 30000,
+                IgnoreHTTPSErrors = configuration.IgnoreHttpsErrors
+            });
+        }
+
+        public async Task Quit()
+        {
+            if (request != null)
+            {
+                await request.DisposeAsync();
+                request = null;
+            }
+        }
+    }
+}

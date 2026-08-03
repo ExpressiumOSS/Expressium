@@ -1,6 +1,7 @@
 ﻿using log4net;
+using $Namespace$.Tests.Infrastructure;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+namespace $Namespace$.Tests.BusinessTests.Steps
 {
     public class BaseContext
     {

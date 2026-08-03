@@ -87,7 +87,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
 
         internal string GetNameSpace()
         {
-            return $"{configuration.Company}.{configuration.Project}.Web.API";
+            return $"{configuration.Company}.{configuration.Project}.Web";
         }
     }
 }

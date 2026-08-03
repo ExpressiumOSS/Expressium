@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using $Namespace$.Controls;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public class BaseTestFixture
     {
@@ -21,8 +22,11 @@ namespace $Company$.$Project$.Web.API.Tests
 
         public BaseTestFixture()
         {
-            configuration = Configuration.GetCurrentConfiguation();
+            configuration = ConfigurationLoader.GetConfiguration();
             browserManager = new BrowserManager(configuration);
+
+            WebElements.Highlight = configuration.Highlight;
+            WebElements.HighlightTimeout = configuration.HighlightTimeout;
         }
 
         [OneTimeSetUp]
@@ -50,12 +54,10 @@ namespace $Company$.$Project$.Web.API.Tests
                     File.Delete(filePath);
             }
 
-            logger.Info("");
             logger.Info("// Initialize Test Fixture");
             logger.Info($"Company: {configuration.Company}");
             logger.Info($"Project: {configuration.Project}");
             logger.Info($"Environment: {configuration.Environment}");
-            logger.Info($"Url: {configuration.Url}");
             logger.Info($"Name: {GetTestName()}");
             logger.Info($"Category: {GetTestCategory()}");
             logger.Info($"Description: {GetTestDescription()}");
@@ -68,7 +70,7 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.Info("");
             logger.Info("// Finalize Test Fixture");
 
-            if (browserManager.IsInitialized())
+            if (browserManager.HasDriver)
             {
                 if (configuration.Screenshots)
                 {
@@ -88,18 +90,17 @@ namespace $Company$.$Project$.Web.API.Tests
             logger.Info($"Number of inconclusive tests: {GetTestInconclusiveCount()}");
             logger.Info($"Number of failed tests: {GetTestFailCount()}");
 
+            var status = GetTestStatus();
             string statusCode;
 
-            if (GetTestStatus() == TestStatus.Failed.ToString())
+            if (status == TestStatus.Failed)
                 statusCode = "Testcase has failed during execution...";
-            else if (GetTestStatus() == TestStatus.Inconclusive.ToString())
+            else if (status == TestStatus.Inconclusive)
                 statusCode = "Testcase was inconclusive executed...";
-            else if (GetTestStatus() == TestStatus.Skipped.ToString())
+            else if (status == TestStatus.Skipped)
                 statusCode = "Testcase was skipped from execution...";
             else
-            {
                 statusCode = "Testcase was successfully executed...";
-            }
 
             logger.Info(statusCode + "\r\n");
 
@@ -117,7 +118,7 @@ namespace $Company$.$Project$.Web.API.Tests
         [TearDown]
         protected virtual void FinalizeTest()
         {
-            if (GetTestStatus() == TestStatus.Failed.ToString())
+            if (GetTestStatus() == TestStatus.Failed)
             {
                 LogMessageAsError(GetTestResultMessage());
                 LogMessageAsDebug(GetTestResultStackTrace());
@@ -151,9 +152,9 @@ namespace $Company$.$Project$.Web.API.Tests
             return TestContext.CurrentContext.Test.Name;
         }
 
-        protected virtual string GetTestStatus()
+        protected virtual TestStatus GetTestStatus()
         {
-            return TestContext.CurrentContext.Result.Outcome.Status.ToString();
+            return TestContext.CurrentContext.Result.Outcome.Status;
         }
 
         protected virtual string GetTestResultMessage()

@@ -1,0 +1,65 @@
+﻿using log4net;
+using RestSharp;
+using System;
+using System.Diagnostics;
+
+namespace $Namespace$.Services
+{
+    public class BaseService
+    {
+        protected readonly ILog logger;
+
+        public string ResponseStatusCode { get; private set; }
+        public string ResponseErrorMessage { get; private set; }
+        public string ResponseContent { get; private set; }
+        public TimeSpan ResponseElapsedTime { get; private set; }
+
+        public BaseService(ILog logger)
+        {
+            this.logger = logger;
+        }
+
+        protected RestResponse ExecuteGetRequest(string baseUrl)
+        {
+            var client = new RestClient();
+            var request = new RestRequest(baseUrl);
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var response = client.Execute(request, Method.Get);
+            stopWatch.Stop();
+
+            ResponseStatusCode = response.StatusCode.ToString();
+            ResponseErrorMessage = response.ErrorMessage;
+            ResponseContent = response.Content;
+            ResponseElapsedTime = stopWatch.Elapsed;
+
+            if (!response.IsSuccessful)
+                throw new ApplicationException($"Executing service request has failed...\nStatus: {response.StatusCode}\nMessage: {response.ErrorMessage}");
+
+            return response;
+        }
+
+        protected RestResponse ExecutePostRequest(string baseUrl, string payload)
+        {
+            var client = new RestClient();
+            var request = new RestRequest(baseUrl);
+            request.AddJsonBody(payload);
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var response = client.Execute(request, Method.Post);
+            stopWatch.Stop();
+
+            ResponseStatusCode = response.StatusCode.ToString();
+            ResponseErrorMessage = response.ErrorMessage;
+            ResponseContent = response.Content;
+            ResponseElapsedTime = stopWatch.Elapsed;
+
+            if (!response.IsSuccessful)
+                throw new ApplicationException($"Executing service request has failed...\nStatus: {response.StatusCode}\nMessage: {response.ErrorMessage}");
+
+            return response;
+        }
+    }
+}

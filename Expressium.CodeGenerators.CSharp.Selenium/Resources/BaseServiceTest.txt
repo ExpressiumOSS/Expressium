@@ -1,0 +1,16 @@
+﻿using NUnit.Framework;
+using $Namespace$.Services;
+using $Namespace$.Tests.Infrastructure;
+
+namespace $Namespace$.Tests.ApiTests
+{
+    public class BaseServiceTest : BaseTestFixture
+    {
+        [OneTimeSetUp]
+        protected void InitializeTestcase()
+        {
+            logger.Info("");
+            logger.Info("// Initialize Testcase");
+        }
+    }
+}

@@ -3,10 +3,10 @@
     "Development": {
       "Company": "$Company$",
       "Project": "$Project$",
-      "Environment": "Development",
       "Loggings": true,
       "Screenshots": true,
       "Videos": false,
+      "Traces": false,
       "Url": "$Url$",
       "Username": "john.doe@microsoft.com",
       "Password": "1234567890",
@@ -16,10 +16,13 @@
       "WindowSize": false,
       "WindowWidth": 1920,
       "WindowHeight": 1080,
-      "BrowserTimeOut": 10000,
-      "PageTimeOut": 5000,
+      "BrowserTimeout": 15000,
+      "PageTimeout": 15000,
       "Highlight": true,
-      "HighlightTimeOut": 150
+      "HighlightTimeout": 150,
+      "ApiBaseUrl": "$Url$/api",
+      "ApiTimeout": 15000,
+      "IgnoreHttpsErrors": false
     }
   }
 }

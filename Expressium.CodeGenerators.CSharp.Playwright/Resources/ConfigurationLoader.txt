@@ -1,0 +1,64 @@
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+
+namespace $Namespace$.Tests.Infrastructure
+{
+    public static class ConfigurationLoader
+    {
+        public static Configuration GetConfiguration()
+        {
+            var profile = ResolveProfile();
+
+            var configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("Configuration.json", optional: false, reloadOnChange: false)
+               .AddJsonFile("Configuration.local.json", optional: true, reloadOnChange: false).Build()
+               .GetSection("Profiles").GetSection(profile).Get<Configuration>();
+
+            if (configuration == null)
+                throw new ApplicationException($"Configuration profile '{profile}' is unknown...");
+
+            configuration.Environment = profile;
+
+            SetEnvironmentFallbacks(configuration);
+            CreateOutputDirectories(configuration);
+
+            return configuration;
+        }
+
+        private static string ResolveProfile()
+        {
+            var profile = System.Environment.GetEnvironmentVariable("$PROJECT$_PROFILE");
+
+            if (profile == null || !Enum.IsDefined(typeof(Configuration.Profiles), profile))
+                profile = Configuration.Profiles.Development.ToString();
+
+            return profile;
+        }
+
+        private static void SetEnvironmentFallbacks(Configuration configuration)
+        {
+            if (string.IsNullOrWhiteSpace(configuration.Username))
+                configuration.Username = System.Environment.GetEnvironmentVariable("$PROJECT$_USERNAME");
+
+            if (string.IsNullOrWhiteSpace(configuration.Password))
+                configuration.Password = System.Environment.GetEnvironmentVariable("$PROJECT$_PASSWORD");
+        }
+
+        private static void CreateOutputDirectories(Configuration configuration)
+        {
+            if (configuration.Loggings)
+                Directory.CreateDirectory(configuration.LoggingsPath);
+
+            if (configuration.Screenshots)
+                Directory.CreateDirectory(configuration.ScreenshotsPath);
+
+            if (configuration.Videos)
+                Directory.CreateDirectory(configuration.VideosPath);
+
+            if (configuration.Traces)
+                Directory.CreateDirectory(configuration.TracesPath);
+        }
+    }
+}

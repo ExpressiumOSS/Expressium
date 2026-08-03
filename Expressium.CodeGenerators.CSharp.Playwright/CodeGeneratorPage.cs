@@ -213,20 +213,25 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
                     }
                 }
             }
+            listOfLines.Add($"}}");
+            listOfLines.Add($"");
 
-            if (page.Synchronizers.Count > 0 && (page.Members.Count > 0 || page.Controls.Any(c => c.IsTable())))
-                listOfLines.Add("");
+
+            listOfLines.Add($"public async Task IsLoaded()");
+            listOfLines.Add($"{{");
+            listOfLines.Add($"logger.Info(\"IsLoaded()\");");
+            listOfLines.Add($"await WaitForPageDomContentLoaded();");
 
             foreach (var synchronizer in page.Synchronizers)
             {
                 if (synchronizer.How == SynchronizerTypes.WaitForPageElementIsVisible.ToString() ||
                     synchronizer.How == SynchronizerTypes.WaitForPageElementIsEnabled.ToString())
                 {
-                    listOfLines.Add($"{synchronizer.How}({synchronizer.Using});");
+                    listOfLines.Add($"await {synchronizer.How}({synchronizer.Using});");
                 }
                 else
                 {
-                    listOfLines.Add($"{synchronizer.How}(\"{synchronizer.Using}\");");
+                    listOfLines.Add($"await {synchronizer.How}(\"{synchronizer.Using}\");");
                 }
             }
 

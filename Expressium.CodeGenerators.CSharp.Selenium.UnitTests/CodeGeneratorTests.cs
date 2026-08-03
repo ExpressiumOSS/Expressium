@@ -33,19 +33,19 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             if (File.Exists(configuration.RepositoryPath))
                 File.Delete(configuration.RepositoryPath);
 
-            var loginPageFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API", "Pages", "LoginPage.cs");
+            var loginPageFile = Path.Combine(directory, "Expressium.Coffeeshop.Web", "Pages", "LoginPage.cs");
             if (File.Exists(loginPageFile))
                 File.Delete(loginPageFile);
 
-            var loginModelFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API", "Models", "LoginPageModel.cs");
+            var loginModelFile = Path.Combine(directory, "Expressium.Coffeeshop.Web", "Models", "LoginPageModel.cs");
             if (File.Exists(loginModelFile))
                 File.Delete(loginModelFile);
 
-            var loginTestFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "UITests", "LoginPageTests.cs");
+            var loginTestFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "UiTests", "LoginPageTests.cs");
             if (File.Exists(loginTestFile))
                 File.Delete(loginTestFile);
 
-            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "Factories", "LoginPageModelFactory.cs");
+            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageModelFactory.cs");
             if (File.Exists(loginFactoryFile))
                 File.Delete(loginFactoryFile);
 
@@ -68,19 +68,19 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             if (File.Exists(configuration.RepositoryPath))
                 File.Delete(configuration.RepositoryPath);
 
-            var loginPageFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API", "Pages", "LoginPage.cs");
+            var loginPageFile = Path.Combine(directory, "Expressium.Coffeeshop.Web", "Pages", "LoginPage.cs");
             if (File.Exists(loginPageFile))
                 File.Delete(loginPageFile);
 
-            var loginPageModelFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API", "Models", "LoginPageModel.cs");
+            var loginPageModelFile = Path.Combine(directory, "Expressium.Coffeeshop.Web", "Models", "LoginPageModel.cs");
             if (File.Exists(loginPageModelFile))
                 File.Delete(loginPageModelFile);
 
-            var loginTestFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "UITests", "LoginPageTests.cs");
+            var loginTestFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "UiTests", "LoginPageTests.cs");
             if (File.Exists(loginTestFile))
                 File.Delete(loginTestFile);
 
-            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.API.Tests", "Factories", "LoginPageModelFactory.cs");
+            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageModelFactory.cs");
             if (File.Exists(loginFactoryFile))
                 File.Delete(loginFactoryFile);
 

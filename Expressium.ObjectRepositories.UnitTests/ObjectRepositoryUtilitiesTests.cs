@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using System;
 using System.IO;
-using Expressium.ObjectRepositories;
 
 namespace Expressium.ObjectRepositories.UnitTests
 {
@@ -52,7 +51,7 @@ namespace Expressium.ObjectRepositories.UnitTests
                 File.Delete(fileName);
 
             var objectRepository = CreateObjectRepository();
-            Assert.DoesNotThrow(() => objectRepository.Validate(), "ObjectRepository Validate validate valid objectRepository");
+            Assert.That((Action)(() => objectRepository.Validate()), Throws.Nothing, "ObjectRepository Validate validate valid objectRepository");
         }
 
         private ObjectRepository CreateObjectRepository()

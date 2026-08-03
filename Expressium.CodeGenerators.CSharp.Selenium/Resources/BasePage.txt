@@ -2,29 +2,28 @@ using log4net;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Threading;
-using $Company$.$Project$.Web.API.Controls;
+using $Namespace$.Controls;
 
-namespace $Company$.$Project$.Web.API
+namespace $Namespace$.Pages
 {
     public class BasePage
     {
         protected readonly ILog logger;
         protected readonly IWebDriver driver;
 
-        public static int PageTimeOut { get; set; }
+        public static int PageTimeout { get; set; }
 
         public static By PageSpinnerLocator { get; set; }
-        public static int PageSpinnerInitialTimeOut { get; set; }
-        public static int PageSpinnerTimeOut { get; set; }
+        public static int PageSpinnerInitialTimeout { get; set; }
+        public static int PageSpinnerTimeout { get; set; }
 
         static BasePage()
         {
-            PageTimeOut = 10000;
+            PageTimeout = 10000;
 
             PageSpinnerLocator = null;
-            PageSpinnerInitialTimeOut = 150;
-            PageSpinnerTimeOut = 10000;
+            PageSpinnerInitialTimeout = 150;
+            PageSpinnerTimeout = 10000;
         }
 
         public BasePage(ILog logger, IWebDriver driver)
@@ -52,12 +51,12 @@ namespace $Company$.$Project$.Web.API
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
                 wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
             }
             catch
             {
-                throw new ApplicationException($"Page document ready state was expected to be completed within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page document ready state was expected to be completed within {PageTimeout} milliseconds...");
             }
         }
 
@@ -66,7 +65,7 @@ namespace $Company$.$Project$.Web.API
             if (PageSpinnerLocator != null)
             {
                 var control = new WebControl(driver, PageSpinnerLocator);
-                control.WaitForElementIsInvisible(PageSpinnerInitialTimeOut, PageSpinnerTimeOut);
+                control.WaitForElementIsInvisible(PageSpinnerInitialTimeout, PageSpinnerTimeout);
             }
         }
 
@@ -74,12 +73,12 @@ namespace $Company$.$Project$.Web.API
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
                 wait.Until(d => d.Title.Equals(title));
             }
             catch
             {
-                throw new ApplicationException($"Page title was expected to be equal to '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page title was expected to be equal to '{title}' but was '{driver.Title}' within {PageTimeout} milliseconds...");
             }
         }
 
@@ -87,12 +86,12 @@ namespace $Company$.$Project$.Web.API
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
                 wait.Until(d => d.Title.Contains(title));
             }
             catch
             {
-                throw new ApplicationException($"Page title was expected to contain '{title}' but was '{driver.Title}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page title was expected to contain '{title}' but was '{driver.Title}' within {PageTimeout} milliseconds...");
             }
         }
 
@@ -100,12 +99,12 @@ namespace $Company$.$Project$.Web.API
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
                 wait.Until(d => new Uri(d.Url).LocalPath.Equals(url));
             }
             catch
             {
-                throw new ApplicationException($"Page URL was expected to be equal to '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page URL was expected to be equal to '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeout} milliseconds...");
             }
         }
 
@@ -113,12 +112,12 @@ namespace $Company$.$Project$.Web.API
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeOut));
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
                 wait.Until(d => new Uri(d.Url).LocalPath.Contains(url));
             }
             catch
             {
-                throw new ApplicationException($"Page URL was expected to contain '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeOut} milliseconds...");
+                throw new ApplicationException($"Page URL was expected to contain '{url}' but was '{new Uri(driver.Url).LocalPath}' within {PageTimeout} milliseconds...");
             }
         }
 
@@ -150,18 +149,16 @@ namespace $Company$.$Project$.Web.API
             driver.Navigate().Refresh();
         }
 
-        public void ScrollToTop(IWebDriver driver)
+        public void ScrollToTop()
         {
             logger.Info("ScrollToTop()");
-            var javaScriptExecutor = (IJavaScriptExecutor)driver;
-            javaScriptExecutor.ExecuteScript("window.scrollTo(0, 0);");
+            ((IJavaScriptExecutor)driver).ExecuteScript("window.scrollTo(0, 0);");
         }
 
-        public void ScrollToBottom(IWebDriver driver)
+        public void ScrollToBottom()
         {
             logger.Info("ScrollToBottom()");
-            var javaScriptExecutor = (IJavaScriptExecutor)driver;
-            javaScriptExecutor.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+            ((IJavaScriptExecutor)driver).ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
         }
 
         public void SwitchToAlertAccept()
@@ -185,25 +182,12 @@ namespace $Company$.$Project$.Web.API
 
         protected void WaitForNewBrowserTabIsOpened(int numberOfCurrentTabs)
         {
-            var found = false;
-
-            int retries = 10;
-            int delay = 500;
-
-            for (int i = 0; i < retries; i++)
+            try
             {
-                if (driver.WindowHandles.Count > numberOfCurrentTabs)
-                {
-                    found = true;
-                    break;
-                }
-                else
-                {
-                    Thread.Sleep(delay);
-                }
+                var wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(PageTimeout));
+                wait.Until(d => d.WindowHandles.Count > numberOfCurrentTabs);
             }
-
-            if (!found)
+            catch
             {
                 throw new ApplicationException($"WaitForNewBrowserTabIsOpened() has Failed - Expected {numberOfCurrentTabs + 1}, Found {driver.WindowHandles.Count}");
             }

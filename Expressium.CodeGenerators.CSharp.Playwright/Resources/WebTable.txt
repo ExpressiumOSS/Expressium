@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebTable : WebControl
     {
@@ -89,7 +89,7 @@ namespace $Company$.$Project$.Web.API.Controls
         {
             var cellLocator = await GetCellLocator(rowId, columnId, null);
 
-            await cellLocator.WaitForAsync();
+            await cellLocator.WaitForElementIsVisible();
             await cellLocator.HighlightAction(page);
             await cellLocator.HighlightClear(page);
             await cellLocator.ClickAsync();

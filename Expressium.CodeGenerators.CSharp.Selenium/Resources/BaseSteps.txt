@@ -1,14 +1,15 @@
 ﻿using log4net;
 using OpenQA.Selenium;
+using $Namespace$.Tests.Infrastructure;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+namespace $Namespace$.Tests.BusinessTests.Steps
 {
     public class BaseSteps
     {
-        protected Configuration configuration;
-        protected ILog logger;
-        protected BrowserManager browserManager;
-        protected Asserts asserts;
+        protected readonly Configuration configuration;
+        protected readonly ILog logger;
+        protected readonly BrowserManager browserManager;
+        protected readonly Asserts asserts;
 
         protected IWebDriver driver => browserManager.Driver;
 

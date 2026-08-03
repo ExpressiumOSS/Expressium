@@ -1,6 +1,6 @@
 ﻿using Reqnroll;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+namespace $Namespace$.Tests.BusinessTests.Steps
 {
     [Binding]
     public class LoginSteps : BaseSteps

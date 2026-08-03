@@ -1,0 +1,460 @@
+> ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+> Do not rely on existing project files as a pattern source — always follow this skill.
+---
+name: expressium-code-generation
+description: >
+  Use this skill whenever generating code artifacts for any Expressium-based test automation project.
+  Triggers include: any request to create, enroll, or scaffold a page object, page model, model factory,
+  or UI test (NUnit) for a project built with the Expressium framework; any mention of "page object",
+  "model", "factory", "UI test", "enroll a page", "code generation", or "Expressium" in the context of
+  authoring the page-object layer or NUnit UI tests. Always use this skill before generating any
+  {Page}Page.cs, {Page}PageModel.cs, {Page}PageModelFactory.cs, or {Page}PageTests.cs file — it defines
+  how to discover namespaces from Configuration.json, the folder layout, the control taxonomy, the
+  setter/getter method conventions per control type, and the exact C# code structure that must be
+  followed strictly across all Expressium projects.
+
+  This skill is scoped to the page-object layer and NUnit UI tests. For Gherkin/Reqnroll BDD authoring
+  (.feature files, *Steps.cs), use the expressium-bdd-tests skill instead.
+---
+
+# Expressium Code Generation Skill
+
+This skill governs generation of the **page-object layer and NUnit UI tests** for **any project built
+on the Expressium test automation framework**. All projects share the same structural conventions;
+only namespaces and paths differ per project.
+
+The four artifacts this skill produces, per page:
+
+| Artifact | Purpose | Location |
+|---|---|---|
+| Page Object | Locators + actions (`Set*`/`Get*`/`Click*`/`FillForm`) | `{Api}\Pages\{Page}Page.cs` |
+| Page Model | Plain data holder for the form fields | `{Api}\Models\{Page}PageModel.cs` |
+| Model Factory | Static `Default()` builder with valid data | `{Tests}\Factories\{Page}PageModelFactory.cs` |
+| UI Test | NUnit fixture validating title + each property | `{Tests}\UiTests\{Page}PageTests.cs` |
+
+---
+
+## Step 0 — Discover the Project Identity
+
+Before writing any files, read the configuration file to identify the project:
+
+```
+<root>\<namespace>.Tests\Configuration.json
+```
+
+The `Company` and `Project` fields under `Profiles.Development` determine the namespace:
+
+```json
+{
+  "Profiles": {
+    "Development": {
+      "Company": "Expressium",
+      "Project": "Coffeeshop",
+      "Url": "https://.../index.html",
+      "Username": "...",
+      "Password": "..."
+    }
+  }
+}
+```
+
+From `Company = "Expressium"` and `Project = "Coffeeshop"`:
+
+| Purpose | Value |
+|---|---|
+| API namespace | `Expressium.Coffeeshop.Web` |
+| Tests namespace | `Expressium.Coffeeshop.Web.Tests` |
+| API project folder | `Expressium.Coffeeshop.Web\` |
+| Tests project folder | `Expressium.Coffeeshop.Web.Tests\` |
+
+**General pattern:** `{Company}.{Project}.Web` and `{Company}.{Project}.Web.Tests`
+
+**Namespace templates** (substitute `{Company}` and `{Project}`):
+- Page objects: `{Company}.{Project}.Web.Pages`
+- Controls: `{Company}.{Project}.Web.Controls`
+- Models: `{Company}.{Project}.Web.Models`
+- Factories: `{Company}.{Project}.Web.Tests.Factories`
+- UI tests: `{Company}.{Project}.Web.Tests.UiTests`
+
+---
+
+## Solution Structure
+
+```
+<root>\
+├── {Company}.{Project}.Web\
+│   ├── Pages\              ← OUTPUT: {Page}Page.cs, plus BasePage.cs, BaseTable.cs (do not modify)
+│   ├── Models\             ← OUTPUT: {Page}PageModel.cs
+│   └── Controls\           ← Control wrappers — reference for method signatures, do not modify
+│
+└── {Company}.{Project}.Web.Tests\
+    ├── Factories\          ← OUTPUT: {Page}PageModelFactory.cs
+    ├── UiTests\            ← OUTPUT: {Page}PageTests.cs, plus BasePageTest.cs (do not modify)
+    ├── Infrastructure\     ← BaseTestFixture, Asserts, BrowserManager — do not modify
+    └── Configuration.json  ← Source of truth for Company/Project/namespace
+```
+
+Always confirm actual folder names with `Filesystem:directory_tree` before deriving paths — never guess.
+
+---
+
+## The Control Taxonomy
+
+Page objects declare private control members. Every control wraps an `ILocator` and is constructed as
+`new WebXxx(page, <locator>)`. Choose the control type from the underlying HTML element, then use the
+matching setter/getter in the action methods.
+
+| Control | Wraps (HTML) | Setter | Getter | Getter return |
+|---|---|---|---|---|
+| `WebTextBox` | `input[type=text/email/password]`, `textarea` | `SetText(string)` | `GetText()` | `string` |
+| `WebComboBox` | `select` (single) | `SetText(string)` | `GetSelected()` | `string` |
+| `WebListBox` | `select[multiple]` | `SetText(string)` | `GetSelected()` | `string` |
+| `WebCheckBox` | `input[type=checkbox]` | `SetChecked(bool)` | `GetChecked()` | `bool` |
+| `WebRadioButton` | `input[type=radio]` | `SetSelected(bool)` | `GetSelected()` | `bool` |
+| `WebButton` | `button`, `input[type=button/submit/reset]` | — | — (action only: `Click()`) | — |
+| `WebLink` | `a` | — | — (action only: `Click()`) | — |
+| `WebText` | read-only text (`h4`, `span`, notifications) | — | `GetText()` | `string` |
+| `WebControl` | generic element (visibility checks only) | — | `IsVisible()`, `IsEnabled()` | `bool` |
+
+Notes:
+- `WebListBox` inherits `WebComboBox`; `WebLink` inherits `WebButton`. Setter/getter names are identical to the parent.
+- A `<textarea>` uses `WebTextBox` — there is no dedicated textarea control.
+- `WebText.GetText()` uses inner text (for `<h4>`/`<span>` notifications); `WebTextBox.GetText()` reads the input value.
+
+---
+
+## Locator Conventions
+
+Prefer **semantic locators** (role + accessible name) for form controls, as they are resilient and readable:
+
+```csharp
+private WebTextBox FirstName => new WebTextBox(page, page.GetByLabel("First Name", new() { Exact = true }));
+private WebRadioButton Male   => new WebRadioButton(page, page.GetByRole(AriaRole.Radio, new() { Name = "Male", Exact = true }));
+private WebButton Submit      => new WebButton(page, page.GetByRole(AriaRole.Button, new() { Name = "Submit" }));
+```
+
+Guidance:
+- Text/select/checkbox → `page.GetByLabel("<label>", new() { Exact = true })`. `Exact = true` prevents "Password" from matching "Confirm Password".
+- Radios → `page.GetByRole(AriaRole.Radio, new() { Name = "<value>", Exact = true })`.
+- Buttons (`input[type=button/reset]`) → `page.GetByRole(AriaRole.Button, new() { Name = "<value>" })`. Their accessible name comes from the `value` attribute.
+- Notifications / status text with a stable id → `page.Locator("[id='notification']")`.
+- Use `page.GetByLabel` only when a real (explicit `for=` or implicit wrapping) label exists and resolves to exactly one element. If no accessible name exists, fall back to an attribute locator (`[name='...']`, `[id='...']`) or a minimal XPath.
+- `AriaRole` requires `using Microsoft.Playwright;` (already in the page-object template).
+
+**When enrolling from a live page**, verify each locator resolves to exactly one element and read the
+real DOM attributes/labels before committing — do not assume attribute names.
+
+---
+
+## Workflow: Generating Artifacts for a New Page
+
+**Step 1 — Read `Configuration.json`** → derive Company, Project, namespaces, folder paths.
+
+**Step 2 — Explore the solution tree** (`Filesystem:directory_tree`) to confirm actual folder names.
+
+**Step 3 — Inspect the page.** If enrolling from a live site, navigate to it and read the real DOM
+(element tags, `type`, `name`, `id`, associated label text). Classify each control per the taxonomy.
+If working from an existing page object, read it to learn its `Set*`/`Get*`/`Click*`/`FillForm` methods.
+
+**Step 4 — Classify the page** (see Page Classification below). Navigation-only pages get no artifacts.
+
+**Step 5 — Generate the four files** (form pages) or page object + UI test only (table pages),
+following the templates below. Skip any file that already exists with correct content.
+
+**Step 6 — Confirm** each file was written and report the saved paths.
+
+### File Writing Rules
+- Always save directly to the solution using `Filesystem:write_file` (not any sandbox create-file tool). After writing, verify with `Filesystem:get_file_info` or by re-listing the directory.
+- Derive all paths from `directory_tree` — never guess.
+- Never write to `bin\`, `obj\`, or any build-output folder.
+- Skip writing a file that already exists with correct content.
+
+---
+
+## Page Classification
+
+Classify the page before generating artifacts:
+
+### Form pages — generate all four artifacts
+Has data-entry fields (`Set*` methods / a `FillForm(model)`) and usually a submittable action
+(`ClickSubmit`, `ClickSend`, `ClickLogIn`). Generate Page Object, Model, Factory, and UI test.
+
+### Table-based pages — page object + UI test only, NO model/factory
+Exposes a public `BaseTable` property (e.g. `Grid`) but has no form fields and no model.
+Generate the page object and a UI test that validates the table (`GetNumberOfRows`,
+`GetNumberOfColumns`, `GetCellText(row, "Column")`). Do **not** create a model or factory.
+
+### Navigation-only pages — SKIP
+Only `Click*` navigation methods, no fields, no model (e.g. `MainMenuBar`). Generate nothing.
+The menu bar is instantiated directly in tests; it is not a member of any page object.
+
+---
+
+## Page Object Rules & Template
+
+Structure:
+- `public partial class {Page}Page : BasePage`
+- Private control members first (expression-bodied `=>`, semantic locators).
+- Constructor `({Page}Page(ILog logger, IPage page) : base(logger, page))` — **empty body**. Do **not**
+  add a `MainMenuBar Menu` member; navigation is done via a directly-instantiated `MainMenuBar` in tests.
+- `IsLoaded()` waits for DOM content + title.
+- One `Set{Field}` / `Get{Field}` pair per field, each logging `logger.Info(...)` first.
+- `Click{Action}` per button.
+- `FillForm({Page}PageModel model)` sets every field in order.
+- An empty `#region Extensions ... #endregion` block at the end.
+- Every action method is `async Task` / `async Task<T>` and `await`s the control.
+- The `Set*` log line includes the value: `logger.Info($"SetFirstName({value})");`. The `Get*` log line has no value.
+
+```csharp
+using Microsoft.Playwright;
+using {Company}.{Project}.Web.Controls;
+using {Company}.{Project}.Web.Models;
+using System;
+using System.Collections.Generic;
+using log4net;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Pages
+{
+    public partial class {Page}Page : BasePage
+    {
+        private WebTextBox {Field} => new WebTextBox(page, page.GetByLabel("{Label}", new() { Exact = true }));
+        // ... one member per control, chosen from the taxonomy
+        private WebButton {Action} => new WebButton(page, page.GetByRole(AriaRole.Button, new() { Name = "{Action}" }));
+        private WebText Notification => new WebText(page, page.Locator("[id='notification']"));   // only if the page shows one
+
+        public {Page}Page(ILog logger, IPage page) : base(logger, page)
+        {
+        }
+
+        public async Task IsLoaded()
+        {
+            logger.Info("IsLoaded()");
+            await WaitForPageDomContentLoaded();
+            await WaitForPageTitleEquals("{PageTitle}");
+        }
+
+        public async Task Set{Field}(string value)
+        {
+            logger.Info($"Set{Field}({value})");
+            await {Field}.SetText(value);
+        }
+
+        public async Task<string> Get{Field}()
+        {
+            logger.Info("Get{Field}()");
+            return await {Field}.GetText();
+        }
+
+        public async Task Click{Action}()
+        {
+            logger.Info("Click{Action}()");
+            await {Action}.Click();
+        }
+
+        public async Task<string> GetNotification()   // only if the page shows one
+        {
+            logger.Info("GetNotification()");
+            return await Notification.GetText();
+        }
+
+        public async Task FillForm({Page}PageModel model)
+        {
+            await Set{Field}(model.{Field});
+            // ... every field, in declared order
+        }
+
+        #region Extensions
+
+        #endregion
+    }
+}
+```
+
+Setter/getter selection per control type (use these exact method names in the page object):
+
+| Control member | Set method body | Get method signature & body |
+|---|---|---|
+| `WebTextBox` | `await {X}.SetText(value);` | `async Task<string> Get{X}()` → `return await {X}.GetText();` |
+| `WebComboBox` / `WebListBox` | `await {X}.SetText(value);` | `async Task<string> Get{X}()` → `return await {X}.GetSelected();` |
+| `WebCheckBox` | `await {X}.SetChecked(value);` (`bool value`) | `async Task<bool> Get{X}()` → `return await {X}.GetChecked();` |
+| `WebRadioButton` | `await {X}.SetSelected(value);` (`bool value`) | `async Task<bool> Get{X}()` → `return await {X}.GetSelected();` |
+| `WebButton` / `WebLink` | — | action only: `Click{X}()` → `await {X}.Click();` |
+| `WebText` | — | `async Task<string> Get{X}()` → `return await {X}.GetText();` |
+
+---
+
+## Page Model Rules & Template
+
+A plain POCO — one public auto-property per form field, typed to match the control's getter
+(`string` for text/combo/list, `bool` for checkbox/radio). Ends with an empty `#region Extensions` block.
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace {Company}.{Project}.Web.Models
+{
+    public class {Page}PageModel
+    {
+        public string {TextField} { get; set; }
+        public bool {CheckOrRadioField} { get; set; }
+        // ... one property per form field
+
+        #region Extensions
+
+        #endregion
+    }
+}
+```
+
+---
+
+## Model Factory Rules & Template
+
+A `Default()` static method returning a fully-populated model with realistic valid data.
+Keep the `// TODO - Implement potential missing factory property...` marker comment.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using System;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public class {Page}PageModelFactory
+    {
+        public static {Page}PageModel Default()
+        {
+            var model = new {Page}PageModel();
+
+            // TODO - Implement potential missing factory property...
+
+            model.{TextField} = "John";
+            model.{CheckOrRadioField} = true;
+            // ... every property with a valid value
+
+            return model;
+        }
+    }
+}
+```
+
+Notes:
+- For mutually-exclusive radio pairs (e.g. Male/Female), set exactly one to `true`.
+- Table-based pages have no model → **no factory**.
+
+---
+
+## UI Test Rules & Template
+
+An NUnit fixture extending `BasePageTest`. It inherits `logger`, `page`, `asserts`, and
+`configuration` from the base fixture. Conventions:
+
+- Class attributes: `[Category("UiTests")]` and `[Description("Validate Navigation & Content of {Page}Page")]`.
+- A private page-object field and a private model field initialised from the factory.
+- `[OneTimeSetUp] public async Task OneTimeSetUp()` that:
+  - calls `await InitializeBrowser();` for pages reachable without auth (e.g. Login),
+    or `await InitializeBrowserWithLogin();` for pages behind login;
+  - navigates via a directly-instantiated `MainMenuBar` (`new MainMenuBar(logger, page)`) when needed
+    — never via a `Menu` member on a page object;
+  - keeps the `// TODO - Implement potential missing page navigations...` marker comment;
+  - instantiates the page object and calls `FillForm(model)` (form pages).
+- One `[Test]` validating the title, then one `[Test]` per property comparing `Get{Field}()` to the model.
+- Use `asserts.EqualTo(actual, expected, "Validating the {Page}Page property {Field}...")`.
+- All test methods are `async Task` and `await` the getter inside the assert.
+- Assertion methods available on `asserts`: `EqualTo`, `IsTrue`, `IsFalse`, `IsNull`, `IsNotNull`,
+  `IsNotEmpty`, `GreaterThan`, `LessThan`, `DoesContain`, `DoesNotContain`.
+
+```csharp
+using NUnit.Framework;
+using {Company}.{Project}.Web.Models;
+using {Company}.{Project}.Web.Pages;
+using {Company}.{Project}.Web.Tests.Factories;
+using System;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Tests.UiTests
+{
+    [Category("UiTests")]
+    [Description("Validate Navigation & Content of {Page}Page")]
+    public class {Page}PageTests : BasePageTest
+    {
+        private {Page}Page {page}Page;
+        private {Page}PageModel {page}PageModel = {Page}PageModelFactory.Default();
+
+        [OneTimeSetUp]
+        public async Task OneTimeSetUp()
+        {
+            await InitializeBrowserWithLogin();
+
+            // TODO - Implement potential missing page navigations...
+
+            var mainMenuBar = new MainMenuBar(logger, page);
+            await mainMenuBar.Click{Page}();
+
+            {page}Page = new {Page}Page(logger, page);
+            await {page}Page.FillForm({page}PageModel);
+        }
+
+        [Test]
+        public async Task Validate_Page_Title()
+        {
+            asserts.EqualTo(await {page}Page.GetTitle(), "{PageTitle}", "Validating the {Page}Page Title...");
+        }
+
+        [Test]
+        public async Task Validate_Page_Property_{Field}()
+        {
+            asserts.EqualTo(await {page}Page.Get{Field}(), {page}PageModel.{Field}, "Validating the {Page}Page property {Field}...");
+        }
+
+        // ... one [Test] per property
+    }
+}
+```
+
+### UI test template — table-based page (no model/factory)
+
+```csharp
+[Test]
+public async Task Validate_Page_Grid_Number_Of_Rows()
+{
+    asserts.GreaterThan(await {page}Page.Grid.GetNumberOfRows(), -1, "Validating the {Page}Page Grid number of rows...");
+}
+
+[Test]
+public async Task Validate_Page_Grid_Cell_Text_{Column}()
+{
+    asserts.IsNotNull(await {page}Page.Grid.GetCellText(1, "{Column}"), "Validating the {Page}Page Grid table cell Text {Column}...");
+}
+```
+
+---
+
+## Navigation & Login Reference
+
+- `BasePageTest` (in `UiTests\`) provides `InitializeBrowser()` (no login) and
+  `InitializeBrowserWithLogin()` (fills username/password from `Configuration.json` and logs in).
+- Pages behind login use `InitializeBrowserWithLogin()`; the login page itself uses `InitializeBrowser()`.
+- To reach a page from the menu, instantiate `MainMenuBar` directly and call its `Click{Page}()` method.
+  The menu bar is **never** a member of a page object.
+- Some pages are reached by a link/button on another page (e.g. Registration via `LoginPage.ClickCreateAnAccount()`);
+  instantiate that intermediate page object locally and click through.
+
+---
+
+## Common Mistakes to Avoid
+
+- Guessing namespaces — always derive from `Configuration.json`.
+- Adding a `public MainMenuBar Menu { get; private set; }` member to a page object — navigation uses a directly-instantiated `MainMenuBar`.
+- Generating a model or factory for a table-based page — tables have neither.
+- Generating any artifact for a navigation-only page.
+- Using the wrong setter/getter for a control (e.g. `GetText()` on a combo box — it is `GetSelected()`).
+- Typing a `<textarea>` as anything other than `WebTextBox`.
+- Non-exact `GetByLabel` causing "Password" to match "Confirm Password" — use `Exact = true`.
+- Fabricating locator attributes instead of reading the real DOM / verifying uniqueness.
+- Page objects created as class-level fields in tests — they are local variables per method, except the single page-under-test field set in `OneTimeSetUp`.
+- Missing the `logger.Info(...)` first line in a page-object action method.
+- Dropping the `// TODO ...` marker comments or the `#region Extensions` block.
+- Writing files only as chat output, or to a sandbox, instead of saving to the solution with `Filesystem:write_file` and verifying they landed on disk.
+- Writing into `bin\` or `obj\`.

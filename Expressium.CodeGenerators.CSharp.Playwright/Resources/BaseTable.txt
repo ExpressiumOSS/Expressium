@@ -1,9 +1,9 @@
-using $Company$.$Project$.Web.API.Controls;
+using $Namespace$.Controls;
 using log4net;
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API
+namespace $Namespace$.Pages
 {
     public class BaseTable : BasePage
     {

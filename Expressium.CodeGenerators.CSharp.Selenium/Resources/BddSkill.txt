@@ -1,0 +1,510 @@
+> ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or ModelFactory.cs file.
+> Do not rely on existing project files as a pattern source — always follow this skill.
+---
+name: expressium-bdd-tests
+description: >
+  Use this skill whenever writing BDD tests for any Expressium-based test automation project.
+  Triggers include: any request to create a feature file, step definition file, or model factory
+  for a project built with the Expressium framework; any mention of "BDD", "Gherkin", "Reqnroll",
+  "feature file", "scenario", "step definition", "page object", "model factory", or "Expressium"
+  in the context of test authoring. Always use this skill before generating any .feature,
+  Steps.cs, or ModelFactory.cs file — it defines how to discover namespaces from configuration.json,
+  the folder layout, TC numbering, Gherkin conventions, factory patterns, and C# code structure
+  that must be followed strictly across all Expressium projects.
+---
+
+# Expressium BDD Tests Skill
+
+This skill governs BDD test authoring for **any project built on the Expressium test automation framework**.
+All projects share the same structural conventions; only namespaces and paths differ per project.
+
+---
+
+## Step 0 — Discover the Project Identity
+
+Before writing any files, read `configuration.json` to identify the project:
+
+```
+<root>\<namespace>.Tests\configuration.json
+```
+
+The `Company` and `Project` fields determine the namespace:
+
+```json
+{
+  "Profiles": {
+    "Development": {
+      "Company": "Qnation",
+      "Project": "Coffeeshop",
+      ...
+    }
+  }
+}
+```
+
+From `Company = "Qnation"` and `Project = "Coffeeshop"`:
+
+| Purpose | Value |
+|---|---|
+| API namespace | `Qnation.Coffeeshop.Web` |
+| Tests namespace | `Qnation.Coffeeshop.Web.Tests` |
+| API project folder | `Qnation.Coffeeshop.Web\` |
+| Tests project folder | `Qnation.Coffeeshop.Web.Tests\` |
+
+**General pattern:** `{Company}.{Project}.Web` and `{Company}.{Project}.Web.Tests`
+
+---
+
+## Solution Structure
+
+```
+<root>\
+├── {Company}.{Project}.Web\
+│   ├── Pages\              ← Page objects — read to understand available actions
+│   ├── Models\             ← Page models — read to know model properties
+│   └── Controls\           ← Low-level control wrappers — do not use directly in tests
+│
+└── {Company}.{Project}.Web.Tests\
+    ├── BusinessTests\
+    │   ├── Features\       ← OUTPUT: .feature files
+    │   ├── Steps\          ← OUTPUT: *Steps.cs files
+    │   └── Hooks\          ← BaseHooks.cs — do not modify
+    ├── Factories\           ← OUTPUT: *ModelFactory.cs files
+    ├── UiTests\            ← Low-level tests for inspiration only — do not replicate
+    └── configuration.json  ← Source of truth for Company/Project/namespace
+```
+
+**Namespace templates** (substitute `{Company}` and `{Project}` from configuration.json):
+- Page objects: `{Company}.{Project}.Web.Pages`
+- Models: `{Company}.{Project}.Web.Models`
+- Steps: `{Company}.{Project}.Web.Tests.BusinessTests.Steps`
+- Factories: `{Company}.{Project}.Web.Tests.Factories`
+
+---
+
+## Workflow: Generating BDD Tests for a New Page
+
+**Step 1 — Read `configuration.json`** to discover Company and Project names → derive namespaces and folder paths.
+
+**Step 2 — Explore the solution tree** to confirm actual folder names:
+```
+Filesystem:directory_tree
+```
+
+**Step 3 — Read the page object** at `{API folder}\Pages\{Page}Page.cs`
+Note: what `FillForm`, `Click*`, and `Get*` methods exist.
+
+**Step 4 — Classify the page** (see Page Classification section below).
+If the page is navigation-only — **stop here**, do not generate any files for it.
+
+**Step 5 — Read the model** at `{API folder}\Models\{Page}PageModel.cs`
+Note: all properties — needed to build the factory.
+
+**Step 6 — Check if factory already exists** at:
+`{Tests folder}\Factories\{Page}PageModelFactory.cs`
+If it exists and its content is already correct — skip writing it.
+
+**Step 7 — Identify the next available TC block** (see TC Numbering section below).
+
+**Step 8 — Write the files:**
+
+| File | Target path |
+|---|---|
+| `{Page}.feature` | `{Tests folder}\BusinessTests\Features\{Page}.feature` |
+| `{Page}Steps.cs` | `{Tests folder}\BusinessTests\Steps\{Page}Steps.cs` |
+| `{Page}PageModelFactory.cs` | `{Tests folder}\Factories\{Page}PageModelFactory.cs` |
+
+**Step 9 — Confirm** each file was written and report the saved paths.
+
+### File Writing Rules
+- Always save files directly to the solution using `Filesystem:write_file`
+- Derive all paths from `directory_tree` — never guess
+- Skip writing a factory if it already exists with correct content
+- Never write to `bin\`, `obj\`, or any build output folder
+
+---
+
+## Page Classification
+
+Before generating any BDD tests, classify the page by inspecting its page object methods:
+
+### Navigation-only pages — SKIP, do not generate BDD tests
+
+A page is navigation-only if its page object contains **only** `Click*` methods that navigate to
+other pages, with no form fields, no data entry, and no submittable actions. These pages have no
+meaningful business behaviour to validate beyond navigation, which is already covered implicitly
+by the `Given I am logged in` step and the When steps of other features.
+
+**Indicators of a navigation-only page:**
+- Only `Click*` methods — no `Set*`, `Get*`, `FillForm`, or `Submit*` methods
+- No associated page model (`{Page}PageModel.cs` does not exist)
+- The page serves purely as a menu, toolbar, or navigation bar
+
+**Example — `MainMenuBar.cs` is navigation-only:**
+```
+ClickHome(), ClickProducts(), ClickContactUs(), ClickLogout()
+```
+No form fields, no model → **do not generate** `MainMenuBar.feature` or `MainMenuBarSteps.cs`.
+
+### Testable pages — proceed with BDD test generation
+
+A page qualifies for BDD tests if it has any of the following:
+- A `FillForm(model)` method
+- One or more `Set*` methods (data entry fields)
+- A submittable action (`ClickSubmit`, `ClickSend`, `ClickLogIn`, etc.)
+- An associated page model
+- One or more public `BaseTable` properties (read-only data display pages)
+
+### Table-based pages
+
+A page that exposes one or more public `BaseTable` properties but has no form fields, no model,
+and no submittable actions is a **table-based page**. It qualifies for BDD tests because the
+presence of row data is meaningful business behaviour — it confirms the data loaded correctly.
+
+**Rules for table-based pages:**
+
+- Generate **exactly one scenario**: `View the {Page} Overview`
+- No factory is needed — do not create a `{Page}PageModelFactory.cs`
+- The `Then` step is **pending** with a scaffolded assertion (use `asserts.GreaterThan` on `GetNumberOfRows()`)
+- Navigate to the page via `MainMenuBar` inside the `When` step
+- The `Given I am logged in with valid user credentials` step is required
+
+**Feature file template for table-based pages:**
+
+```gherkin
+@TC-X000 @PageName @BusinessTests
+Feature: PageName
+	As a User
+	I want to view the [Page Name] page of the web application
+	So that I can browse the available [business data]
+
+@TC-X001 @Review
+Scenario: View the [Page Name] Overview
+	Given I am logged in with valid user credentials
+	When I navigate to the [Page Name] page
+	Then the [Page Name] overview should be displayed
+```
+
+**Step definition template for table-based pages:**
+
+```csharp
+[When(@"I navigate to the [Page Name] page")]
+public void WhenINavigateToThe{Page}Page()
+{
+    var mainMenu = new MainMenuBar(logger, driver);
+    mainMenu.Click{Page}();
+
+    var {page}Page = new {Page}Page(logger, driver);
+}
+
+[Then(@"the [Page Name] overview should be displayed")]
+public void ThenThe{Page}OverviewShouldBeDisplayed()
+{
+    var {page}Page = new {Page}Page(logger, driver);
+    //asserts.GreaterThan({page}Page.{Table}.GetNumberOfRows(), 0, "Validating the {Page}Page {Table} table contains at least one row of data...");
+
+    throw new PendingStepException();
+}
+```
+
+---
+
+## TC Number Assignment
+
+TC blocks are assigned per feature. Before assigning a new block:
+1. Scan all existing `.feature` files in `BusinessTests\Features\`
+2. Identify the highest TC-X000 block already in use
+3. Assign the next block (increments of 1000)
+
+Scenarios within a feature use the block base + sequential offset:
+- Feature tag: `@TC-3000`
+- Scenarios: `@TC-3001`, `@TC-3002`, `@TC-3003` ...
+
+---
+
+## Feature File Rules
+
+### File naming
+Feature file name matches the page object name without the "Page" suffix:
+- `ContactUsPage.cs` → `ContactUs.feature`
+- `RegistrationPage.cs` → `Registration.feature`
+
+### Feature-level tags and description
+```gherkin
+@TC-X000 @PageName @BusinessTests
+Feature: PageName
+	As a [Actor]
+	I want to [Action]
+	So that [Benefit]
+```
+
+### Scenario-level tags
+```gherkin
+@TC-X001 @Review
+Scenario: ...
+```
+
+Status tags: `@Review` (new/unverified), `@Done` (verified), `@Ignore` (skipped).
+
+### Scenario naming convention
+Scenario names follow **BDD style** and use **Title Case** for all important words — nouns, verbs,
+adjectives, and domain terms. Minor words (articles, prepositions, conjunctions) such as "a", "an",
+"the", "with", "when", "for", "of", "to", "and", "or", "in" are written in lowercase unless they
+are the first word.
+
+A good scenario name describes:
+1. **User action** (the behaviour being exercised)
+2. **Context or condition** (the data or state, if relevant)
+3. **Clear intent** (what the user is trying to do — not what the outcome is)
+
+**Never describe the outcome** in the scenario name. Words like "Successfully", "Unsuccessfully",
+"Correctly", "Fails", and "Passes" are outcome descriptions and must not be used.
+
+**Examples:**
+```
+✅ Scenario: Login with Valid Credentials
+✅ Scenario: Login with Invalid Credentials
+✅ Scenario: Login with Missing Credentials
+✅ Scenario: Submit a Contact Request with Valid Details
+✅ Scenario: Register a New Account with Missing Details
+✅ Scenario: Reset the Registration Form
+✅ Scenario: Cancel the Registration Process
+
+❌ Scenario: Successfully Login with Valid Credentials      ← outcome word
+❌ Scenario: Unsuccessful Login with Invalid Credentials   ← outcome word
+❌ Scenario: login with valid credentials                  ← not Title Case
+```
+
+### Maximum 5 scenarios per feature
+
+| # | Type | Required? |
+|---|---|---|
+| TC-X001 | [Action] with Valid Details (Happy Path) | Always |
+| TC-X002 | [Action] with Missing Details (Validation) | Always |
+| TC-X003 | [Action] with Invalid Details (Validation) | Always |
+| TC-X004 | Reset the [Form] | Only if Reset button exists on page |
+| TC-X005 | Cancel the [Action] Process | Only if Cancel button exists on page |
+
+Pages without reset/cancel get **3 scenarios only**.
+Table-based pages get **1 scenario only** (see Table-based pages section above).
+
+### Step writing rules
+- Scenarios MUST start with where needed: `Given I am logged in with valid user credentials`
+- Steps are high-level and business-focused — one When, one Then per action
+- No `Background:` blocks
+- No `Scenario Outline:` or `Examples:` tables
+- No separate navigation steps (navigation belongs inside When step definitions)
+- No field-by-field low-level steps
+- No data variant scenarios (one valid, one invalid — not multiple combinations)
+
+### Feature file template
+
+```gherkin
+@TC-X000 @PageName @BusinessTests
+Feature: PageName
+	As a User
+	I want to [perform action] through the [page name]
+	So that I can [benefit]
+
+@TC-X001 @Review
+Scenario: [Action] [Page Name] with Valid Details
+	Given I am logged in with valid user credentials
+	When I [action] [Page Name] with valid details
+	Then I should see the valid details in [Page Name]
+
+@TC-X002 @Review
+Scenario: [Action] [Page Name] with Missing Details
+	Given I am logged in with valid user credentials
+	When I attempt to [action] [Page Name] with missing details
+	Then I should see an validation error for the missing details in [Page Name]
+
+@TC-X003 @Review
+Scenario: [Action] [Page Name] with Invalid Details
+	Given I am logged in with valid user credentials
+	When I attempt to [action] [Page Name] with invalid details
+	Then I should see an validation error for the invalid details in [Page Name]
+```
+
+---
+
+## Model Factory Rules
+
+**Location:** `{Tests folder}\Factories\{Page}PageModelFactory.cs`
+
+Every factory must expose **three static methods**:
+
+| Method | Purpose |
+|---|---|
+| `Default()` | All fields set to realistic valid values |
+| `Empty()` | Start from `Default()`, clear all required fields to `""` |
+| `Invalid()` | Start from `Default()`, set fields to values that fail validation |
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using System;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public class {Page}PageModelFactory
+    {
+        public static {Page}PageModel Default()
+        {
+            var model = new {Page}PageModel();
+            model.Property1 = "valid value";
+            // ... all model properties
+            return model;
+        }
+
+        public static {Page}PageModel Empty()
+        {
+            var model = Default();
+            model.Property1 = "";
+            // ... clear all required fields
+            return model;
+        }
+
+        public static {Page}PageModel Invalid()
+        {
+            var model = Default();
+            model.Property1 = "x";   // too short / wrong format
+            // ... make fields invalid
+            return model;
+        }
+    }
+}
+```
+
+---
+
+## Step Definition Rules
+
+### Class structure
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using {Company}.{Project}.Web.Pages;
+using {Company}.{Project}.Web.Tests.Factories;
+using Reqnroll;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Tests.BusinessTests.Steps
+{
+    [Binding]
+    public class {Page}Steps : BaseSteps
+    {
+        private {Page}PageModel {page}PageModel;
+
+        public {Page}Steps(BaseContext baseContext) : base(baseContext)
+        {
+        }
+
+        // When steps
+        // Then steps
+        // Helper methods
+    }
+}
+```
+
+### Code rules
+- **No `#region` directives** anywhere in step files
+- Model stored as **private class-level field** (camelCase: `contactUsPageModel`)
+- Page objects created as **local variables** within each step method — never as class fields
+- Navigation always via the main menu bar class (typically `MainMenuBar`) inside the When step
+- All step methods use `async Task` + `await`
+- Incomplete `Then` steps use `throw new PendingStepException()`
+- Do not use `throw new NotImplementedException()`
+
+### When step — valid data
+```csharp
+[When(@"I [action] with valid details in [Page Name]")]
+public async Task WhenI...WithValidDetailsIn{Page}()
+{
+    var mainMenu = new MainMenuBar(logger, page);
+    await mainMenu.Click{Page}();
+
+    var {page}Page = new {Page}Page(logger, page);
+    {page}PageModel = {Page}PageModelFactory.Default();
+
+    await {page}Page.FillForm({page}PageModel);
+    await {page}Page.ClickSubmit();
+}
+```
+
+### When step — missing / invalid data
+```csharp
+[When(@"I attempt to [action] with missing details in [Page Name]")]
+public async Task WhenIAttemptTo...MissingDetailsIn{Page}()
+{
+    var mainMenu = new MainMenuBar(logger, page);
+    await mainMenu.Click{Page}();
+
+    var {page}Page = new {Page}Page(logger, page);
+    {page}PageModel = {Page}PageModelFactory.Empty();  // or .Invalid()
+
+    await {page}Page.FillForm({page}PageModel);
+    await {page}Page.ClickSubmit();
+}
+```
+
+### Then step — pending implementation
+Every pending Then step MUST instantiate the page object and include a commented-out assertion
+as a scaffold for the implementer. The `throw new PendingStepException()` always comes last.
+
+```csharp
+[Then(@"the [action] should be [completed] in [Page Name]")]
+public void ThenThe...In{Page}()
+{
+    var {page}Page = new {Page}Page(logger, driver);
+    //asserts.EqualTo({page}Page.GetNotification(), "...", "Validating the {Page} notification...");
+
+    throw new PendingStepException();
+}
+```
+
+```csharp
+[Then(@"I should see validation errors for the missing details in [Page Name]")]
+public void ThenIShouldSeeValidationErrorsForTheMissingDetailsIn{Page}()
+{
+    var {page}Page = new {Page}Page(logger, driver);
+    //asserts.EqualTo({page}Page.GetNotification(), "...", "Validating the {Page} notification...");
+
+    throw new PendingStepException();
+}
+```
+
+The commented-out assertion serves as a hint to the implementer — replace the `"..."` placeholder
+with the actual expected notification or error message once it is known, then remove the comment
+and delete the `throw new PendingStepException()` line.
+
+### Then step — implemented assertion
+```csharp
+[Then(@"I should be redirected to the Home page")]
+public void ThenIShouldBeRedirectedToTheHomePage()
+{
+    var homePage = new HomePage(logger, driver);
+    asserts.EqualTo(homePage.GetTitle(), "Home", "Validating the HomePage Title...");
+}
+```
+
+---
+
+## Common Mistakes to Avoid
+
+- Guessing namespaces — always derive from `configuration.json`
+- Generating BDD tests for navigation-only pages — always classify the page first
+- Skipping table-based pages — a page with a public `BaseTable` property always gets a feature file
+- More than 5 scenarios per feature
+- More than 1 scenario for table-based pages
+- Data-driven Scenario Outlines or Examples tables
+- Background blocks
+- Navigation steps in the feature file
+- Low-level, field-by-field steps
+- `#region` directives in step definitions
+- Page objects as class-level fields
+- `throw new NotImplementedException()` — use `PendingStepException` instead
+- Inline model creation in steps — always use the factory
+- Only presenting files as chat output without saving them to the solution
+- Pending Then steps missing the page object instantiation and commented-out assertion scaffold
+- Scenario names describing outcomes — never use "Successfully", "Unsuccessfully", etc.
+- Scenario names not following Title Case for important words
+- Creating a factory for table-based pages — they have no model and need no factory

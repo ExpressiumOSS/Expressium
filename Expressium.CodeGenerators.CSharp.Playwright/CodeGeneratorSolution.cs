@@ -23,71 +23,99 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
             {
                 { "$Company$", configuration.Company },
                 { "$Project$", configuration.Project },
+                { "$PROJECT$", configuration.Project.ToUpper() },
+                { "$Namespace$", nameSpace },
                 { "$Url$", configuration.ApplicationUrl },
-                { "$BrowserType$", configuration.Enroller.BrowserType }
+                { "$BrowserType$", configuration.Enroller.BrowserType },
+                { "$SolutionPath$", configuration.SolutionPath }
             };
 
             // Generate Solution Files...
             var solutionFileName = Path.GetFileName(directory).ToLower() + ".sln";
             WriteToFile(Path.Combine(directory, solutionFileName), Resources.SolutionFile, mapOfProperties);
             WriteToFile(Path.Combine(directory, ".gitignore"), Resources.GitIgnore, mapOfProperties);
-            WriteToFile(Path.Combine(directory, "RegressionTest.bat"), Resources.RegressionTest, mapOfProperties);
+            WriteToFile(Path.Combine(directory, "BuildRunTests.bat"), Resources.BatchFileTests, mapOfProperties);
             WriteToFile(Path.Combine(directory, "CodeGeneration.bat"), Resources.CodeGeneration, mapOfProperties);
+            WriteToFile(Path.Combine(directory, "README.md"), Resources.ReadMe, mapOfProperties);
 
-            // Generate Solution Api Project Files...
-            var apiProjectPath = Path.Combine(directory, nameSpace);
+#if DEBUG
+            // Include BDD Skills file for quick reference during development...
+            WriteToFile(Path.Combine(directory, "skills", "BddTests", "SKILL.md"), Resources.SkillBddTests, mapOfProperties);
+            WriteToFile(Path.Combine(directory, "skills", "UiTests", "SKILL.md"), Resources.SkillUiTests, mapOfProperties);
+            WriteToFile(Path.Combine(directory, "skills", "ApiTests", "SKILL.md"), Resources.SkillApiTests, mapOfProperties);
+#endif
 
-            Directory.CreateDirectory(Path.Combine(apiProjectPath, CodeFolders.Models.ToString()));
-            Directory.CreateDirectory(Path.Combine(apiProjectPath, CodeFolders.Pages.ToString()));
+            // Generate Solution Project Files...
+            var projectPath = Path.Combine(directory, nameSpace);
+            WriteToFile(Path.Combine(projectPath, nameSpace + ".csproj"), Resources.ProjectFileApi, mapOfProperties);
 
-            WriteToFile(Path.Combine(apiProjectPath, nameSpace + ".csproj"), Resources.ProjectFileApi, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "Logger.cs"), Resources.Logger, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "Randomizer.cs"), Resources.Randomizer, mapOfProperties);
+            var controlsPath = Path.Combine(projectPath, "Controls");
+            WriteToFile(Path.Combine(controlsPath, "WebLocators.cs"), Resources.WebLocators, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebButton.cs"), Resources.WebButton, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebCheckBox.cs"), Resources.WebCheckBox, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebComboBox.cs"), Resources.WebComboBox, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebControl.cs"), Resources.WebControl, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebLink.cs"), Resources.WebLink, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebListBox.cs"), Resources.WebListBox, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebRadioButton.cs"), Resources.WebRadioButton, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebText.cs"), Resources.WebText, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebTextBox.cs"), Resources.WebTextBox, mapOfProperties);
+            WriteToFile(Path.Combine(controlsPath, "WebTable.cs"), Resources.WebTable, mapOfProperties);
 
-            WriteToFile(Path.Combine(apiProjectPath, "BasePage.cs"), Resources.BasePage, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "Locators.cs"), Resources.Locators, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
+            Directory.CreateDirectory(Path.Combine(projectPath, CodeFolders.Models.ToString()));
 
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebButton.cs"), Resources.WebButton, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebCheckBox.cs"), Resources.WebCheckBox, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebComboBox.cs"), Resources.WebComboBox, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebControl.cs"), Resources.WebControl, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebLink.cs"), Resources.WebLink, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebListBox.cs"), Resources.WebListBox, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebRadioButton.cs"), Resources.WebRadioButton, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebText.cs"), Resources.WebText, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebTextBox.cs"), Resources.WebTextBox, mapOfProperties);
-            WriteToFile(Path.Combine(apiProjectPath + "\\Controls", "WebTable.cs"), Resources.WebTable, mapOfProperties);
+            var pagesPath = Path.Combine(projectPath, "Pages");
+            WriteToFile(Path.Combine(pagesPath, "BasePage.cs"), Resources.BasePage, mapOfProperties);
+            WriteToFile(Path.Combine(pagesPath, "BaseTable.cs"), Resources.BaseTable, mapOfProperties);
 
-            // Generate Solution Api Test Project Files...
-            var apiTestProjectPath = Path.Combine(directory, nameSpace + ".Tests");
+            var servicesPath = Path.Combine(projectPath, "Services");
+            WriteToFile(Path.Combine(servicesPath, "BaseService.cs"), Resources.BaseService, mapOfProperties);
 
-            Directory.CreateDirectory(Path.Combine(apiTestProjectPath, TestFolders.Factories.ToString()));
-            Directory.CreateDirectory(Path.Combine(apiTestProjectPath, TestFolders.UITests.ToString()));
-            Directory.CreateDirectory(Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString()));
+            // Generate Solution Test Project Files...
+            var testProjectPath = Path.Combine(directory, nameSpace + ".Tests");
 
-            WriteToFile(Path.Combine(apiTestProjectPath, "BaseTestFixture.cs"), Resources.BaseTestFixture, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "BaseTest.cs"), Resources.BaseTest, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "BrowserFactory.cs"), Resources.BrowserFactory, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "BrowserManager.cs"), Resources.BrowserManager, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "Asserts.cs"), Resources.Asserts, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "Configuration.cs"), Resources.Configuration, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "configuration.json"), Resources.ConfigurationJson, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
+            // Generate Test Project Root Files...
+            WriteToFile(Path.Combine(testProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTests, mapOfProperties);
+            WriteToFile(Path.Combine(testProjectPath, "Configuration.json"), Resources.ConfigurationJson, mapOfProperties);
+            WriteToFile(Path.Combine(testProjectPath, "AssemblyInfo.cs"), Resources.AssemblyInfo, mapOfProperties);
+            WriteToFile(Path.Combine(testProjectPath, "Reqnroll.json"), Resources.ReqnrollJson, mapOfProperties);
 
-            WriteToFile(Path.Combine(apiTestProjectPath, nameSpace + ".Tests.csproj"), Resources.ProjectFileApiTests, mapOfProperties);
-            WriteToFile(Path.Combine(apiTestProjectPath, "ReqnRoll.json"), Resources.ReqnRollJson, mapOfProperties);
+            // Generate Test Project Factory Files...
+            var factoriesPath = Path.Combine(testProjectPath, TestFolders.Factories.ToString());
+            WriteToFile(Path.Combine(factoriesPath, "Randomizer.cs"), Resources.Randomizer, mapOfProperties);
 
-            var featureHookFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Hooks");
-            var featureFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Features");
-            var featureStepFiles = Path.Combine(apiTestProjectPath, TestFolders.BusinessTests.ToString(), "Steps");
+            var uitestsPath = Path.Combine(testProjectPath, TestFolders.UiTests.ToString());
+            WriteToFile(Path.Combine(uitestsPath, "BasePageTest.cs"), Resources.BasePageTest, mapOfProperties);
 
-            WriteToFile(Path.Combine(featureHookFiles, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
-            WriteToFile(Path.Combine(featureHookFiles, "ReqnRollExtensions.cs"), Resources.ReqnRollExtensions, mapOfProperties);
-            WriteToFile(Path.Combine(featureFiles, "Login.feature"), Resources.Feature, mapOfProperties);
-            WriteToFile(Path.Combine(featureStepFiles, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
-            WriteToFile(Path.Combine(featureStepFiles, "BaseSteps.cs"), Resources.BaseSteps, mapOfProperties);
-            WriteToFile(Path.Combine(featureStepFiles, "LoginSteps.cs"), Resources.LoginSteps, mapOfProperties);
+            var apitestsPath = Path.Combine(testProjectPath, TestFolders.ApiTests.ToString());
+            WriteToFile(Path.Combine(apitestsPath, "BaseServiceTest.cs"), Resources.BaseServiceTest, mapOfProperties);
+
+            // Generate Test Project Infrastructure Files...
+            var infrastructurePath = Path.Combine(testProjectPath, "Infrastructure");
+            WriteToFile(Path.Combine(infrastructurePath, "ApiManager.cs"), Resources.ApiManager, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "BaseTestFixture.cs"), Resources.BaseTestFixture, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "PlaywrightProvider.cs"), Resources.PlaywrightProvider, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "BrowserFactory.cs"), Resources.BrowserFactory, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "BrowserManager.cs"), Resources.BrowserManager, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "Asserts.cs"), Resources.Asserts, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "Configuration.cs"), Resources.Configuration, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "ConfigurationLoader.cs"), Resources.ConfigurationLoader, mapOfProperties);
+            WriteToFile(Path.Combine(infrastructurePath, "Logger.cs"), Resources.Logger, mapOfProperties);
+
+            // Generate Test Project Feature Files...
+            var featuresPath = Path.Combine(testProjectPath, TestFolders.BusinessTests.ToString(), "Features");
+            WriteToFile(Path.Combine(featuresPath, "Login.feature"), Resources.Feature, mapOfProperties);
+
+            // Generate Test Project Hook Files...
+            var hooksPath = Path.Combine(testProjectPath, TestFolders.BusinessTests.ToString(), "Hooks");
+            WriteToFile(Path.Combine(hooksPath, "BaseHooks.cs"), Resources.BaseHooks, mapOfProperties);
+            WriteToFile(Path.Combine(hooksPath, "ReqnrollExtensions.cs"), Resources.ReqnrollExtensions, mapOfProperties);
+
+            // Generate Test Project Step Files...
+            var stepsPath = Path.Combine(testProjectPath, TestFolders.BusinessTests.ToString(), "Steps");
+            WriteToFile(Path.Combine(stepsPath, "BaseContext.cs"), Resources.BaseContext, mapOfProperties);
+            WriteToFile(Path.Combine(stepsPath, "BaseSteps.cs"), Resources.BaseSteps, mapOfProperties);
+            WriteToFile(Path.Combine(stepsPath, "LoginSteps.cs"), Resources.LoginSteps, mapOfProperties);
 
             // Save Configuration & Object Repository Files...
             ObjectRepositoryUtilities.SerializeAsJson(configuration.RepositoryPath, new ObjectRepository());

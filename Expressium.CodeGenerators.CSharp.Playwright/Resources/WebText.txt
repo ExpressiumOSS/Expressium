@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebText : WebControl
     {

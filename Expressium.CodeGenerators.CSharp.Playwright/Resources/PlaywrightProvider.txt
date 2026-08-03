@@ -1,0 +1,40 @@
+using Microsoft.Playwright;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace $Namespace$.Tests.Infrastructure
+{
+    internal static class PlaywrightProvider
+    {
+        private static IPlaywright playwright;
+        private static readonly SemaphoreSlim initLock = new SemaphoreSlim(1, 1);
+
+        public static async Task<IPlaywright> GetInstanceAsync()
+        {
+            if (playwright != null)
+                return playwright;
+
+            await initLock.WaitAsync();
+            try
+            {
+                if (playwright == null)
+                    playwright = await Playwright.CreateAsync();
+            }
+            finally
+            {
+                initLock.Release();
+            }
+
+            return playwright;
+        }
+
+        public static void Dispose()
+        {
+            if (playwright != null)
+            {
+                playwright.Dispose();
+                playwright = null;
+            }
+        }
+    }
+}

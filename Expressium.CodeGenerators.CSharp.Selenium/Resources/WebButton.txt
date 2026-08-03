@@ -1,6 +1,6 @@
 using OpenQA.Selenium;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebButton : WebControl
     {

@@ -1,0 +1,35 @@
+﻿using NUnit.Framework;
+using System;
+using $Namespace$.Pages;
+using $Namespace$.Tests.Infrastructure;
+
+namespace $Namespace$.Tests.UiTests
+{
+    public class BasePageTest : BaseTestFixture
+    {
+        [OneTimeSetUp]
+        protected void InitializeTestcase()
+        {
+            logger.Info("");
+            logger.Info("// Initialize Testcase");
+        }
+
+        public virtual void InitializeBrowser()
+        {
+        }
+
+        public virtual void InitializeBrowserWithLogin()
+        {
+            InitializeBrowser();
+
+            throw new ApplicationException("Implementation of InitializeBrowserWithLogin is missing...");
+
+            // TODO - Implement potential missing login sequence...
+
+            // var loginPage = new LoginPage(logger, driver);
+            // loginPage.SetUsername(configuration.Username);
+            // loginPage.SetPassword(configuration.Password);
+            // loginPage.ClickLogin();
+        }
+    }
+}

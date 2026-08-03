@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests
 {
     public class Asserts
     {
@@ -24,7 +24,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be equal [{expected}] but was [{actual}] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be equal [{expected}] but was [{actual}] - FAILED");
             }
         }
 
@@ -39,7 +39,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be equal [True] but was [False] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be equal [True] but was [False] - FAILED");
             }
         }
 
@@ -54,7 +54,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be equal [False] but was [True] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be equal [False] but was [True] - FAILED");
             }
         }
 
@@ -65,15 +65,15 @@ namespace $Company$.$Project$.Web.API.Tests
                 Assert.That(actual, Is.Null, message);
 
                 logger.Info($"{message}");
-                logger.Info($"Expected to be equal [Null] and was [Null]");
+                logger.Info($"Expected to be equal [Null] and was [Null] - PASSED");
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be equal [Null] but was [{actual}]");
+                throw new AssertionException($"{message}\nExpected to be equal [Null] but was [{actual}] - FAILED");
             }
         }
 
-        public void IsNotNull(string actual, string message)
+        public void IsNotNull(object actual, string message)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be be different from [Null] but was [Null] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be different from [Null] but was [Null] - FAILED");
             }
         }
 
@@ -99,7 +99,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be be different from [Empty] but was [Empty] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be different from [Empty] but was [Empty] - FAILED");
             }
         }
 
@@ -114,7 +114,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be greater than [{expected}] but was [{actual}] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be greater than [{expected}] but was [{actual}] - FAILED");
             }
         }
 
@@ -129,13 +129,13 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to be less than [{expected}] but was [{actual}] - FAILED");
+                throw new AssertionException($"{message}\nExpected to be less than [{expected}] but was [{actual}] - FAILED");
             }
         }
 
         public void DoesContain(string actual, string expected, string message)
         {
-            var actualTruncated = Truncate(actual, 25);
+            var actualTruncated = Truncate(actual, 50);
 
             try
             {
@@ -146,13 +146,13 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to contain [{expected}] in [{actualTruncated}] - FAILED");
+                throw new AssertionException($"{message}\nExpected to contain [{expected}] in [{actualTruncated}] - FAILED");
             }
         }
 
         public void DoesNotContain(string actual, string expected, string message)
         {
-            var actualTruncated = Truncate(actual, 25);
+            var actualTruncated = Truncate(actual, 50);
 
             try
             {
@@ -163,7 +163,7 @@ namespace $Company$.$Project$.Web.API.Tests
             }
             catch (AssertionException)
             {
-                throw new ApplicationException($"{message}\nExpected to not contain [{expected}] in [{actualTruncated}] - FAILED");
+                throw new AssertionException($"{message}\nExpected to not contain [{expected}] in [{actualTruncated}] - FAILED");
             }
         }
 

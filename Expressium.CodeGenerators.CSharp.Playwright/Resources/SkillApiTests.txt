@@ -1,0 +1,775 @@
+> ⚠️ This skill MUST be read before generating any Service, Model, Factory, or API test (`*Service.cs`, `*ServiceModel.cs`, `*Factory.cs`, `*ServiceTests.cs`) file from an OpenAPI specification.
+> Do not rely on existing project files as a pattern source — always follow this skill.
+> This skill is aligned with the real framework conventions (verified against the shipped PetService / PetServiceTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins.
+---
+name: expressium-api-tests
+description: >
+  Use this skill whenever generating API tests from an OpenAPI (Swagger) specification for any
+  Expressium-based test automation project. Triggers include: any request to create, scaffold, or
+  generate a service class, service model, model factory, or API/NUnit integration test from an
+  OpenAPI/Swagger spec (YAML or JSON); any mention of "API tests", "OpenAPI", "Swagger", "spec to
+  tests", "contract tests", "service class", or pointing at a .yaml/.json/.yml spec file and asking
+  to generate tests; or extending an existing generated service with more happy-path or negative
+  tests. Always use this skill before generating any {Resource}Service.cs, {Resource}ServiceModel.cs,
+  {Resource}Factory.cs, or {Resource}ServiceTests.cs file — it defines how to discover namespaces from
+  Configuration.json, the folder layout, the OpenAPI-to-class mapping, the per-operation test matrix,
+  and the exact C# code structure that must be followed strictly across all Expressium projects.
+
+  This skill is scoped to the API/service layer (integration/contract tests). For page-object and NUnit
+  UI tests, use the expressium-code-generation skill. For Gherkin/Reqnroll BDD authoring, use the
+  expressium-bdd-tests skill.
+---
+
+# Expressium API Tests Skill
+
+This skill governs generation of the **API/service layer and NUnit integration tests** from an
+**OpenAPI 3.x specification**, for **any project built on the Expressium test automation framework**.
+All projects share the same structural conventions; only namespaces and paths differ per project.
+
+The generated tests are **contract tests** at the **integration** level of the test pyramid (real HTTP
+against a running server). Treat them as the low-level "unit tests of the API" — the reliable foundation
+laid down **before** any high-level business-flow (BDD) tests.
+
+The four artifacts this skill produces, per resource (OpenAPI tag / path group):
+
+| Artifact | Purpose | Location |
+|---|---|---|
+| Service | One method per operation, wraps HTTP via `BaseService` | `{Web}\Services\{Resource}Service.cs` |
+| Model | POCO per component schema (`System.Text.Json`) | `{Web}\Models\{Resource}ServiceModel.cs` |
+| Factory | Static builder of valid predefined models | `{Tests}\Factories\{Resource}Factory.cs` |
+| API Test | NUnit fixture: happy-path + negative tests | `{Tests}\ApiTests\{Resource}ServiceTests.cs` |
+
+---
+
+## Step 0 — Discover the Project Identity
+
+Before writing any files, read `Configuration.json` to identify the project — never hardcode namespaces:
+
+```
+<root>\<namespace>.Web.Tests\Configuration.json
+```
+
+The `Company` and `Project` fields under `Profiles.Development` determine the namespace:
+
+```json
+{
+  "Profiles": {
+    "Development": {
+      "Company": "Expressium",
+      "Project": "Coffeeshop",
+      "ApiBaseUrl": "https://.../api",
+      ...
+    }
+  }
+}
+```
+
+From `Company = "Expressium"` and `Project = "Coffeeshop"`:
+
+| Purpose | Value |
+|---|---|
+| Web (application) namespace | `Expressium.Coffeeshop.Web` |
+| Tests namespace | `Expressium.Coffeeshop.Web.Tests` |
+| Web (application) project folder | `Expressium.Coffeeshop.Web\` |
+| Tests project folder | `Expressium.Coffeeshop.Web.Tests\` |
+
+**General pattern:** `{Company}.{Project}.Web` and `{Company}.{Project}.Web.Tests`
+
+**Namespace templates** (substitute `{Company}` and `{Project}`):
+- Services: `{Company}.{Project}.Web.Services`
+- Models: `{Company}.{Project}.Web.Models`
+- Factories: `{Company}.{Project}.Web.Tests.Factories`
+- API tests: `{Company}.{Project}.Web.Tests.ApiTests`
+
+Sanity-check the composed root against an existing `*Service.cs` namespace. If they differ, prefer the
+value observed in the shipped source and tell the user about the mismatch.
+
+---
+
+## Solution Structure
+
+```
+<root>\
+├── {Company}.{Project}.Web\
+│   ├── Services\          ← OUTPUT: {Resource}Service.cs, plus BaseService.cs (do not modify)
+│   └── Models\            ← OUTPUT: {Resource}ServiceModel.cs (+ nested models in same file)
+│
+└── {Company}.{Project}.Web.Tests\
+    ├── Factories\         ← OUTPUT: {Resource}Factory.cs; plus Randomizer.cs (shared helper, do not modify)
+    ├── Infrastructure\    ← BaseTestFixture, ApiManager (do not modify); Asserts (extend-only — add missing assert methods in its existing style, never change existing ones)
+    ├── ApiTests\          ← OUTPUT: {Resource}ServiceTests.cs, plus BaseServiceTest.cs (do not modify)
+    └── Configuration.json ← Source of truth for Company/Project/namespace + ApiBaseUrl
+```
+
+Always confirm actual folder names with `Filesystem:directory_tree` before deriving paths — never guess.
+
+---
+
+## Workflow: Generating API Tests from a Spec
+
+**Step 1 — Read `Configuration.json`** → derive Company, Project, namespaces, folder paths, `ApiBaseUrl`.
+
+**Step 2 — Explore the solution tree** (`Filesystem:directory_tree`) to confirm actual folder names.
+
+**Step 3 — Parse the OpenAPI spec.** Identify: `servers` base URL; `tags` / path groups (each = one
+resource); every path + operation (`operationId`, method, parameters, request body, responses, security);
+every `components.schemas` entry. If there is no `servers` block, ask the user for the base URL — don't guess.
+
+**Step 4 — Confirm scope with the user.** A full spec can be large and produces a lot of code. Confirm
+which resource(s) to generate and whether tests should hit the live server. Show the planning table (see
+Test Matrix) before writing code.
+
+**Step 5 — Generate the files**, per chosen resource, in this order:
+1. **Models** — one class per referenced component schema (nested schemas as extra classes in the same file).
+2. **Service** — one class per resource, one method per operation, plus raw-string / raw-id overloads for negatives.
+3. **Factory** — one static class building a valid default model with a randomized id.
+4. **Tests** — one class, self-contained and order-independent, following the test matrix.
+
+**Step 6 — Confirm** each file was written to disk and report the saved paths, the coverage table, and the
+honest caveats (see Reporting).
+
+### File Writing Rules
+- Always save directly to the solution using `Filesystem:write_file` (not any sandbox create-file tool). After writing, verify with `Filesystem:get_file_info` or by re-listing the directory.
+- Derive all paths from `directory_tree` — never guess.
+- Never write to `bin\`, `obj\`, or any build-output folder.
+- Skip writing a file that already exists with correct content. When extending coverage, edit the existing test class rather than replacing it.
+
+---
+
+## OpenAPI → Class Mapping
+
+| OpenAPI element | Generates |
+|---|---|
+| `servers[0].url` | `baseUrl` constant in each service (or config-driven relative URLs via `ApiBaseUrl` — ask) |
+| `tags` / first path segment | One **resource** = one Service + one Factory + one Test class |
+| each `path` + method | One **service method** (named from `operationId`) |
+| `requestBody` schema | `DataObject` handling + a raw-string overload for malformed-body tests |
+| path id `parameters` | Method arg; numeric id also gets a raw-id (`string`) overload |
+| query `parameters` | Appended to the endpoint querystring |
+| `responses` 2xx | Happy-path status test (+ content test if a body is returned) |
+| `responses` 4xx | Negative test(s) — see Test Matrix |
+| `components.schemas.*` | One **model class** each (nested schemas → same-file classes) |
+| `securitySchemes` | Auth handling — see Security |
+
+**Resource grouping:** group operations by `tags` (first tag if several); if untagged, group by the first
+path segment. Each group → one Service + Factory + Test class, named for the singular PascalCase resource
+(`pet` → `Pet`).
+
+**Service method naming:** PascalCase of `operationId` (`addPet` → `AddPet`, `getPetById` → `GetPetById`,
+`findPetsByStatus` → `FindPetsByStatus`). No `operationId` → derive from method + path.
+
+**Model naming:** primary schema → `{Resource}ServiceModel`. Nested schemas → `{Resource}{Schema}Model`
+(prefix with the resource when the schema name is generic, e.g. `Category` → `PetCategoryModel`, to avoid
+collisions). Generate a model for every schema the chosen resource references, transitively.
+
+**Type mapping (OpenAPI → C#):** `integer/int64` → `long?`; `integer/int32` → `int?`; `number` → `double?`;
+`boolean` → `bool?`; `string`/enum/date-time → `string`; `array` → `List<T>`; `object` ($ref) → nested
+model type; `additionalProperties` map → `Dictionary<string, T>`. Use **nullable** value types so absent
+fields don't produce false positives.
+
+---
+
+## Test Matrix per Operation
+
+Generate the applicable rows per operation. "Applicable" is driven by what the spec declares — don't invent
+a negative test for an error the operation can't produce.
+
+### Test method naming
+`Validate_{Operation}_{Case}_Response_{Aspect}` — e.g. `Validate_AddPet_Response_Status`,
+`Validate_AddPet_Response_Content`, `Validate_GetPetById_NotFound_Response_Status`,
+`Validate_AddPet_MalformedJson_Response_Failure`.
+
+### Always (every operation)
+- **Happy-path status** — assert the declared 2xx (`200`/`201`/`202`/`204`). `Validate_{Op}_Response_Status`
+- **Happy-path content** — *if* the 2xx has a body schema: deserialize + assert key fields.
+  `Validate_{Op}_Response_Content`. Skip where there's no response body (many DELETEs / 204s).
+
+### Request-body operations (POST/PUT with a body) — if 400/422 declared
+- **Empty body** → `Validate_{Op}_EmptyBody_Response_Failure`
+- **Malformed JSON** → `Validate_{Op}_MalformedJson_Response_Failure`
+- **Invalid field type** → `Validate_{Op}_InvalidFieldType_Response_Failure` (raw body with a wrong-typed field)
+
+### Id-path operations (…/{id}) — if 404/400 declared
+- **Not found** → `Validate_{Op}_NotFound_Response_Status` (id that doesn't exist, e.g. `0` or a fresh id)
+- **Invalid id** (non-numeric where an integer is required) → `Validate_{Op}_InvalidId_Response_Failure`
+  (uses the raw-id overload) — only for numeric ids
+
+### Missing required inputs — one test per operation (always)
+Every operation gets exactly one missing-required-input test, derived from what the spec marks `required`:
+- **Request-body operations** (body schema has a `required` list) → send well-formed JSON that binds cleanly
+  but omits every schema-required property (e.g. `{"id": <random>}` when `name`/`photoUrls` are required)
+  → `Validate_{Op}_MissingRequiredFields_Response_Failure`, asserting the spec's declared validation code
+  exactly. If the server does not implement schema validation, the test goes red — that is the finding to
+  raise with the developers, and the test is the acceptance criterion for the fix (never ignored, never
+  loosened).
+- **Required path parameter** → omit the segment via the raw-id overload with `string.Empty` (the route
+  collapses to the parent path, typically 405 Method Not Allowed or 404)
+  → `Validate_{Op}_Missing{Param}_Response_Failure`. Requires a raw-id overload on the service.
+- **Required query parameter** → call the endpoint without the parameter at all (not with an empty value)
+  → `Validate_{Op}_Missing{Param}_Response_Failure`. Requires a parameterless service overload that omits
+  the querystring entirely.
+- Operations with no request body and no required parameters → no test for this row (don't invent one).
+
+### Constrained parameters (enum / min / max) — if 400 declared
+- **Invalid value** → `Validate_{Op}_Invalid{Param}_Response_Failure` (value outside the enum/range)
+
+### Mutating operations on non-existent resources — if 404 declared
+- **Non-existent id** → `Validate_{Op}_NonExistentId_Response_Failure` (update/delete something never created;
+  register nothing for cleanup)
+
+### Planning table (show the user before generating)
+
+```
+Resource: Pet   (baseUrl: https://petstore3.swagger.io/api/v3)
+Operation           Method  Happy  Content  Missing-required          Negatives
+addPet              POST    ✓      ✓        required body fields      empty, malformed, invalid-type
+getPetById          GET     ✓      ✓        petId path param          not-found, invalid-id
+findPetsByStatus    GET     ✓      ✓        status query param        invalid-status
+updatePet           PUT     ✓      ✓        required body fields      non-existent, malformed
+deletePet           DELETE  ✓      —        petId path param          non-existent
+uploadFile          POST    (skipped — binary upload)
+```
+
+---
+
+## Assertion Rules
+
+**Always use the framework `Asserts` class** (available as `asserts` from `BaseTestFixture`) — never call
+NUnit `Assert.That` directly in a test. Every `asserts` method takes a trailing message (`"Validating ..."`)
+that is logged with a PASSED/FAILED outcome, which is what feeds the test report. This matches the UI tests.
+
+Available methods: `EqualTo`, `IsTrue`, `IsFalse`, `IsNull`, `IsNotNull`, `IsNotEmpty`, `IsAnyOf`,
+`GreaterThan`, `LessThan`, `DoesContain`, `DoesNotContain`.
+
+- **Positive**: exact status + Ok flag:
+  ```csharp
+  asserts.EqualTo(response.Status, 200, "Validating response Status property");
+  asserts.EqualTo(response.Ok, true, "Validating response OK property");
+  ```
+  Content via deserialization, then `asserts.EqualTo(result.X, expected, "Validating response content X property")`.
+- **Negative**: Ok false + the **exact** expected status code — never a tolerant set:
+  ```csharp
+  asserts.EqualTo(response.Ok, false, "Validating response OK property");
+  asserts.EqualTo(response.Status, 400, "Validating response Status property");
+  ```
+  - The expected code is the spec's declared code for that failure (e.g. 400 Invalid input, 404 Pet not
+    found). Where the failure is produced by routing rather than the operation itself (e.g. omitting a
+    required path parameter collapses the route), the expected code is the HTTP-level result (405/404).
+  - Always add a one-line comment naming the expected code and its meaning.
+  - Do **not** use `asserts.IsAnyOf` for status codes in API tests — one operation failure has one
+    expected code.
+- **Collections**: `asserts.IsNotNull(result, ...)` plus `asserts.IsTrue(result.All(x => ...), ...)`
+  (needs `using System.Linq;`) for all-items checks; `asserts.GreaterThan(list.Count, 0, ...)` for non-empty.
+- **API tests are strict contract tests and are never `[Ignore]`d.** When the server diverges from its
+  spec (e.g. a demo returning 200 for schema-violating input), the test stays strict on the expected code
+  and goes red — that red test is the finding to raise with the developers (spec bug or server bug; someone
+  must decide), and it becomes the acceptance criterion and regression guard for the fix. Never loosen the
+  assertion or ignore the test to make the suite green.
+- If an assertion shape has no `Asserts` method yet, extend `Asserts.cs` with a new method following its
+  existing try/catch + PASSED/FAILED logging pattern rather than falling back to raw `Assert.That`.
+
+---
+
+## BaseService Contract (services inherit)
+
+`BaseService(ILog logger, IAPIRequestContext request)`. Protected helpers (return `Task<IAPIResponse>`,
+auto-inject a correlation-id header and log request/response):
+`GetAsync`, `PostAsync`, `PutAsync`, `DeleteAsync` — each `(string endpoint, APIRequestContextOptions options = null)`.
+Public: `DeserializeAsync<T>(IAPIResponse response)` (wraps `response.JsonAsync<T>()`).
+
+Request bodies via `APIRequestContextOptions`: `DataObject = <model>` (typed → JSON) or
+`DataString = <string>` (raw body, for malformed negatives). Set `Headers["Content-Type"] = "application/json"`.
+
+## BaseServiceTest / BaseTestFixture Contract (tests inherit)
+
+`BaseServiceTest : BaseTestFixture`. Available: `apiManager` (call `apiManager.GetRequest()` for the
+`IAPIRequestContext`), `logger`, `asserts`. `ApiManager` sets `BaseURL` from `configuration.ApiBaseUrl`.
+
+**Assign `baseService`:** `BaseServiceTest` exposes a `protected BaseService baseService` field and uses it
+in its `[TearDown]` to log the request/response bodies when a test fails. The generated `[OneTimeSetUp]`
+**must** assign the created service to it:
+
+```csharp
+[OneTimeSetUp]
+public void OneTimeSetUp()
+{
+    {resource}Service = new {Resource}Service(logger, apiManager.GetRequest());
+    baseService = {resource}Service;
+}
+```
+
+Skipping the assignment silently disables failure diagnostics — never omit it.
+
+**Lifecycle:** `BaseTestFixture` already defines `[OneTimeSetUp]`, `[OneTimeTearDown]`, `[SetUp]`, and
+`[TearDown] FinalizeTest` (all `protected virtual`). A generated test class adds its **own** `[TearDown]`
+with a **different name** (e.g. `CleanUp`) — NUnit runs all `[TearDown]`-attributed methods, so this
+composes. Do **not** override the base ones and do **not** name the cleanup method `FinalizeTest`.
+
+**Cleanup logging:** when the test class has a cleanup `[TearDown]`, open it with a log header so the
+cleanup calls are visibly separated from the test steps in the log:
+
+```csharp
+[TearDown]
+public async Task CleanUp()
+{
+    logger.Info("");
+    logger.Info("// Cleanup Testcase");
+
+    foreach (var id in created{Resource}Ids)
+        await {resource}Service.Delete{Resource}(id);
+
+    created{Resource}Ids.Clear();
+}
+```
+
+Only generate a cleanup `[TearDown]` when the fixture actually creates server-side resources.
+
+---
+
+## The Non-Negotiables
+
+These come from how the shipped `PetServiceTests` was built. Don't relax them:
+
+1. **Self-contained tests** — a test needing a resource creates it in-test (factory + `Add` call), exercises
+   the operation, asserts. No test depends on another test having run.
+2. **No `[Order]` attributes** — order-independent, data-parallel-safe via unique random ids.
+3. **Teardown cleanup** — a per-fixture `List<long>` of created ids, deleted in a `[TearDown] CleanUp`.
+4. **Factory builds, test tracks** — the factory only constructs valid models (stateless). Registering a
+   created id for cleanup is the test class's job, never the factory's. **Every API model instance is built
+   by the `{Resource}Factory` — never construct a model inline in a test class** (e.g. a private static
+   helper `new`-ing up the model with hardcoded values). The only model-creating member allowed in the test
+   class is the thin `Create{Resource}()` wrapper that calls the factory and registers the id for cleanup.
+5. **Honest assertions** — see Assertion Rules.
+6. **Reuse the framework** — services extend `BaseService`; tests extend `BaseServiceTest`; requests come
+   from `apiManager.GetRequest()`. Never hand-roll HTTP or JSON.
+7. **Framework asserts** — all validations go through the `asserts` class with a logging message, exactly
+   like the UI tests. No direct NUnit `Assert.That` in test methods.
+8. **`baseService` assignment** — `[OneTimeSetUp]` assigns the created service to `baseService` so the base
+   teardown can log request/response bodies on failure.
+
+---
+
+## Model Template
+
+One file per top-level schema; nested schemas as extra classes in the same file.
+
+```csharp
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
+namespace {Company}.{Project}.Web.Models
+{
+    public class {Resource}ServiceModel
+    {
+        [JsonPropertyName("id")]
+        public long? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("category")]
+        public {Resource}CategoryModel Category { get; set; }
+
+        [JsonPropertyName("photoUrls")]
+        public List<string> PhotoUrls { get; set; }
+
+        [JsonPropertyName("tags")]
+        public List<{Resource}TagModel> Tags { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+    }
+
+    public class {Resource}CategoryModel
+    {
+        [JsonPropertyName("id")]
+        public long? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+    }
+
+    public class {Resource}TagModel
+    {
+        [JsonPropertyName("id")]
+        public long? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+    }
+}
+```
+
+---
+
+## Service Template
+
+One method per operation. Include a **raw-string overload** for any operation with a request body, and a
+**raw-id overload** for numeric path-id operations, so negative tests can send malformed input.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using log4net;
+using Microsoft.Playwright;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Services
+{
+    public class {Resource}Service : BaseService
+    {
+        private const string baseUrl = "{baseUrl}";        // from spec servers[0].url
+        private const string {resource}Path = "{path}";    // e.g. "/pet"
+
+        public {Resource}Service(ILog logger, IAPIRequestContext request) : base(logger, request)
+        {
+        }
+
+        public async Task<IAPIResponse> Add{Resource}({Resource}ServiceModel model)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}";
+            var options = new APIRequestContextOptions
+            {
+                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
+                DataObject = model
+            };
+            return await PostAsync(endpoint, options);
+        }
+
+        public async Task<IAPIResponse> Add{Resource}(string rawBody)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}";
+            var options = new APIRequestContextOptions
+            {
+                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
+                DataString = rawBody
+            };
+            return await PostAsync(endpoint, options);
+        }
+
+        public async Task<IAPIResponse> Update{Resource}({Resource}ServiceModel model)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}";
+            var options = new APIRequestContextOptions
+            {
+                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
+                DataObject = model
+            };
+            return await PutAsync(endpoint, options);
+        }
+
+        public async Task<IAPIResponse> Update{Resource}(string rawBody)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}";
+            var options = new APIRequestContextOptions
+            {
+                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
+                DataString = rawBody
+            };
+            return await PutAsync(endpoint, options);
+        }
+
+        public async Task<IAPIResponse> Get{Resource}ById(long id)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            return await GetAsync(endpoint);
+        }
+
+        public async Task<IAPIResponse> Get{Resource}ByRawId(string id)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            return await GetAsync(endpoint);
+        }
+
+        public async Task<IAPIResponse> Find{Resource}sByStatus(string status)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}/findByStatus?status={status}";
+            return await GetAsync(endpoint);
+        }
+
+        public async Task<IAPIResponse> Delete{Resource}(long id)
+        {
+            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            return await DeleteAsync(endpoint);
+        }
+
+        public async Task<{Resource}ServiceModel> Deserialize(IAPIResponse response)
+        {
+            return await DeserializeAsync<{Resource}ServiceModel>(response);
+        }
+
+        public async Task<List<{Resource}ServiceModel>> DeserializeList(IAPIResponse response)
+        {
+            return await DeserializeAsync<List<{Resource}ServiceModel>>(response);
+        }
+    }
+}
+```
+
+> Note the `baseUrl` constant mirrors the shipped `PetService` (self-contained, spec-driven). If the user
+> prefers config-driven URLs, use relative endpoints and let `ApiManager`'s `BaseURL` apply — offer this as
+> an option rather than the default.
+
+---
+
+## Factory Template
+
+Stateless. Builds a **valid** default model. Randomized id avoids collisions with server seed data and lets
+tests run in parallel without stepping on each other. Populate required properties with valid values; for
+enums use the first declared value.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using System.Collections.Generic;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public static class {Resource}Factory
+    {
+        public static {Resource}ServiceModel Create{Resource}()
+        {
+            return Create{Resource}(Generate{Resource}Id());
+        }
+
+        public static {Resource}ServiceModel Create{Resource}(long id)
+        {
+            return new {Resource}ServiceModel
+            {
+                Id = id,
+                Name = "{Company}-{Resource}",
+                Category = new {Resource}CategoryModel { Id = 1, Name = "Dogs" },
+                PhotoUrls = new List<string> { "https://example.dev/{resource}.png" },
+                Tags = new List<{Resource}TagModel> { new {Resource}TagModel { Id = 1, Name = "friendly" } },
+                Status = "available"   // first valid enum value from the schema
+            };
+        }
+
+        public static long Generate{Resource}Id()
+        {
+            // Random high-range id to avoid colliding with existing/seed data.
+            // Reuse the shared Randomizer helper that already lives in the Factories namespace.
+            return Randomizer.GetRandomInteger(1_000_000, 9_000_000);
+        }
+    }
+}
+```
+
+> The factory reuses the shipped `Randomizer` helper (in `{Company}.{Project}.Web.Tests.Factories`) rather
+> than calling `Random.Shared` directly — check its available methods (`GetRandomInteger`, `GetRandomString`,
+> `GetUniqueId`, `GetDateTimeId`) and pick the one matching the id type. `GetRandomInteger` takes `int`
+> bounds; if the schema id must span the full `long` range, add a `long` overload to `Randomizer` rather
+> than inlining `Random.Shared` here.
+
+---
+
+## API Test Template
+
+Self-contained, order-independent, with teardown cleanup. The local `Create{Resource}()` wrapper is the one
+place that both builds (via factory) and registers the id for cleanup — keep that bridge in the test class,
+not the factory. `Add{Resource}ForTest()` creates the resource on the server and returns the model whose id
+read/update tests then use — this is how those tests stay self-contained.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using {Company}.{Project}.Web.Services;
+using {Company}.{Project}.Web.Tests.Factories;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Tests.ApiTests
+{
+    [Category("ApiTests")]
+    [Description("Validate Content of {Resource}Service")]
+    public class {Resource}ServiceTests : BaseServiceTest
+    {
+        private {Resource}Service {resource}Service;
+
+        private readonly List<long> created{Resource}Ids = new List<long>();
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            {resource}Service = new {Resource}Service(logger, apiManager.GetRequest());
+            baseService = {resource}Service;
+        }
+
+        [TearDown]
+        public async Task CleanUp()
+        {
+            logger.Info("");
+            logger.Info("// Cleanup Testcase");
+
+            foreach (var id in created{Resource}Ids)
+                await {resource}Service.Delete{Resource}(id);
+
+            created{Resource}Ids.Clear();
+        }
+
+        [Test]
+        public async Task Validate_Add{Resource}_Response_Status()
+        {
+            var model = Create{Resource}();
+
+            var response = await {resource}Service.Add{Resource}(model);
+
+            asserts.EqualTo(response.Status, 200, "Validating response Status property");
+            asserts.EqualTo(response.Ok, true, "Validating response OK property");
+        }
+
+        [Test]
+        public async Task Validate_Add{Resource}_Response_Content()
+        {
+            var model = Create{Resource}();
+
+            var response = await {resource}Service.Add{Resource}(model);
+
+            var result = await {resource}Service.Deserialize(response);
+
+            asserts.EqualTo(result.Id, model.Id, "Validating response content Id property");
+            asserts.EqualTo(result.Name, model.Name, "Validating response content Name property");
+            asserts.EqualTo(result.Status, "available", "Validating response content Status property");
+        }
+
+        [Test]
+        public async Task Validate_Get{Resource}ById_Response_Content()
+        {
+            var model = await Add{Resource}ForTest();
+
+            var response = await {resource}Service.Get{Resource}ById(model.Id.Value);
+
+            var result = await {resource}Service.Deserialize(response);
+
+            asserts.EqualTo(result.Id, model.Id, "Validating response content Id property");
+            asserts.EqualTo(result.Name, model.Name, "Validating response content Name property");
+        }
+
+        [Test]
+        public async Task Validate_Get{Resource}ById_NotFound_Response_Status()
+        {
+            var response = await {resource}Service.Get{Resource}ById(0);
+
+            // Spec: 404 (Not found).
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 404, "Validating response Status property");
+        }
+
+        [Test]
+        public async Task Validate_Add{Resource}_EmptyBody_Response_Failure()
+        {
+            var response = await {resource}Service.Add{Resource}(string.Empty);
+
+            // Spec: 400 (Invalid input).
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 400, "Validating response Status property");
+        }
+
+        [Test]
+        public async Task Validate_Add{Resource}_MalformedJson_Response_Failure()
+        {
+            var response = await {resource}Service.Add{Resource}("{ this is not valid json");
+
+            // Spec: 400 (Invalid input).
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 400, "Validating response Status property");
+        }
+
+        [Test]
+        public async Task Validate_Add{Resource}_InvalidFieldType_Response_Failure()
+        {
+            // id is int64 in the schema; a string violates the type.
+            var response = await {resource}Service.Add{Resource}("{\"id\":\"not-a-number\",\"name\":\"x\"}");
+
+            // Spec: 400 (Invalid input).
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 400, "Validating response Status property");
+        }
+
+        private async Task<{Resource}ServiceModel> Add{Resource}ForTest()
+        {
+            var model = Create{Resource}();
+            await {resource}Service.Add{Resource}(model);
+            return model;
+        }
+
+        private {Resource}ServiceModel Create{Resource}()
+        {
+            var model = {Resource}Factory.Create{Resource}();
+
+            created{Resource}Ids.Add(model.Id.Value);
+
+            return model;
+        }
+    }
+}
+```
+
+List-returning endpoints use `DeserializeList` and assert with
+`asserts.IsNotNull(result, ...)` + `asserts.IsTrue(result.All(x => ...), ...)` (add `using System.Linq;`).
+
+---
+
+## Security
+
+The shipped reference targets an unauthenticated demo, so it sends no auth. For a real API:
+- `apiKey` (header) → add the header in the service options (like `Content-Type`), value from config.
+- `http bearer` (JWT) → `Headers["Authorization"] = $"Bearer {token}"`.
+- `oauth2` → obtain a token out of band; inject as bearer.
+
+Add **negative auth tests** (missing/invalid credentials → 401/403) only when the target enforces auth. Ask
+the user whether the target enforces security before generating auth code — don't assume.
+
+---
+
+## Operations to Skip (and say so)
+
+- **Binary upload/download** (`application/octet-stream`, `multipart/form-data` file bodies, e.g. `uploadFile`)
+  — doesn't fit the JSON-service pattern. Skip by default; mention it and offer a bespoke method if wanted.
+- **Callbacks / webhooks** — inbound to the API, not client-callable; no test.
+- **Non-JSON-only responses** (`text/plain`, XML-only) — generate the call + status test, skip JSON content
+  assertions, note the limitation.
+
+---
+
+## Reporting (Step 6)
+
+After generating, report plainly:
+- The saved file paths (verified on disk).
+- The coverage table (operation × status/content/negative).
+- That the code was **not compiled or run** — recommend a local build + a single run of the new test class.
+- Where assertions are **loose on purpose**, and any test likely to fail for server-behavior reasons rather
+  than a real defect (e.g. a demo returning 200 for an unknown enum value or a delete of a non-existent id).
+- Any operation skipped and why.
+
+---
+
+## Common Mistakes to Avoid
+
+- Guessing namespaces — always derive from `Configuration.json`, sanity-check against shipped source.
+- Hardcoding the root namespace instead of `{Company}.{Project}`.
+- Adding `[Order]` attributes or otherwise coupling tests to execution order.
+- Tests that depend on another test having created data — each test sets up its own state.
+- Putting cleanup/id-tracking in the factory — the factory is stateless; the test class tracks created ids.
+- Building models inline in the test class (e.g. a `private static Create{Resource}()` constructing the
+  model with `new`) instead of generating a `{Resource}Factory` — model construction always lives in the
+  factory class under `{Tests}\Factories\`; the test class only keeps the thin wrapper that calls the
+  factory and registers the created id for cleanup.
+- Naming the cleanup method `FinalizeTest` (collides with the base fixture) — use a distinct name like `CleanUp`.
+- Calling NUnit `Assert.That` directly in tests — always use the framework `asserts` class (with a `"Validating ..."` message) so results are logged; extend `Asserts.cs` if a method is missing.
+- Forgetting `baseService = {resource}Service;` in `[OneTimeSetUp]` — without it the base teardown cannot log request/response bodies on failure.
+- Omitting the `logger.Info("// Cleanup Testcase")` header in the cleanup `[TearDown]` — cleanup calls blur into the test steps in the log.
+- Using `asserts.IsAnyOf` for status codes — every test asserts the single exact expected code with `asserts.EqualTo` and a comment naming it.
+- Marking an API test `[Ignore]` — API tests are never ignored; a spec/implementation divergence stays red as the finding to raise with the developers.
+- Fixed/shared resource ids — use `Generate{Resource}Id()` random ids to avoid collisions and enable parallelism.
+- Hand-rolling HTTP or JSON instead of `BaseService` helpers.
+- Missing the raw-string / raw-id overloads that malformed-input and invalid-id tests depend on.
+- Omitting the per-operation missing-required-input test, or faking a "missing" query parameter by sending
+  an empty value instead of omitting the parameter entirely (add a parameterless service overload).
+- Loosening a missing-required-fields assertion to make a non-validating server pass — keep it strict on
+  the spec code and let it fail; the red test is the record of the server's non-conformance.
+- Generating a service for a binary upload/download operation — skip it and say so.
+- Non-nullable model value types (e.g. `long` instead of `long?`) causing false-positive content assertions.
+- Generating the whole spec without confirming scope — a large spec is a lot of code; confirm the resource(s) first.
+- Only presenting files as chat output, or writing to a sandbox, instead of saving to the solution with `Filesystem:write_file` and verifying they landed on disk.
+- Writing into `bin\` or `obj\`.
+- Claiming the code compiles/passes — you have not built or run it; say so and recommend a local build + run.

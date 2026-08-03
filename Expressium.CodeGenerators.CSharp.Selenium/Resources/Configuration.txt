@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
+﻿using System.IO;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public enum Folders
     {
@@ -37,40 +35,6 @@ namespace $Company$.$Project$.Web.API.Tests
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
         public bool Highlight { get; set; }
-        public int HighlightTimeOut { get; set; }
-
-        public static Configuration GetCurrentConfiguation()
-        {
-            var profile = System.Environment.GetEnvironmentVariable("PROFILE");
-
-            if (profile == null || !Enum.IsDefined(typeof(Profiles), profile))
-                profile = Profiles.Development.ToString();
-
-            var configuration = new ConfigurationBuilder()
-               .SetBasePath(Directory.GetCurrentDirectory())
-               .AddJsonFile("configuration.json").Build()
-               .GetSection("Profiles").GetSection(profile).Get<Configuration>();
-
-            if (configuration == null)
-                throw new ApplicationException($"Configuration profile '{profile}' is unknown...");
-
-            if (string.IsNullOrWhiteSpace(configuration.Username))
-                configuration.Username = System.Environment.GetEnvironmentVariable("USERNAME");
-
-            if (string.IsNullOrWhiteSpace(configuration.Password))
-                configuration.Password = System.Environment.GetEnvironmentVariable("PASSWORD");
-
-            if (configuration.Loggings && !Directory.Exists(configuration.LoggingsPath))
-                Directory.CreateDirectory(configuration.LoggingsPath);
-
-            if (configuration.Screenshots && !Directory.Exists(configuration.ScreenshotsPath))
-                Directory.CreateDirectory(configuration.ScreenshotsPath);
-
-            // Initialize WebElements Settings...
-            WebElements.Highlight = configuration.Highlight;
-            WebElements.HighlightTimeOut = configuration.HighlightTimeOut;
-
-            return configuration;
-        }
+        public int HighlightTimeout { get; set; }
     }
 }

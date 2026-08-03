@@ -1,0 +1,194 @@
+using log4net;
+using Microsoft.Playwright;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace  $Namespace$.Services
+{
+    public class BaseService
+    {
+        private const string correlationIdHeader = "X-Correlation-Id";
+
+        private static readonly JsonSerializerOptions prettyPrintOptions = new JsonSerializerOptions { WriteIndented = true };
+
+        protected ILog logger;
+        protected IAPIRequestContext request;
+
+        public TimeSpan Duration { get; private set; } = TimeSpan.Zero;
+
+        public string RequestBody { get; private set; }
+        public string ResponseBody { get; private set; }
+
+        public bool EnableBodyLogging { get; set; } = false;
+
+        public BaseService(ILog logger, IAPIRequestContext request)
+        {
+            this.logger = logger;
+            this.request = request;
+        }
+
+        protected async Task<IAPIResponse> GetAsync(string endpoint, APIRequestContextOptions options = null)
+        {
+            logger.Info($"Request: GET {endpoint}");
+
+            options = AddRequestOptions(options);
+            SetRequestBody(options);
+
+            var stopwatch = Stopwatch.StartNew();
+
+            var response = await request.GetAsync(endpoint, options);
+
+            stopwatch.Stop();
+            Duration = stopwatch.Elapsed;
+
+            await SetResponseBodyAsync(response);
+
+            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
+            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
+
+            return response;
+        }
+
+        protected async Task<IAPIResponse> PostAsync(string endpoint, APIRequestContextOptions options = null)
+        {
+            logger.Info($"Request: POST {endpoint}");
+
+            options = AddRequestOptions(options);
+            SetRequestBody(options);
+
+            var stopwatch = Stopwatch.StartNew();
+
+            var response = await request.PostAsync(endpoint, options);
+
+            stopwatch.Stop();
+            Duration = stopwatch.Elapsed;
+
+            await SetResponseBodyAsync(response);
+
+            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
+            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
+
+            return response;
+        }
+
+        protected async Task<IAPIResponse> PutAsync(string endpoint, APIRequestContextOptions options = null)
+        {
+            logger.Info($"Request: PUT {endpoint}");
+
+            options = AddRequestOptions(options);
+            SetRequestBody(options);
+
+            var stopwatch = Stopwatch.StartNew();
+
+            var response = await request.PutAsync(endpoint, options);
+
+            stopwatch.Stop();
+            Duration = stopwatch.Elapsed;
+
+
+            await SetResponseBodyAsync(response);
+
+            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
+            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
+
+            return response;
+        }
+
+        protected async Task<IAPIResponse> DeleteAsync(string endpoint, APIRequestContextOptions options = null)
+        {
+            logger.Info($"Request: DELETE {endpoint}");
+
+            options = AddRequestOptions(options);
+            SetRequestBody(options);
+
+            var stopwatch = Stopwatch.StartNew();
+
+            var response = await request.DeleteAsync(endpoint, options);
+
+            stopwatch.Stop();
+            Duration = stopwatch.Elapsed;
+
+            await SetResponseBodyAsync(response);
+
+            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
+            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
+
+            return response;
+        }
+
+        public async Task<T> DeserializeAsync<T>(IAPIResponse response)
+        {
+            return await response.JsonAsync<T>();
+        }
+
+        private APIRequestContextOptions AddRequestOptions(APIRequestContextOptions options)
+        {
+            options ??= new APIRequestContextOptions();
+
+            var headers = options.Headers != null
+                ? new Dictionary<string, string>(options.Headers)
+                : new Dictionary<string, string>();
+
+            var correlationId = Guid.NewGuid().ToString();
+            headers[correlationIdHeader] = correlationId;
+
+            options.Headers = headers;
+
+            logger.Info($"{correlationIdHeader}: {correlationId}");
+
+            return options;
+        }
+
+        private void SetRequestBody(APIRequestContextOptions options)
+        {
+            if (options?.DataObject != null)
+                RequestBody = JsonSerializer.Serialize(options.DataObject, prettyPrintOptions);
+
+            if (options?.DataString != null)
+                RequestBody = options.DataString;
+
+            if (EnableBodyLogging && !string.IsNullOrWhiteSpace(RequestBody))
+            {
+                logger.Debug("Request Body:");
+                LogBodyAsLines(RequestBody);
+            }
+        }
+
+        private async Task SetResponseBodyAsync(IAPIResponse response)
+        {
+            var text = await response.TextAsync();
+
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            try
+            {
+                var json = JsonSerializer.Serialize(JsonSerializer.Deserialize<JsonElement>(text), prettyPrintOptions);
+                ResponseBody = json;
+            }
+            catch (JsonException)
+            {
+                ResponseBody = text;
+            }
+
+            if (EnableBodyLogging && !string.IsNullOrWhiteSpace(ResponseBody))
+            {
+                logger.Debug("Response Body:");
+                LogBodyAsLines(ResponseBody);
+            }
+        }
+
+        private void LogBodyAsLines(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (var line in lines)
+                logger.Debug(line);
+        }
+    }
+}

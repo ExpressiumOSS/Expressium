@@ -1,8 +1,8 @@
-using $Company$.$Project$.Web.API.Controls;
+using $Namespace$.Controls;
 using log4net;
 using OpenQA.Selenium;
 
-namespace $Company$.$Project$.Web.API
+namespace $Namespace$.Pages
 {
     public class BaseTable : BasePage
     {

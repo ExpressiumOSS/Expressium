@@ -5,13 +5,15 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
     internal enum CodeFolders
     {
         Models,
+        Services,
         Pages
     }
 
     internal enum TestFolders
     {
         Factories,
-        UITests,
+        ApiTests,
+        UiTests,
         BusinessTests
     }
 

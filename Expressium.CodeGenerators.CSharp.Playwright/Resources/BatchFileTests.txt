@@ -1,0 +1,12 @@
+﻿echo Runnning Regression Test...
+
+set PROFILE=Development
+
+rmdir /q /s .\$Namespace$.Tests\bin\Debug\net10.0\TestResults
+
+dotnet nuget
+dotnet build
+
+dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory="UiTests"
+dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory="ApiTests"
+dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory="BusinessTests"

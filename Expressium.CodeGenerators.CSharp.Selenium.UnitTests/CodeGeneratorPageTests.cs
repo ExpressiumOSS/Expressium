@@ -43,7 +43,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorPage.GenerateUsings(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(7), "CodeGeneratorPageCSharp GenerateUsings validation");
-            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.API.Models;"), "CodeGeneratorPageCSharp GenerateUsings validation");
+            Assert.That(listOfLines[2], Is.EqualTo("using Expressium.Coffeeshop.Web.Models;"), "CodeGeneratorPageCSharp GenerateUsings validation");
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorPage.GenerateNameSpace();
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "CodeGeneratorPageCSharp GenerateNameSpace validation");
-            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.API.Pages"), "CodeGeneratorPageCSharp GenerateNameSpace validation");
+            Assert.That(listOfLines[0], Is.EqualTo("namespace Expressium.Coffeeshop.Web.Pages"), "CodeGeneratorPageCSharp GenerateNameSpace validation");
         }
 
         [Test]

@@ -1,13 +1,15 @@
-﻿using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+﻿using $Namespace$.Tests.BusinessTests.Steps;
+using $Namespace$.Tests.Infrastructure;
 using Reqnroll;
 using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+namespace $Namespace$.Tests.BusinessTests.Hooks
 {
     [Binding]
-    public class BaseHooks : BaseTest
+    public class BaseHooks : BaseTestFixture
     {
         private readonly FeatureContext featureContext;
         private readonly ScenarioContext scenarioContext;
@@ -25,25 +27,24 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
         }
 
         [BeforeScenario]
-        public void BeforeScenario()
+        public async Task BeforeScenario()
         {
-            InitializeFixture();
-
-            logger.Info("// Initialize Testcase");
+            await InitializeFixture();
 
             baseContext = new BaseContext();
             baseContext.Configuration = configuration;
             baseContext.Logger = logger;
             baseContext.BrowserManager = browserManager;
+            baseContext.ApiManager = apiManager;
             baseContext.Asserts = asserts;
 
             objectContainer.RegisterInstanceAs(baseContext);
         }
 
         [AfterScenario]
-        public void AfterScenario()
+        public async Task AfterScenario()
         {
-            FinalizeFixture();
+            await FinalizeFixture();
 
             if (configuration.Loggings)
             {
@@ -51,16 +52,19 @@ namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
                 reqnrollOutputHelper.AddAttachmentAsLink(fileName);
             }
 
-            if (configuration.Screenshots)
+            if (browserManager.Initialized)
             {
-                var fileName = Path.Combine(Folders.Screenshots.ToString(), GetTestName() + ".png");
-                reqnrollOutputHelper.AddAttachmentAsLink(fileName);
-            }
+                if (configuration.Screenshots)
+                {
+                    var fileName = Path.Combine(Folders.Screenshots.ToString(), GetTestName() + ".png");
+                    reqnrollOutputHelper.AddAttachmentAsLink(fileName);
+                }
 
-            if (configuration.Videos)
-            {
-                var fileName = Path.Combine(Folders.Videos.ToString(), GetTestName() + ".webm");
-                reqnrollOutputHelper.AddAttachmentAsLink(fileName);
+                if (configuration.Videos)
+                {
+                    var fileName = Path.Combine(Folders.Videos.ToString(), GetTestName() + ".webm");
+                    reqnrollOutputHelper.AddAttachmentAsLink(fileName);
+                }
             }
         }
 

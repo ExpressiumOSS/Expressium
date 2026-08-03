@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebComboBox : WebControl
     {
@@ -16,7 +16,7 @@ namespace $Company$.$Project$.Web.API.Controls
 
             await locator.WaitForElementIsVisible();
             await locator.HighlightAction(page);
-            await locator.SelectOptionAsync(value);
+            await locator.SelectOptionAsync(new SelectOptionValue { Label = value });
             await locator.HighlightClear(page);
         }
 
@@ -24,7 +24,7 @@ namespace $Company$.$Project$.Web.API.Controls
         {
             await locator.WaitForElementIsVisible();
             await locator.HighlightValidation(page);
-            return await locator.InputValueAsync();
+            return (await locator.Locator("option:checked").InnerTextAsync()).Trim();
         }
     }
 }

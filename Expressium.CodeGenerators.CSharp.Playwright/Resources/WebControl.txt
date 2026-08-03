@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebControl
     {
@@ -15,14 +15,29 @@ namespace $Company$.$Project$.Web.API.Controls
             this.locator = locator;
         }
 
-        public void WaitForPageElementIsVisible()
+        public async Task WaitForPageElementIsVisible()
         {
-            locator.WaitForElementIsVisible().GetAwaiter().GetResult();
+            await locator.WaitForElementIsVisible();
         }
 
-        public void WaitForPageElementIsEnabled()
+        public async Task WaitForPageElementIsEnabled()
         {
-            locator.WaitForElementIsEnabled().GetAwaiter().GetResult();
+            await locator.WaitForElementIsEnabled();
+        }
+
+        public async Task<bool> IsVisible()
+        {
+            return await locator.IsVisibleAsync();
+        }
+
+        public async Task<bool> IsEnabled()
+        {
+            return await locator.IsEnabledAsync();
+        }
+
+        public async Task<bool> IsHidden()
+        {
+            return await locator.IsHiddenAsync();
         }
     }
 }

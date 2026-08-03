@@ -1,0 +1,56 @@
+using $Namespace$.Services;
+using $Namespace$.Tests.Infrastructure;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using System;
+
+namespace $Namespace$.Tests.ApiTests
+{
+    public class BaseServiceTest : BaseTestFixture
+    {
+        protected BaseService baseService;
+
+        [OneTimeSetUp]
+        protected void InitializeTestcase()
+        {
+            logger.Info("");
+            logger.Info("// Initialize Testcase");
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            var result = TestContext.CurrentContext.Result;
+
+            if (result.Outcome.Status == TestStatus.Failed)
+            {
+                logger.Error("Test failed during execution...");
+
+                if (baseService != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(baseService.RequestBody))
+                    {
+                        logger.Error("Request Body:");
+                        LogBodyAsLines(baseService.RequestBody);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(baseService.ResponseBody))
+                    {
+                        logger.Error("Response Body:");
+                        LogBodyAsLines(baseService.ResponseBody);
+                    }
+                }
+            }
+        }
+
+        private void LogBodyAsLines(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (var line in lines)
+                logger.Debug(line);
+        }
+    }
+}

@@ -3,7 +3,7 @@ using OpenQA.Selenium.Support.UI;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace $Company$.$Project$.Web.API.Controls
+namespace $Namespace$.Controls
 {
     public class WebComboBox : WebControl
     {

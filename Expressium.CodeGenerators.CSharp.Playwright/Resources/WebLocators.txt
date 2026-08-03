@@ -1,0 +1,89 @@
+﻿using Microsoft.Playwright;
+using System.Threading.Tasks;
+using System;
+
+namespace $Namespace$.Controls
+{
+    public static class WebLocators
+    {
+        public static bool Highlight { get; set; }
+        public static int HighlightTimeout { get; set; }
+        public static int HighlightWidth { get; set; }
+        public static string HighlightActionColor { get; set; }
+        public static string HighlightValidationColor { get; set; }
+        public static string HighlightFailureColor { get; set; }
+        public static string HighlightStyle { get; set; }
+
+        static WebLocators()
+        {
+            Highlight = true;
+            HighlightTimeout = 250;
+            HighlightWidth = 2;
+            HighlightActionColor = "orange";
+            HighlightValidationColor = "mediumseagreen";
+            HighlightFailureColor = "darkred";
+            HighlightStyle = "dashed";
+        }
+
+        public static async Task WaitForElementIsVisible(this ILocator locator)
+        {
+            await locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+        }
+
+        public static async Task WaitForElementIsEnabled(this ILocator locator)
+        {
+            await locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            if (!await locator.IsEnabledAsync())
+                throw new PlaywrightException("Element is visible but not enabled...");
+        }
+
+        public static async Task HighlightAction(this ILocator locator, IPage page)
+        {
+            await locator.HighlightLocator(page, HighlightWidth, HighlightStyle, HighlightActionColor);
+        }
+
+        public static async Task HighlightValidation(this ILocator locator, IPage page)
+        {
+            await locator.HighlightLocator(page, HighlightWidth, HighlightStyle, HighlightValidationColor);
+        }
+
+        public static async Task HighlightFailure(this ILocator locator, IPage page)
+        {
+            await locator.HighlightLocator(page, HighlightWidth, HighlightStyle, HighlightFailureColor);
+        }
+
+        public static async Task HighlightClear(this ILocator locator, IPage page)
+        {
+            if (Highlight)
+            {
+                await Task.Delay(HighlightTimeout);
+                await locator.HighlightLocator(page, 0, HighlightStyle, HighlightActionColor);
+            }
+        }
+
+        private static async Task HighlightLocator(this ILocator locator, IPage page, int width, string style, string color)
+        {
+            if (Highlight)
+            {
+                try
+                {
+                    await locator.EvaluateAsync(
+                            @"(el, args) => {
+                            el.style.outline = `${args.outlineWidth}px ${args.outlineStyle} ${args.outlineColor}`;
+                            el.style.outlineOffset = args.outlineOffset;
+                        }",
+                        new { outlineWidth = width, outlineStyle = style, outlineColor = color, outlineOffset = -1 }
+                    );
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        public static async Task RemoveAttributeReadOnly(this ILocator locator)
+        {
+            await locator.EvaluateAsync("element => element.removeAttribute('readonly')");
+        }
+    }
+}

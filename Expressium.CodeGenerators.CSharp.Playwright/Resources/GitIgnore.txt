@@ -318,3 +318,6 @@ FodyWeavers.xsd
 
 # Reqnroll generated files
 **/*.feature.cs
+
+# Local-only configuration overrides (secrets, personal credentials)
+[Cc]onfiguration.local.json

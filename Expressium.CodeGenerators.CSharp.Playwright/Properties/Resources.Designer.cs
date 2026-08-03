@@ -61,6 +61,34 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using Microsoft.Playwright;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace $Namespace$.Tests.Infrastructure
+        ///{
+        ///    public class ApiManager
+        ///    {
+        ///        private readonly Configuration configuration;
+        ///        private IAPIRequestContext request;
+        ///
+        ///        public ApiManager(Configuration configuration)
+        ///        {
+        ///            this.configuration = configuration;
+        ///        }
+        ///
+        ///        public bool Initialized { get; private set; }
+        ///
+        ///        public IAPIRequestContext GetRequest()
+        ///        {
+        ///            if (requ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ApiManager {
+            get {
+                return ResourceManager.GetString("ApiManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using NUnit.Framework;
         ///
         ///[assembly: Parallelizable(ParallelScope.Fixtures)]
@@ -77,7 +105,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using NUnit.Framework;
         ///using System;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests
         ///{
         ///    public class Asserts
         ///    {
@@ -95,7 +123,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///                Assert.That(actual, Is.EqualTo(expected), message);
         ///
         ///                logger.Info($&quot;{message}&quot;);
-        ///   [rest of string was truncated]&quot;;.
+        ///                lo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Asserts {
             get {
@@ -104,16 +132,17 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using log4net;
-        ///using Microsoft.Playwright;
+        ///   Looks up a localized string similar to using $Namespace$.Tests.Infrastructure;
+        ///using log4net;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+        ///namespace $Namespace$.Tests.BusinessTests.Steps
         ///{
         ///    public class BaseContext
         ///    {
         ///        public Configuration Configuration { get; set; }
         ///        public ILog Logger { get; set; }
         ///        public BrowserManager BrowserManager { get; set; }
+        ///        public ApiManager ApiManager { get; set; }
         ///        public Asserts Asserts {  get; set; }
         ///    }
         ///}.
@@ -125,21 +154,23 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+        ///   Looks up a localized string similar to using $Namespace$.Tests.BusinessTests.Steps;
+        ///using $Namespace$.Tests.Infrastructure;
         ///using Reqnroll;
         ///using Reqnroll.BoDi;
         ///using System.IO;
         ///using System.Text.RegularExpressions;
+        ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+        ///namespace $Namespace$.Tests.BusinessTests.Hooks
         ///{
         ///    [Binding]
-        ///    public class BaseHooks : BaseTest
+        ///    public class BaseHooks : BaseTestFixture
         ///    {
         ///        private readonly FeatureContext featureContext;
         ///        private readonly ScenarioContext scenarioContext;
         ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
-        ///        private readonly IObjectConta [rest of string was truncated]&quot;;.
+        ///       [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooks {
             get {
@@ -152,20 +183,22 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///using System;
-        ///using $Company$.$Project$.Web.API.Controls;
+        ///using $Namespace$.Controls;
         ///
-        ///namespace $Company$.$Project$.Web.API
+        ///namespace $Namespace$.Pages
         ///{
         ///    public class BasePage
         ///    {
         ///        protected ILog logger;
         ///        protected IPage page;
         ///
-        ///        public static int PageReadyStateTimeOut { get; set; }
+        ///        public static int PageReadyStateTimeout { get; set; }
         ///
         ///        public static string PageSpinnerSelector { get; set; }
-        ///        public static int PageSpinnerInitialTimeOut { get; set; }
-        ///        public static int PageSpinner [rest of string was truncated]&quot;;.
+        ///        public static int PageSpinnerInitialTimeout { get; set; }
+        ///        public static int PageSpinnerTimeout { get; set; }
+        ///
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePage {
             get {
@@ -174,66 +207,14 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using log4net;
-        ///using Microsoft.Playwright;
-        ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
-        ///{
-        ///    public class BaseSteps
-        ///    {
-        ///        protected Configuration configuration;
-        ///        protected ILog logger;
-        ///        protected BrowserManager browserManager;
-        ///        protected Asserts asserts;
-        ///
-        ///        protected IPage page =&gt; browserManager.GetPage();
-        ///
-        ///        public BaseSteps(BaseContext baseContext)
-        ///        {
-        ///            configuration = baseContext.Configuration;
-        ///            log [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BaseSteps {
-            get {
-                return ResourceManager.GetString("BaseSteps", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using $Company$.$Project$.Web.API.Controls;
-        ///using log4net;
-        ///using Microsoft.Playwright;
-        ///using System.Threading.Tasks;
-        ///
-        ///namespace $Company$.$Project$.Web.API
-        ///{
-        ///    public class BaseTable : BasePage
-        ///    {
-        ///        protected WebTable baseControl;
-        ///
-        ///        public BaseTable(ILog logger, IPage page, ILocator baseLocator) : base(logger, page)
-        ///        {
-        ///            baseControl = new WebTable(page, baseLocator);
-        ///        }
-        ///
-        ///        public virtual async Task&lt;int&gt; GetNumberOfRows()
-        ///        {
-        ///            [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BaseTable {
-            get {
-                return ResourceManager.GetString("BaseTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using NUnit.Framework;
-        ///using System.Threading.Tasks;
+        ///   Looks up a localized string similar to using $Namespace$.Tests.Infrastructure;
+        ///using NUnit.Framework;
         ///using System;
+        ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.UiTests
         ///{
-        ///    public class BaseTest : BaseTestFixture
+        ///    public class BasePageTest : BaseTestFixture
         ///    {
         ///        [OneTimeSetUp]
         ///        protected void InitializeTestcase()
@@ -248,11 +229,114 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public async Task InitializeBrowserWithLogin()
         ///        {
-        ///            await Initializ [rest of string was truncated]&quot;;.
+        ///             [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BaseTest {
+        internal static string BasePageTest {
             get {
-                return ResourceManager.GetString("BaseTest", resourceCulture);
+                return ResourceManager.GetString("BasePageTest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using log4net;
+        ///using Microsoft.Playwright;
+        ///using System;
+        ///using System.Collections.Generic;
+        ///using System.Text.Json;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace  $Namespace$.Services
+        ///{
+        ///    public class BaseService
+        ///    {
+        ///        private const string correlationIdHeader = &quot;X-Correlation-Id&quot;;
+        ///
+        ///        private static readonly JsonSerializerOptions prettyPrintOptions = new JsonSerializerOptions { WriteIndented = true };
+        ///
+        ///        protected ILog logger;
+        ///        protected IAPIRequestContext request;
+        ///
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BaseService {
+            get {
+                return ResourceManager.GetString("BaseService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using NUnit.Framework;
+        ///using $Namespace$.Services;
+        ///using System.Threading.Tasks;
+        ///using $Namespace$.Tests.Infrastructure;
+        ///
+        ///namespace $Namespace$.Tests.ApiTests
+        ///{
+        ///    public class BaseServiceTest : BaseTestFixture
+        ///    {
+        ///        [OneTimeSetUp]
+        ///        protected void InitializeTestcase()
+        ///        {
+        ///            logger.Info(&quot;&quot;);
+        ///            logger.Info(&quot;// Initialize Testcase&quot;);
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string BaseServiceTest {
+            get {
+                return ResourceManager.GetString("BaseServiceTest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using $Namespace$.Tests.Infrastructure;
+        ///using log4net;
+        ///using Microsoft.Playwright;
+        ///
+        ///namespace $Namespace$.Tests.BusinessTests.Steps
+        ///{
+        ///    public class BaseSteps
+        ///    {
+        ///        protected readonly Configuration configuration;
+        ///        protected readonly ILog logger;
+        ///        protected readonly BrowserManager browserManager;
+        ///        protected readonly ApiManager apiManager;
+        ///        protected readonly Asserts asserts;
+        ///
+        ///        protected IPage page =&gt; browserManager.GetPage();
+        ///        protected IAPIR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BaseSteps {
+            get {
+                return ResourceManager.GetString("BaseSteps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using $Namespace$.Controls;
+        ///using log4net;
+        ///using Microsoft.Playwright;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace $Namespace$.Pages
+        ///{
+        ///    public class BaseTable : BasePage
+        ///    {
+        ///        protected WebTable baseControl;
+        ///
+        ///        public BaseTable(ILog logger, IPage page, ILocator baseLocator) : base(logger, page)
+        ///        {
+        ///            baseControl = new WebTable(page, baseLocator);
+        ///        }
+        ///
+        ///        public virtual async Task&lt;int&gt; GetNumberOfRows()
+        ///        {
+        ///            logger.Info(&quot;GetNumberOfR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BaseTable {
+            get {
+                return ResourceManager.GetString("BaseTable", resourceCulture);
             }
         }
         
@@ -265,19 +349,17 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using System.Collections.Generic;
         ///using System.IO;
         ///using System.Linq;
+        ///using System.Threading;
         ///using System.Threading.Tasks;
+        ///using $Namespace$.Controls;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
         ///    public class BaseTestFixture
         ///    {
         ///        protected readonly Configuration configuration;
         ///        protected readonly BrowserManager browserManager;
-        ///
-        ///        protected ILog logger;
-        ///        protected Asserts asserts;
-        ///
-        ///        pr [rest of string was truncated]&quot;;.
+        ///        protected readonly ApiManager apiManage [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixture {
             get {
@@ -286,28 +368,48 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to echo Runnning Regression Test...
+        ///
+        ///set PROFILE=Development
+        ///
+        ///rmdir /q /s .\$Namespace$.Tests\bin\Debug\net10.0\TestResults
+        ///
+        ///dotnet nuget
+        ///dotnet build
+        ///
+        ///dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory=&quot;UiTests&quot;
+        ///dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory=&quot;ApiTests&quot;
+        ///dotnet test .\$Namespace$.Tests\$Namespace$.Tests.csproj --filter TestCategory=&quot;BusinessTests&quot;.
+        /// </summary>
+        internal static string BatchFileTests {
+            get {
+                return ResourceManager.GetString("BatchFileTests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System;
+        ///using System.Threading;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
+        ///    public enum BrowserTypes
+        ///    {
+        ///        Chrome,
+        ///        Chromium,
+        ///        Firefox,
+        ///        Edge,
+        ///        Webkit
+        ///    }
+        ///
         ///    public class BrowserFactory
         ///    {
-        ///        private static IPlaywright playwright;
         ///        private static IBrowser browser;
+        ///        private static readonly SemaphoreSlim initLock = new SemaphoreSlim(1, 1);
         ///
-        ///        public enum BrowserTypes
-        ///        {
-        ///            Chrome,
-        ///            Firefox,
-        ///            Edge,
-        ///            Webkit
-        ///        }
-        ///
-        ///        public static async Task&lt;IPage&gt; Initialize(Configuration configuration)
-        ///        {
-        ///            if (playwri [rest of string was truncated]&quot;;.
+        ///        public static async Task&lt;(IPage page, IBrowserContext con [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserFactory {
             get {
@@ -319,22 +421,24 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
         ///    public class BrowserManager
         ///    {
-        ///        private Configuration configuration;
+        ///        private readonly Configuration configuration;
         ///        private IPage page;
+        ///        private IBrowserContext context;
         ///
         ///        public BrowserManager(Configuration configuration)
         ///        {
         ///            this.configuration = configuration;
         ///        }
         ///
+        ///        public bool Initialized { get; private set; }
+        ///
         ///        public IPage GetPage()
         ///        {
-        ///            if (page == null)
-        ///                page = BrowserFactory.Initialize(configuration).GetAwaiter().G [rest of string was truncated]&quot;;.
+        ///            if (page = [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserManager {
             get {
@@ -344,7 +448,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to @echo off
-        ///cd /d &quot;.\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0&quot;
+        ///cd /d &quot;.\$Namespace$.Tests\bin\Debug\net10.0&quot;
         ///powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; { .\playwright.ps1 codegen $Url$ }&quot;.
         /// </summary>
         internal static string CodeGeneration {
@@ -354,17 +458,16 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using Microsoft.Extensions.Configuration;
-        ///using System;
-        ///using System.IO;
+        ///   Looks up a localized string similar to using System.IO;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
         ///    public enum Folders
         ///    {
         ///        Loggings,
         ///        Screenshots,
-        ///        Videos
+        ///        Videos,
+        ///        Traces
         ///    }
         ///
         ///    public class Configuration
@@ -379,7 +482,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public string Company { get; set; }
         ///        public string Project { get; set; }
-        ///         [rest of string was truncated]&quot;;.
+        ///        public string Environment { get; set; }
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Configuration {
             get {
@@ -393,10 +497,10 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    &quot;Development&quot;: {
         ///      &quot;Company&quot;: &quot;$Company$&quot;,
         ///      &quot;Project&quot;: &quot;$Project$&quot;,
-        ///      &quot;Environment&quot;: &quot;Development&quot;,
         ///      &quot;Loggings&quot;: true,
         ///      &quot;Screenshots&quot;: true,
         ///      &quot;Videos&quot;: false,
+        ///      &quot;Traces&quot;: false,
         ///      &quot;Url&quot;: &quot;$Url$&quot;,
         ///      &quot;Username&quot;: &quot;john.doe@microsoft.com&quot;,
         ///      &quot;Password&quot;: &quot;1234567890&quot;,
@@ -406,11 +510,35 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///      &quot;WindowSize&quot;: false,
         ///      &quot;WindowWidth&quot;: 1920,
         ///      &quot;WindowHeight&quot;: 1080,
-        ///      &quot;BrowserTime [rest of string was truncated]&quot;;.
+        ///      &quot;BrowserTimeout&quot;: 15000,        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationJson {
             get {
                 return ResourceManager.GetString("ConfigurationJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using Microsoft.Extensions.Configuration;
+        ///using System;
+        ///using System.IO;
+        ///
+        ///namespace $Namespace$.Tests.Infrastructure
+        ///{
+        ///    public static class ConfigurationLoader
+        ///    {
+        ///        public static Configuration GetConfiguration()
+        ///        {
+        ///            var profile = ResolveProfile();
+        ///
+        ///            var configuration = new ConfigurationBuilder()
+        ///               .SetBasePath(Directory.GetCurrentDirectory())
+        ///               .AddJsonFile(&quot;Configuration.json&quot;, optional: false, reloadOnChange: false)
+        ///         [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ConfigurationLoader {
+            get {
+                return ResourceManager.GetString("ConfigurationLoader", resourceCulture);
             }
         }
         
@@ -422,7 +550,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///	So that I can administrate my product orders
         ///
         ///@TC-1001 @Review
-        ///Scenario: Successful User Login with Valid Credentials
+        ///Scenario: Login with Valid Credentials
         ///	Given I am logged in with valid user credentials
         ///	Then I should be redirected to the Home page.
         /// </summary>
@@ -476,35 +604,15 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using Microsoft.Playwright;
-        ///using System.Threading.Tasks;
-        ///using System.Threading;
-        ///
-        ///namespace $Company$.$Project$.Web.API
-        ///{
-        ///    public static class Locators
-        ///    {
-        ///        public static bool Highlight { get; set; }
-        ///        public static int HighlightTimeOut { get; set; }
-        ///        public static int HighlightWidth { get; set; }
-        ///        public static string HighlightActionColor { get; set; }
-        ///        public static string HighlightValidationColor { get; set; }
-        ///        public static string HighlightFail [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Locators {
-            get {
-                return ResourceManager.GetString("Locators", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using log4net.Appender;
         ///using log4net.Config;
         ///using log4net.Core;
         ///using log4net.Layout;
+        ///using log4net.Layout.Pattern;
+        ///using System.IO;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
         ///    public class Logger
         ///    {
@@ -513,8 +621,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            var repository = LoggerManager.CreateRepository(name);
         ///
         ///            var patternLayout = new PatternLayout();
-        ///            patternLayout.ConversionPattern = &quot;%date{HH:mm:ss} %level %type # %message%newline&quot;;
-        ///            p [rest of string was truncated]&quot;;.
+        ///            patternLayout.AddConverter(&quot;shortType&quot;, typeof(ShortTypePatternConve [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Logger {
             get {
@@ -524,8 +631,9 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
+        ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+        ///namespace $Namespace$.Tests.BusinessTests.Steps
         ///{
         ///    [Binding]
         ///    public class LoginSteps : BaseSteps
@@ -540,8 +648,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            throw new PendingStepException();
         ///        }
         ///
-        ///        [Then(@&quot;I should be redirected to the Home page&quot;)]
-        ///  [rest of string was truncated]&quot;;.
+        ///        [Then(@&quot;I should be redirected to the  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoginSteps {
             get {
@@ -550,16 +657,42 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using Microsoft.Playwright;
+        ///using System.Threading;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace $Namespace$.Tests.Infrastructure
+        ///{
+        ///    internal static class PlaywrightProvider
+        ///    {
+        ///        private static IPlaywright playwright;
+        ///        private static readonly SemaphoreSlim initLock = new SemaphoreSlim(1, 1);
+        ///
+        ///        public static async Task&lt;IPlaywright&gt; GetInstanceAsync()
+        ///        {
+        ///            if (playwright != null)
+        ///                return playwright;
+        ///
+        ///            await initLock.WaitAsync();
+        ///            try
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PlaywrightProvider {
+            get {
+                return ResourceManager.GetString("PlaywrightProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
         ///
         ///	&lt;PropertyGroup&gt;
-        ///		&lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
+        ///		&lt;TargetFramework&gt;net10.0&lt;/TargetFramework&gt;
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.2.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Playwright&quot; Version=&quot;1.58.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;113.1.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.3.2&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Playwright&quot; Version=&quot;1.61.0&quot; /&gt;
         ///	&lt;/ItemGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
@@ -579,15 +712,15 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
         ///
         ///	&lt;PropertyGroup&gt;
-        ///		&lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
+        ///		&lt;TargetFramework&gt;net10.0&lt;/TargetFramework&gt;
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.2.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.2&quot; /&gt;
-        ///		&lt;PackageReference I [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.4.8&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.10&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.10&quot; /&gt;
+        ///		&lt;PackageReferen [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectFileApiTests {
             get {
@@ -599,19 +732,19 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using System;
         ///using System.Linq;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests
+        ///namespace $Namespace$.Tests.Factories
         ///{
         ///    public class Randomizer
         ///    {
-        ///        private static readonly Random random = new Random();
-        ///
         ///        public static string GetRandomString(int length)
         ///        {
         ///            const string chars = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;;
-        ///            return new string(Enumerable.Repeat(chars, length).Select(s =&gt; s[random.Next(s.Length)]).ToArray());
+        ///            return new string(Enumerable.Repeat(chars, length).Select(s =&gt; s[Random.Shared.Next(s.Length)]).ToArray());
         ///        }
         ///
-        ///        public static int GetR [rest of string was truncated]&quot;;.
+        ///        public static int GetRandomInteger(int minValue, int maxValue)
+        ///        {
+        ///            [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Randomizer {
             get {
@@ -620,30 +753,30 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to echo Runnning Regression Test...
+        ///   Looks up a localized string similar to # Overview
         ///
-        ///set PROFILE=Development
+        ///This solution is a test automation framework generated by Expressium for web application and API testing. A layered structure separates the application layer from the test layer, promoting reusability and maintainability:
         ///
-        ///rmdir /q /s .\$Company$.$Project$.Web.API.Tests\bin\Debug\net8.0\TestResults
-        ///
-        ///dotnet nuget
-        ///dotnet build
-        ///
-        ///dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory=&quot;UITests&quot;
-        ///dotnet test .\$Company$.$Project$.Web.API.Tests\$Company$.$Project$.Web.API.Tests.csproj --filter TestCategory=&quot;BusinessTests&quot;.
+        ///- **Expressium.Coffeeshop.Web** — Application layer:
+        ///  - **Pages** — Page objects.
+        ///  - **Controls** — Page object control wrappers.
+        ///  - **Models** — Data models.
+        ///  - **Services** — API service objects.
+        ///- **Expressium.Coffeeshop.Web.Tests** — Test layer:
+        ///  - **UiTests** — Page- [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string RegressionTest {
+        internal static string ReadMe {
             get {
-                return ResourceManager.GetString("RegressionTest", resourceCulture);
+                return ResourceManager.GetString("ReadMe", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to using Reqnroll;
         ///
-        ///namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+        ///namespace $Namespace$.Tests.BusinessTests.Hooks
         ///{
-        ///    internal static class ReqnRollExtensions
+        ///    internal static class ReqnrollExtensions
         ///    {
         ///        internal static void AddAttachmentAsLink(this IReqnrollOutputHelper outputHelper, string path)
         ///        {
@@ -652,9 +785,9 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    }
         ///}.
         /// </summary>
-        internal static string ReqnRollExtensions {
+        internal static string ReqnrollExtensions {
             get {
-                return ResourceManager.GetString("ReqnRollExtensions", resourceCulture);
+                return ResourceManager.GetString("ReqnrollExtensions", resourceCulture);
             }
         }
         
@@ -664,14 +797,59 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///  &quot;formatters&quot;: {
         ///    &quot;expressium&quot;: {
         ///      &quot;outputFilePath&quot;: &quot;LivingDoc.ndjson&quot;,
-        ///      &quot;outputFileTitle&quot;: &quot;$Company$.$Project$.Web.API.Tests&quot;
+        ///      &quot;outputFileTitle&quot;: &quot;$Namespace$.Tests&quot;
         ///    }
         ///  }
         ///}.
         /// </summary>
-        internal static string ReqnRollJson {
+        internal static string ReqnrollJson {
             get {
-                return ResourceManager.GetString("ReqnRollJson", resourceCulture);
+                return ResourceManager.GetString("ReqnrollJson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+        ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
+        ///---
+        ///name: expressium-code-generation
+        ///description: &gt;
+        ///  Use this skill whenever generating code artifacts for any Expressium-based test automation project.
+        ///  Triggers include: any request to create, enroll, or scaffold a page object, page model, m [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkillApiTests {
+            get {
+                return ResourceManager.GetString("SkillApiTests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or ModelFactory.cs file.
+        ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
+        ///&gt; This skill is aligned with the real framework conventions (verified against the shipped BusinessTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins.
+        ///---
+        ///name: expressium-bdd-tests
+        ///description: &gt;
+        ///  Use this skill whenever writing BDD tests for any Expressium-based tes [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkillBddTests {
+            get {
+                return ResourceManager.GetString("SkillBddTests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+        ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
+        ///---
+        ///name: expressium-code-generation
+        ///description: &gt;
+        ///  Use this skill whenever generating code artifacts for any Expressium-based test automation project.
+        ///  Triggers include: any request to create, enroll, or scaffold a page object, page model, m [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkillUiTests {
+            get {
+                return ResourceManager.GetString("SkillUiTests", resourceCulture);
             }
         }
         
@@ -681,9 +859,12 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///# Visual Studio Version 17
         ///VisualStudioVersion = 17.5.33414.496
         ///MinimumVisualStudioVersion = 10.0.40219.1
-        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Company$.$Project$.Web.API&quot;, &quot;$Company$.$Project$.Web.API\$Company$.$Project$.Web.API.csproj&quot;, &quot;{C3C90606-9E62-457B-990D-550CADD0AFD9}&quot;
+        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Namespace$&quot;, &quot;$Namespace$\$Namespace$.csproj&quot;, &quot;{C3C90606-9E62-457B-990D-550CADD0AFD9}&quot;
         ///EndProject
-        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Company$.$Project$.Web.API.Tests&quot;, &quot;$Company$.$Project$.Web.API.Tests\$Company$.$Pr [rest of string was truncated]&quot;;.
+        ///Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;$Namespace$.Tests&quot;, &quot;$Namespace$.Tests\$Namespace$.Tests.csproj&quot;, &quot;{90B24486-871B-4116-9219-98B24E225D28}&quot;
+        ///EndProject
+        ///Global
+        ///	Glo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SolutionFile {
             get {
@@ -695,7 +876,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebButton : WebControl
         ///    {
@@ -709,7 +890,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            await locator.HighlightAction(page);
         ///            await locator.HighlightClear(page);
         ///            await locator.ClickAsync();
-        ///  [rest of string was truncated]&quot;;.
+        ///        }
+        ///    }        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebButton {
             get {
@@ -721,7 +903,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebCheckBox : WebControl
         ///    {
@@ -733,7 +915,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        {
         ///            if ((await locator.IsCheckedAsync() == false &amp;&amp; value) || (await locator.IsCheckedAsync() == true &amp;&amp; !value))
         ///            {
-        ///                await locator.WaitForE [rest of string was truncated]&quot;;.
+        ///                await locator.WaitForElementIsVisible( [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebCheckBox {
             get {
@@ -745,7 +927,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebComboBox : WebControl
         ///    {
@@ -760,7 +942,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///            await locator.WaitForElementIsVisible();
         ///            await locator.HighlightAction(page);
-        ///            aw [rest of string was truncated]&quot;;.
+        ///            await locator.Sele [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebComboBox {
             get {
@@ -772,7 +954,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebControl
         ///    {
@@ -786,9 +968,12 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            this.locator = locator;
         ///        }
         ///
-        ///        public void WaitForPageElementIsVisible()
+        ///        public async Task WaitForPageElementIsVisible()
         ///        {
-        ///            locator.WaitForElementIs [rest of string was truncated]&quot;;.
+        ///            await locator.WaitForElementIsVisible();
+        ///        }
+        ///
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebControl {
             get {
@@ -800,7 +985,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebLink : WebButton
         ///    {
@@ -820,7 +1005,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebListBox : WebComboBox
         ///    {
@@ -839,8 +1024,31 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
+        ///using System;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
+        ///{
+        ///    public static class WebLocators
+        ///    {
+        ///        public static bool Highlight { get; set; }
+        ///        public static int HighlightTimeout { get; set; }
+        ///        public static int HighlightWidth { get; set; }
+        ///        public static string HighlightActionColor { get; set; }
+        ///        public static string HighlightValidationColor { get; set; }
+        ///        public static string HighlightFailureColor { get; set; }
+        ///     [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string WebLocators {
+            get {
+                return ResourceManager.GetString("WebLocators", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using Microsoft.Playwright;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebRadioButton : WebControl
         ///    {
@@ -852,7 +1060,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        {
         ///            if ((await locator.IsCheckedAsync() == false &amp;&amp; value) || (await locator.IsCheckedAsync() == true &amp;&amp; !value))
         ///            {
-        ///                await locator.W [rest of string was truncated]&quot;;.
+        ///                await locator.WaitForElementIsV [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebRadioButton {
             get {
@@ -865,7 +1073,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using System;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebTable : WebControl
         ///    {
@@ -880,7 +1088,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        }
         ///
         ///        public virtual async Task&lt;int&gt; GetNumberOfColumns()
-        ///  [rest of string was truncated]&quot;;.
+        ///        {
+        ///            var columns =  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebTable {
             get {
@@ -892,7 +1101,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebText : WebControl
         ///    {
@@ -919,7 +1128,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System.Threading.Tasks;
         ///
-        ///namespace $Company$.$Project$.Web.API.Controls
+        ///namespace $Namespace$.Controls
         ///{
         ///    public class WebTextBox : WebControl
         ///    {
@@ -934,7 +1143,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///            await locator.WaitForElementIsVisible();
         ///            await locator.HighlightAction(page);
-        ///            awai [rest of string was truncated]&quot;;.
+        ///            await locator.FillAs [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebTextBox {
             get {

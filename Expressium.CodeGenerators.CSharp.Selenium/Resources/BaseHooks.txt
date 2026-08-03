@@ -1,10 +1,11 @@
-﻿using $Company$.$Project$.Web.API.Tests.BusinessTests.Steps;
+﻿using $Namespace$.Tests.BusinessTests.Steps;
+using $Namespace$.Tests.Infrastructure;
 using Reqnroll;
 using Reqnroll.BoDi;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Hooks
+namespace $Namespace$.Tests.BusinessTests.Hooks
 {
     [Binding]
     public class BaseHooks : BaseTestFixture

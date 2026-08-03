@@ -3,7 +3,6 @@
     "Development": {
       "Company": "$Company$",
       "Project": "$Project$",
-      "Environment": "Development",
       "Loggings": true,
       "Screenshots": true,
       "Url": "$Url$",
@@ -16,7 +15,7 @@
       "WindowWidth": 1920,
       "WindowHeight": 1080,
       "Highlight": true,
-      "HighlightTimeOut": 150
+      "HighlightTimeout": 150
     }
   }
 }

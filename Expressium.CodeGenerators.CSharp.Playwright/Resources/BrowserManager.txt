@@ -1,29 +1,30 @@
 ﻿using Microsoft.Playwright;
 using System.Threading.Tasks;
 
-namespace $Company$.$Project$.Web.API.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public class BrowserManager
     {
-        private Configuration configuration;
+        private readonly Configuration configuration;
         private IPage page;
+        private IBrowserContext context;
 
         public BrowserManager(Configuration configuration)
         {
             this.configuration = configuration;
         }
 
+        public bool Initialized { get; private set; }
+
         public IPage GetPage()
         {
             if (page == null)
-                page = BrowserFactory.Initialize(configuration).GetAwaiter().GetResult();
+            {
+                (page, context) = BrowserFactory.Initialize(configuration).GetAwaiter().GetResult();
+                Initialized = true;
+            }
 
             return page;
-        }
-
-        public bool IsInitialized()
-        {
-            return page != null;
         }
 
         public async Task Quit()
@@ -32,6 +33,12 @@ namespace $Company$.$Project$.Web.API.Tests
             {
                 await page.CloseAsync();
                 page = null;
+            }
+
+            if (context != null)
+            {
+                await context.CloseAsync();
+                context = null;
             }
         }
     }

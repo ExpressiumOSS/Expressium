@@ -1,13 +1,14 @@
-﻿using log4net;
-using Microsoft.Playwright;
+﻿using $Namespace$.Tests.Infrastructure;
+using log4net;
 
-namespace $Company$.$Project$.Web.API.Tests.BusinessTests.Steps
+namespace $Namespace$.Tests.BusinessTests.Steps
 {
     public class BaseContext
     {
         public Configuration Configuration { get; set; }
         public ILog Logger { get; set; }
         public BrowserManager BrowserManager { get; set; }
+        public ApiManager ApiManager { get; set; }
         public Asserts Asserts {  get; set; }
     }
 }
