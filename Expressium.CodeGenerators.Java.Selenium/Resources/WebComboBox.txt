@@ -1,0 +1,55 @@
+package $Package$.controls;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Select;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class WebComboBox extends WebControl {
+    public WebComboBox(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebComboBox(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+
+    public void setText(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        new Select(getElement()).selectByVisibleText(value);
+        highlightElementClear();
+    }
+
+    public void selectByIndex(int value) {
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        new Select(getElement()).selectByIndex(value);
+        highlightElementClear();
+    }
+
+    public void selectByValue(String value) {
+        if (value == null) return;
+        waitForElementIsEnabled();
+        highlightElementAsAction();
+        new Select(getElement()).selectByValue(value);
+        highlightElementClear();
+    }
+
+    public String getSelected() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        Select select = new Select(getElement());
+        if (select.getFirstSelectedOption() != null)
+            return select.getFirstSelectedOption().getText().trim();
+        return null;
+    }
+
+    public List<String> getOptions() {
+        return new Select(getElement()).getOptions().stream()
+            .map(e -> e.getText())
+            .collect(Collectors.toList());
+    }
+}

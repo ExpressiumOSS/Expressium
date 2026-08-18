@@ -1,0 +1,61 @@
+package $Package$.controls;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import java.util.List;
+
+public class WebTable extends WebControl {
+    public WebTable(WebDriver driver, By locator) {
+        super(driver, locator);
+    }
+
+    public WebTable(WebDriver driver, By locator, By childLocator) {
+        super(driver, locator, childLocator);
+    }
+
+    public int getNumberOfRows() {
+        return getChildElements(By.xpath("./tbody/tr")).size();
+    }
+
+    public int getNumberOfColumns() {
+        return getChildElements(By.xpath("./thead/tr/th")).size();
+    }
+
+    public String getCellText(Object rowId, Object columnId) {
+        By cellLocator = getCellElement(rowId, columnId, null);
+        WebText control = new WebText(driver, locator, cellLocator);
+        return control.getText();
+    }
+
+    public String getCellText(String cellText) {
+        By cellLocator = By.xpath("./tbody/tr/td[contains(normalize-space(),'" + cellText + "')]");
+        WebText control = new WebText(driver, locator, cellLocator);
+        return control.getText();
+    }
+
+    protected By getCellElement(Object rowId, Object columnId, String subXPath) {
+        String sub = subXPath != null ? subXPath : "";
+        if (rowId instanceof Integer && columnId instanceof Integer) {
+            return By.xpath("./tbody/tr[" + rowId + "]/td[" + columnId + "]" + sub);
+        } else if (rowId instanceof Integer && columnId instanceof String) {
+            return getCellElement(rowId, getColumnIndex((String) columnId), subXPath);
+        } else if (rowId instanceof String && columnId instanceof Integer) {
+            return By.xpath("./tbody/tr[td[contains(normalize-space(),'" + rowId + "')]]/td[" + columnId + "]" + sub);
+        } else if (rowId instanceof String && columnId instanceof String) {
+            return getCellElement(rowId, getColumnIndex((String) columnId), subXPath);
+        } else {
+            throw new IllegalArgumentException("Invalid argument types for getCellElement...");
+        }
+    }
+
+    protected int getColumnIndex(String columnName) {
+        List<WebElement> columns = getChildElements(By.xpath("./thead/tr/th"));
+        for (int i = 0; i < columns.size(); i++) {
+            if (columns.get(i).getText().equals(columnName)) {
+                return i + 1;
+            }
+        }
+        throw new RuntimeException("The column name '" + columnName + "' was not found...");
+    }
+}

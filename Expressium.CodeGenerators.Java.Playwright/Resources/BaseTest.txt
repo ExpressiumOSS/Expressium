@@ -1,0 +1,22 @@
+package $Package$;
+
+import com.microsoft.playwright.*;
+
+public class BaseTest extends BaseTestFixture {
+    public void initializeBrowser() {
+        page = browserManager.getPage();
+    }
+
+    public void initializeBrowserWithLogin() {
+        initializeBrowser();
+
+        throw new RuntimeException("Implementation of initializeBrowserWithLogin is missing...");
+
+        // TODO - Implement potential missing login sequence...
+
+        // LoginPage loginPage = new LoginPage(logger, page);
+        // loginPage.setUsername(configuration.username);
+        // loginPage.setPassword(configuration.password);
+        // loginPage.clickLogin();
+    }
+}

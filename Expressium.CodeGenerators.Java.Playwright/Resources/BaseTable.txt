@@ -1,0 +1,34 @@
+package $Package$;
+
+import $Package$.controls.WebTable;
+import com.microsoft.playwright.*;
+import org.slf4j.Logger;
+
+public class BaseTable extends BasePage {
+    protected final WebTable baseControl;
+
+    public BaseTable(Logger logger, Page page, Locator baseLocator) {
+        super(logger, page);
+        baseControl = new WebTable(page, baseLocator);
+    }
+
+    public int getNumberOfRows() {
+        logger.info("getNumberOfRows()");
+        return baseControl.getNumberOfRows();
+    }
+
+    public int getNumberOfColumns() {
+        logger.info("getNumberOfColumns()");
+        return baseControl.getNumberOfColumns();
+    }
+
+    public String getCellText(Object rowId, Object columnId) {
+        logger.info("getCellText(" + rowId + ", " + columnId + ")");
+        return baseControl.getCellText(rowId, columnId);
+    }
+
+    public String getCellText(String cellText) {
+        logger.info("getCellText(" + cellText + ")");
+        return baseControl.getCellText(cellText);
+    }
+}

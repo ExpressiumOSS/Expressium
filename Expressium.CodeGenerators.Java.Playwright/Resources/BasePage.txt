@@ -1,0 +1,95 @@
+package $Package$;
+
+import com.microsoft.playwright.*;
+import $Package$.controls.WebControl;
+import org.slf4j.Logger;
+
+public class BasePage {
+    protected final Logger logger;
+    protected final Page page;
+
+    public static int pageTimeOut = 10000;
+
+    public BasePage(Logger logger, Page page) {
+        this.logger = logger;
+        this.page = page;
+        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+    }
+
+    public String getTitle() {
+        logger.info("getTitle()");
+        return page.title();
+    }
+
+    public String getURL() {
+        logger.info("getURL()");
+        return page.url();
+    }
+
+    protected void waitForPageTitleEquals(String title) {
+        try {
+            page.waitForCondition(() -> page.title().equals(title),
+                new Page.WaitForConditionOptions().setTimeout(pageTimeOut));
+        } catch (Exception e) {
+            throw new RuntimeException("Page title was expected to be equal to '" + title + "' but was '" + page.title() + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageTitleContains(String title) {
+        try {
+            page.waitForCondition(() -> page.title().contains(title),
+                new Page.WaitForConditionOptions().setTimeout(pageTimeOut));
+        } catch (Exception e) {
+            throw new RuntimeException("Page title was expected to contain '" + title + "' but was '" + page.title() + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageUrlEquals(String url) {
+        try {
+            page.waitForURL(url, new Page.WaitForURLOptions().setTimeout(pageTimeOut));
+        } catch (Exception e) {
+            throw new RuntimeException("Page URL was expected to be equal to '" + url + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageUrlContains(String url) {
+        try {
+            page.waitForURL("**" + url + "**", new Page.WaitForURLOptions().setTimeout(pageTimeOut));
+        } catch (Exception e) {
+            throw new RuntimeException("Page URL was expected to contain '" + url + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageElementIsVisible(WebControl control) {
+        control.waitForElementIsVisible();
+    }
+
+    protected void waitForPageElementIsEnabled(WebControl control) {
+        control.waitForElementIsEnabled();
+    }
+
+    public void navigateBack() {
+        logger.info("navigateBack()");
+        page.goBack();
+    }
+
+    public void navigateForward() {
+        logger.info("navigateForward()");
+        page.goForward();
+    }
+
+    public void navigateRefresh() {
+        logger.info("navigateRefresh()");
+        page.reload();
+    }
+
+    public void scrollToTop() {
+        logger.info("scrollToTop()");
+        page.evaluate("window.scrollTo(0, 0);");
+    }
+
+    public void scrollToBottom() {
+        logger.info("scrollToBottom()");
+        page.evaluate("window.scrollTo(0, document.body.scrollHeight);");
+    }
+}

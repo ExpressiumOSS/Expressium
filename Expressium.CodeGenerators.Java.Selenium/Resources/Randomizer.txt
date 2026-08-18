@@ -1,0 +1,30 @@
+package $Package$;
+
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class Randomizer {
+    private static final SecureRandom random = new SecureRandom();
+    private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static String getRandomString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(CHARS.charAt(random.nextInt(CHARS.length())));
+        }
+        return sb.toString();
+    }
+
+    public static int getRandomInteger(int minValue, int maxValue) {
+        return random.nextInt(maxValue - minValue) + minValue;
+    }
+
+    public static String getUniqueId() {
+        return "ID" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssnn"));
+    }
+
+    public static String getDateTimeId() {
+        return LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
+}

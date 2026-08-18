@@ -1,0 +1,57 @@
+package $Package$;
+
+import com.microsoft.playwright.*;
+import java.nio.file.Paths;
+
+public class BrowserManager {
+    private final Configuration configuration;
+    private Playwright playwright;
+    private Browser browser;
+    private Page page;
+
+    public BrowserManager(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Page getPage() {
+        if (page == null) {
+            playwright = Playwright.create();
+            browser = BrowserFactory.initialize(playwright, configuration);
+            page = browser.newPage();
+
+            if (configuration.maximize)
+                page.setViewportSize(1920, 1080);
+            else if (configuration.windowSize)
+                page.setViewportSize(configuration.windowWidth, configuration.windowHeight);
+
+            if (configuration.url != null)
+                page.navigate(configuration.url);
+        }
+        return page;
+    }
+
+    public boolean isInitialized() {
+        return page != null;
+    }
+
+    public void saveScreenshot(String filePath) {
+        if (page != null) {
+            try {
+                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(filePath)));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
+    public void quit() {
+        if (page != null) {
+            page.close();
+            browser.close();
+            playwright.close();
+            page = null;
+            browser = null;
+            playwright = null;
+        }
+    }
+}

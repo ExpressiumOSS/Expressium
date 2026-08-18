@@ -1,0 +1,58 @@
+package $Package$;
+
+import com.microsoft.playwright.*;
+import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.nio.file.Paths;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class BaseTestFixture {
+    protected final Configuration configuration;
+    protected final BrowserManager browserManager;
+
+    protected Logger logger;
+    protected Asserts asserts;
+
+    protected Page page;
+
+    public BaseTestFixture() {
+        configuration = Configuration.getCurrentConfiguration();
+        browserManager = new BrowserManager(configuration);
+    }
+
+    @BeforeAll
+    protected void initializeFixture() {
+        logger = LoggerFactory.getLogger(getClass().getSimpleName());
+        asserts = new Asserts(logger);
+        page = browserManager.getPage();
+
+        logger.info("");
+        logger.info("// Initialize Test Fixture");
+        logger.info("Company: " + configuration.company);
+        logger.info("Project: " + configuration.project);
+        logger.info("Environment: " + configuration.environment);
+        logger.info("Url: " + configuration.url);
+    }
+
+    @AfterAll
+    protected void finalizeFixture() {
+        logger.info("");
+        logger.info("// Finalize Test Fixture");
+
+        if (browserManager.isInitialized()) {
+            if (configuration.screenshots) {
+                String filePath = Paths.get("Screenshots", getClass().getSimpleName() + ".png").toString();
+                browserManager.saveScreenshot(filePath);
+            }
+
+            browserManager.quit();
+        }
+    }
+
+    @BeforeEach
+    protected void initializeTest(TestInfo testInfo) {
+        logger.info("");
+        logger.info("// " + testInfo.getDisplayName());
+    }
+}

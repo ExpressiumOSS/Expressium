@@ -1,0 +1,110 @@
+package $Package$;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.slf4j.Logger;
+import $Package$.controls.WebControl;
+import java.time.Duration;
+
+public class BasePage {
+    protected final Logger logger;
+    protected final WebDriver driver;
+
+    public static int pageTimeOut = 10000;
+
+    public BasePage(Logger logger, WebDriver driver) {
+        this.logger = logger;
+        this.driver = driver;
+
+        waitForPageDocumentReadyStateEqualsComplete();
+    }
+
+    public String getTitle() {
+        logger.info("getTitle()");
+        return driver.getTitle();
+    }
+
+    public String getURL() {
+        logger.info("getURL()");
+        return driver.getCurrentUrl();
+    }
+
+    protected void waitForPageDocumentReadyStateEqualsComplete() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(pageTimeOut));
+            wait.until(d -> ((JavascriptExecutor) d).executeScript("return document.readyState").equals("complete"));
+        } catch (Exception e) {
+            throw new RuntimeException("Page document ready state was expected to be completed within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageTitleEquals(String title) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(pageTimeOut));
+            wait.until(ExpectedConditions.titleIs(title));
+        } catch (Exception e) {
+            throw new RuntimeException("Page title was expected to be equal to '" + title + "' but was '" + driver.getTitle() + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageTitleContains(String title) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(pageTimeOut));
+            wait.until(ExpectedConditions.titleContains(title));
+        } catch (Exception e) {
+            throw new RuntimeException("Page title was expected to contain '" + title + "' but was '" + driver.getTitle() + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageUrlEquals(String url) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(pageTimeOut));
+            wait.until(ExpectedConditions.urlToBe(url));
+        } catch (Exception e) {
+            throw new RuntimeException("Page URL was expected to be equal to '" + url + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageUrlContains(String url) {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(pageTimeOut));
+            wait.until(ExpectedConditions.urlContains(url));
+        } catch (Exception e) {
+            throw new RuntimeException("Page URL was expected to contain '" + url + "' within " + pageTimeOut + " milliseconds...");
+        }
+    }
+
+    protected void waitForPageElementIsVisible(WebControl control) {
+        control.waitForElementIsVisible();
+    }
+
+    protected void waitForPageElementIsEnabled(WebControl control) {
+        control.waitForElementIsEnabled();
+    }
+
+    public void navigateBack() {
+        logger.info("navigateBack()");
+        driver.navigate().back();
+    }
+
+    public void navigateForward() {
+        logger.info("navigateForward()");
+        driver.navigate().forward();
+    }
+
+    public void navigateRefresh() {
+        logger.info("navigateRefresh()");
+        driver.navigate().refresh();
+    }
+
+    public void scrollToTop() {
+        logger.info("scrollToTop()");
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+    }
+
+    public void scrollToBottom() {
+        logger.info("scrollToBottom()");
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight);");
+    }
+}

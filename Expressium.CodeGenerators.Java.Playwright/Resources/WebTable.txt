@@ -1,0 +1,54 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+import java.util.List;
+
+public class WebTable extends WebControl {
+    public WebTable(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public int getNumberOfRows() {
+        return locator.locator("xpath=./tbody/tr").count();
+    }
+
+    public int getNumberOfColumns() {
+        return locator.locator("xpath=./thead/tr/th").count();
+    }
+
+    public String getCellText(Object rowId, Object columnId) {
+        Locator cellLocator = getCellLocator(rowId, columnId);
+        String val = cellLocator.textContent();
+        return val != null ? val.trim() : "";
+    }
+
+    public String getCellText(String cellText) {
+        Locator cellLocator = locator.locator("xpath=./tbody/tr/td[contains(normalize-space(),'" + cellText + "')]");
+        String val = cellLocator.textContent();
+        return val != null ? val.trim() : "";
+    }
+
+    protected Locator getCellLocator(Object rowId, Object columnId) {
+        if (rowId instanceof Integer && columnId instanceof Integer) {
+            return locator.locator("xpath=./tbody/tr[" + rowId + "]/td[" + columnId + "]");
+        } else if (rowId instanceof Integer && columnId instanceof String) {
+            return getCellLocator(rowId, getColumnIndex((String) columnId));
+        } else if (rowId instanceof String && columnId instanceof Integer) {
+            return locator.locator("xpath=./tbody/tr[td[contains(normalize-space(),'" + rowId + "')]]/td[" + columnId + "]");
+        } else if (rowId instanceof String && columnId instanceof String) {
+            return getCellLocator(rowId, getColumnIndex((String) columnId));
+        } else {
+            throw new IllegalArgumentException("Invalid argument types for getCellLocator...");
+        }
+    }
+
+    protected int getColumnIndex(String columnName) {
+        List<String> texts = locator.locator("xpath=./thead/tr/th").allTextContents();
+        for (int i = 0; i < texts.size(); i++) {
+            if (texts.get(i).equals(columnName)) {
+                return i + 1;
+            }
+        }
+        throw new RuntimeException("The column name '" + columnName + "' was not found...");
+    }
+}

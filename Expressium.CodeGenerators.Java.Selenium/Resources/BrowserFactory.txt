@@ -1,0 +1,92 @@
+package $Package$;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+
+public class BrowserFactory {
+    public enum BrowserTypes {
+        Chrome, Firefox, Edge
+    }
+
+    public static WebDriver initialize(Configuration configuration) {
+        if (BrowserTypes.Chrome.name().equals(configuration.browserType))
+            return initializeChromeBrowser(configuration);
+        else if (BrowserTypes.Firefox.name().equals(configuration.browserType))
+            return initializeFirefoxBrowser(configuration);
+        else if (BrowserTypes.Edge.name().equals(configuration.browserType))
+            return initializeEdgeBrowser(configuration);
+        else
+            throw new IllegalArgumentException("Specified browser type '" + configuration.browserType + "' is unknown...");
+    }
+
+    private static WebDriver initializeChromeBrowser(Configuration configuration) {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+
+        if (configuration.maximize)
+            options.addArguments("start-maximized");
+
+        if (configuration.headless) {
+            options.addArguments("--headless");
+            options.addArguments("--window-size=" + configuration.windowWidth + "," + configuration.windowHeight);
+        } else if (configuration.windowSize) {
+            options.addArguments("--window-size=" + configuration.windowWidth + "," + configuration.windowHeight);
+            options.addArguments("--window-position=10,10");
+        }
+
+        WebDriver driver = new ChromeDriver(options);
+
+        if (configuration.url != null)
+            driver.get(configuration.url);
+
+        return driver;
+    }
+
+    private static WebDriver initializeFirefoxBrowser(Configuration configuration) {
+        FirefoxOptions options = new FirefoxOptions();
+
+        if (configuration.headless) {
+            options.addArguments("--headless");
+            options.addArguments("--width=" + configuration.windowWidth);
+            options.addArguments("--height=" + configuration.windowHeight);
+        } else if (configuration.windowSize) {
+            options.addArguments("--width=" + configuration.windowWidth);
+            options.addArguments("--height=" + configuration.windowHeight);
+        }
+
+        WebDriver driver = new FirefoxDriver(options);
+
+        if (configuration.url != null)
+            driver.get(configuration.url);
+
+        return driver;
+    }
+
+    private static WebDriver initializeEdgeBrowser(Configuration configuration) {
+        EdgeOptions options = new EdgeOptions();
+        options.addArguments("--disable-notifications");
+
+        if (configuration.maximize)
+            options.addArguments("start-maximized");
+
+        if (configuration.headless) {
+            options.addArguments("--headless");
+            options.addArguments("--window-size=" + configuration.windowWidth + "," + configuration.windowHeight);
+        } else if (configuration.windowSize) {
+            options.addArguments("--window-size=" + configuration.windowWidth + "," + configuration.windowHeight);
+            options.addArguments("--window-position=10,10");
+        }
+
+        WebDriver driver = new EdgeDriver(options);
+
+        if (configuration.url != null)
+            driver.get(configuration.url);
+
+        return driver;
+    }
+}

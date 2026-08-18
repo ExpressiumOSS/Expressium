@@ -1,0 +1,112 @@
+package $Package$;
+
+import org.junit.jupiter.api.Assertions;
+import org.slf4j.Logger;
+
+public class Asserts {
+    private final Logger logger;
+
+    public Asserts(Logger logger) {
+        this.logger = logger;
+    }
+
+    public void equalTo(Object actual, Object expected, String message) {
+        try {
+            Assertions.assertEquals(expected, actual, message);
+            logger.info(message);
+            logger.info("Expected to be equal [" + expected + "] and was [" + actual + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be equal [" + expected + "] but was [" + actual + "] - FAILED");
+        }
+    }
+
+    public void isTrue(boolean actual, String message) {
+        try {
+            Assertions.assertTrue(actual, message);
+            logger.info(message);
+            logger.info("Expected to be equal [true] and was [true] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be equal [true] but was [false] - FAILED");
+        }
+    }
+
+    public void isFalse(boolean actual, String message) {
+        try {
+            Assertions.assertFalse(actual, message);
+            logger.info(message);
+            logger.info("Expected to be equal [false] and was [false] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be equal [false] but was [true] - FAILED");
+        }
+    }
+
+    public void isNull(Object actual, String message) {
+        try {
+            Assertions.assertNull(actual, message);
+            logger.info(message);
+            logger.info("Expected to be equal [null] and was [null] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be equal [null] but was [" + actual + "] - FAILED");
+        }
+    }
+
+    public void isNotNull(String actual, String message) {
+        try {
+            Assertions.assertNotNull(actual, message);
+            logger.info(message);
+            logger.info("Expected to be different from [null] and was [" + actual + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be different from [null] but was [null] - FAILED");
+        }
+    }
+
+    public void isNotEmpty(String actual, String message) {
+        try {
+            Assertions.assertFalse(actual == null || actual.isEmpty(), message);
+            logger.info(message);
+            logger.info("Expected to be different from [empty] and was [" + actual + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be different from [empty] but was [empty] - FAILED");
+        }
+    }
+
+    public void greaterThan(int actual, int expected, String message) {
+        try {
+            Assertions.assertTrue(actual > expected, message);
+            logger.info(message);
+            logger.info("Expected to be greater than [" + expected + "] and was [" + actual + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be greater than [" + expected + "] but was [" + actual + "] - FAILED");
+        }
+    }
+
+    public void lessThan(int actual, int expected, String message) {
+        try {
+            Assertions.assertTrue(actual < expected, message);
+            logger.info(message);
+            logger.info("Expected to be less than [" + expected + "] and was [" + actual + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to be less than [" + expected + "] but was [" + actual + "] - FAILED");
+        }
+    }
+
+    public void doesContain(String actual, String expected, String message) {
+        try {
+            Assertions.assertTrue(actual != null && actual.contains(expected), message);
+            logger.info(message);
+            logger.info("Expected to contain [" + expected + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to contain [" + expected + "] - FAILED");
+        }
+    }
+
+    public void doesNotContain(String actual, String expected, String message) {
+        try {
+            Assertions.assertFalse(actual != null && actual.contains(expected), message);
+            logger.info(message);
+            logger.info("Expected to not contain [" + expected + "] - PASSED");
+        } catch (AssertionError e) {
+            throw new RuntimeException(message + "\nExpected to not contain [" + expected + "] - FAILED");
+        }
+    }
+}

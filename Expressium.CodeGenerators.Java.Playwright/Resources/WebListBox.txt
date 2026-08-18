@@ -1,0 +1,9 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebListBox extends WebComboBox {
+    public WebListBox(Page page, Locator locator) {
+        super(page, locator);
+    }
+}

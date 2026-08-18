@@ -1,0 +1,55 @@
+package $Package$;
+
+import $Package$.controls.WebControl;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+
+public class Configuration {
+    public String company;
+    public String project;
+    public String environment;
+    public boolean loggings;
+    public boolean screenshots;
+    public String url;
+    public String username;
+    public String password;
+    public String browserType;
+    public boolean maximize;
+    public boolean headless;
+    public boolean windowSize;
+    public int windowWidth;
+    public int windowHeight;
+    public boolean highlight;
+    public int highlightTimeOut;
+
+    public static Configuration getCurrentConfiguration() {
+        String profile = System.getenv("PROFILE");
+        if (profile == null || profile.isEmpty()) profile = "Development";
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(new File("src/test/resources/configuration.json"));
+            JsonNode profileNode = root.path("Profiles").path(profile);
+
+            Configuration config = mapper.treeToValue(profileNode, Configuration.class);
+
+            if (config == null)
+                throw new RuntimeException("Configuration profile '" + profile + "' is unknown...");
+
+            if (config.username == null || config.username.isEmpty())
+                config.username = System.getenv("USERNAME");
+
+            if (config.password == null || config.password.isEmpty())
+                config.password = System.getenv("PASSWORD");
+
+            WebControl.highlight = config.highlight;
+            WebControl.highlightTimeOut = config.highlightTimeOut;
+
+            return config;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load configuration: " + e.getMessage());
+        }
+    }
+}

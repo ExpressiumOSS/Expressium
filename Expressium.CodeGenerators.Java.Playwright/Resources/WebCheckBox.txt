@@ -1,0 +1,24 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebCheckBox extends WebControl {
+    public WebCheckBox(Page page, Locator locator) {
+        super(page, locator);
+    }
+
+    public void setChecked(boolean value) {
+        waitForElementIsEnabled();
+        if ((!isChecked() && value) || (isChecked() && !value)) {
+            highlightElementAsAction();
+            clickElement();
+            highlightElementClear();
+        }
+    }
+
+    public boolean getChecked() {
+        waitForElementIsVisible();
+        highlightElementAsValidation();
+        return isChecked();
+    }
+}

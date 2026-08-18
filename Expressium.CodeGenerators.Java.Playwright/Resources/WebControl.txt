@@ -1,0 +1,72 @@
+package $Package$.controls;
+
+import com.microsoft.playwright.*;
+
+public class WebControl {
+    protected Page page;
+    protected Locator locator;
+
+    public static boolean highlight = false;
+    public static int highlightTimeOut = 150;
+
+    public WebControl(Page page, Locator locator) {
+        this.page = page;
+        this.locator = locator;
+    }
+
+    public String getAttribute(String name) {
+        return locator.getAttribute(name);
+    }
+
+    public boolean isVisible() {
+        return locator.isVisible();
+    }
+
+    public boolean isEnabled() {
+        return locator.isEnabled();
+    }
+
+    public boolean isChecked() {
+        return locator.isChecked();
+    }
+
+    public void waitForElementIsVisible() {
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+    }
+
+    public void waitForElementIsEnabled() {
+        locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+    }
+
+    public void highlightElementAsAction() {
+        if (highlight) {
+            try {
+                page.evaluate("el => { el.style.border='3px solid blue'; }", locator.elementHandle());
+                Thread.sleep(highlightTimeOut);
+                page.evaluate("el => { el.style.border=''; }", locator.elementHandle());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void highlightElementAsValidation() {
+        if (highlight) {
+            try {
+                page.evaluate("el => { el.style.border='3px solid green'; }", locator.elementHandle());
+                Thread.sleep(highlightTimeOut);
+                page.evaluate("el => { el.style.border=''; }", locator.elementHandle());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void highlightElementClear() {
+        if (highlight) {
+            try {
+                page.evaluate("el => { el.style.border=''; }", locator.elementHandle());
+            } catch (Exception ignored) {}
+        }
+    }
+
+    public void clickElement() {
+        locator.click();
+    }
+}
