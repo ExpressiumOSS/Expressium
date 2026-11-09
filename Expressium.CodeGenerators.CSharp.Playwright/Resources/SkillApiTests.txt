@@ -1,4 +1,4 @@
-> ⚠️ This skill MUST be read before generating any Service, Model, Factory, or API test (`*Service.cs`, `*ServiceModel.cs`, `*Factory.cs`, `*ServiceTests.cs`) file from an OpenAPI specification.
+> ⚠️ This skill MUST be read before generating any Service, Model, Factory, or API test (`*Service.cs`, `*Model.cs`, `*ServiceFactory.cs`, `*ServiceTests.cs`) file from an OpenAPI specification.
 > Do not rely on existing project files as a pattern source — always follow this skill.
 > This skill is aligned with the real framework conventions (verified against the shipped PetService / PetServiceTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins.
 ---
@@ -9,11 +9,12 @@ description: >
   generate a service class, service model, model factory, or API/NUnit integration test from an
   OpenAPI/Swagger spec (YAML or JSON); any mention of "API tests", "OpenAPI", "Swagger", "spec to
   tests", "contract tests", "service class", or pointing at a .yaml/.json/.yml spec file and asking
-  to generate tests; or extending an existing generated service with more happy-path or negative
-  tests. Always use this skill before generating any {Resource}Service.cs, {Resource}ServiceModel.cs,
-  {Resource}Factory.cs, or {Resource}ServiceTests.cs file — it defines how to discover namespaces from
-  Configuration.json, the folder layout, the OpenAPI-to-class mapping, the per-operation test matrix,
-  and the exact C# code structure that must be followed strictly across all Expressium projects.
+  to generate tests; evaluating whether a spec can be tested with this skill; or extending an existing
+  generated service with more tests. Always use this skill before generating any {Resource}Service.cs,
+  model, {Resource}ServiceFactory.cs, or {Resource}ServiceTests.cs file — it defines how to discover
+  namespaces from Configuration.json, how to analyse any OpenAPI 3.x spec, the generic contract-test
+  matrix, what to skip when the spec does not define it, and the exact C# code structure that must be
+  followed strictly across all Expressium projects.
 
   This skill is scoped to the API/service layer (integration/contract tests). For page-object and NUnit
   UI tests, use the expressium-code-generation skill. For Gherkin/Reqnroll BDD authoring, use the
@@ -22,22 +23,47 @@ description: >
 
 # Expressium API Tests Skill
 
-This skill governs generation of the **API/service layer and NUnit integration tests** from an
-**OpenAPI 3.x specification**, for **any project built on the Expressium test automation framework**.
-All projects share the same structural conventions; only namespaces and paths differ per project.
+This skill governs generation of the **API/service layer and NUnit contract tests** from **any OpenAPI 3.x
+specification**, for **any project built on the Expressium test automation framework**. All projects share
+the same structural conventions; only namespaces, paths and the spec differ.
 
 The generated tests are **contract tests** at the **integration** level of the test pyramid (real HTTP
-against a running server). Treat them as the low-level "unit tests of the API" — the reliable foundation
-laid down **before** any high-level business-flow (BDD) tests.
+against a running server). They are the reliable foundation laid down **before** any high-level
+business-flow (BDD) tests.
 
-The four artifacts this skill produces, per resource (OpenAPI tag / path group):
+---
+
+## Core Principle — The Spec Is the Contract
+
+The skill works for any API because it never assumes what an API looks like. It reads what the spec
+defines and generates exactly the tests that definition supports:
+
+1. **Every test traces to a spec element** — an operation, a declared response code, a `required` list, a
+   constraint, a `security` requirement. If you cannot point at the spec element a test verifies, don't
+   generate the test.
+2. **Undefined means skipped, not guessed.** No delete operation → no cleanup. No resource key → no
+   unknown-id or invalid-id tests. No `security` → no auth tests. No declared 404 → no not-found test. No
+   response schema → no content test. Never invent an operation, a code, an id format or a field.
+3. **Expected codes come from the spec.** The one exception is a failure produced by HTTP routing rather
+   than the operation (e.g. an omitted path segment → 405/404); that code is the HTTP-level result and is
+   marked as routing-based in a comment.
+4. **Strict, never loosened.** When the server diverges from the spec, the test stays strict and goes red.
+   That red test is the finding (spec bug or server bug) and the acceptance criterion for the fix.
+5. **Everything skipped is reported.** The coverage report lists, per operation, every situation that was
+   skipped and the reason ("no 404 declared", "no delete operation", "key is server-assigned"…), plus every
+   spec defect found during analysis.
+
+---
+
+The four artifact types this skill produces, per resource. All tests for a resource — including
+authorization tests — live in the one `{Resource}ServiceTests` file:
 
 | Artifact | Purpose | Location |
 |---|---|---|
 | Service | One method per operation, wraps HTTP via `BaseService` | `{Web}\Services\{Resource}Service.cs` |
-| Model | POCO per component schema (`System.Text.Json`) | `{Web}\Models\{Resource}ServiceModel.cs` |
-| Factory | Static builder of valid predefined models | `{Tests}\Factories\{Resource}Factory.cs` |
-| API Test | NUnit fixture: happy-path + negative tests | `{Tests}\ApiTests\{Resource}ServiceTests.cs` |
+| Models | One class per schema the resource uses (`System.Text.Json`) | `{Web}\Models\{Resource}ServiceModel.cs` (all models of the resource in one file) |
+| Factory | Static builder of valid request models and named invalid-input variants; every method self-contained | `{Tests}\Factories\{Resource}ServiceFactory.cs` |
+| API Test | NUnit fixture: every applicable situation from the Test Matrix | `{Tests}\ApiTests\{Resource}ServiceTests.cs` |
 
 ---
 
@@ -92,12 +118,13 @@ value observed in the shipped source and tell the user about the mismatch.
 <root>\
 ├── {Company}.{Project}.Web\
 │   ├── Services\          ← OUTPUT: {Resource}Service.cs, plus BaseService.cs (do not modify)
-│   └── Models\            ← OUTPUT: {Resource}ServiceModel.cs (+ nested models in same file)
+│   ├── Models\            ← OUTPUT: {Resource}ServiceModel.cs (all models of the resource)
+│   └── Specs\             ← OpenAPI specs (input)
 │
 └── {Company}.{Project}.Web.Tests\
-    ├── Factories\         ← OUTPUT: {Resource}Factory.cs; plus Randomizer.cs (shared helper, do not modify)
+    ├── Factories\         ← OUTPUT: {Resource}ServiceFactory.cs, AuthorizationFactory.cs; plus Randomizer.cs (shared helper, do not modify)
     ├── Infrastructure\    ← BaseTestFixture, ApiManager (do not modify); Asserts (extend-only — add missing assert methods in its existing style, never change existing ones)
-    ├── ApiTests\          ← OUTPUT: {Resource}ServiceTests.cs, plus BaseServiceTest.cs (do not modify)
+    ├── ApiTests\          ← OUTPUT: {Resource}ServiceTests.cs (one file per resource), plus BaseServiceTest.cs (do not modify)
     └── Configuration.json ← Source of truth for Company/Project/namespace + ApiBaseUrl
 ```
 
@@ -105,28 +132,35 @@ Always confirm actual folder names with `Filesystem:directory_tree` before deriv
 
 ---
 
-## Workflow: Generating API Tests from a Spec
+## Workflow
 
 **Step 1 — Read `Configuration.json`** → derive Company, Project, namespaces, folder paths, `ApiBaseUrl`.
 
 **Step 2 — Explore the solution tree** (`Filesystem:directory_tree`) to confirm actual folder names.
 
-**Step 3 — Parse the OpenAPI spec.** Identify: `servers` base URL; `tags` / path groups (each = one
-resource); every path + operation (`operationId`, method, parameters, request body, responses, security);
-every `components.schemas` entry. If there is no `servers` block, ask the user for the base URL — don't guess.
+**Step 3 — Analyse the spec** (see Spec Analysis). Build a **resource profile** per resource: base URL,
+operations, schemas, resource key, lifecycle (create / read / update / delete), security, and the list of
+**spec defects**.
 
-**Step 4 — Confirm scope with the user.** A full spec can be large and produces a lot of code. Confirm
-which resource(s) to generate and whether tests should hit the live server. Show the planning table (see
-Test Matrix) before writing code.
+**Step 4 — Resolve blockers with the user.** Stop and ask before generating when:
+- a spec defect blocks building a valid request (see Spec Defects);
+- the server URL is relative and `ApiBaseUrl` is not set, or no `servers` block exists;
+- security is declared but you don't know whether the target enforces it, or which environment variable
+  holds each credential;
+- the scope is unclear (a large spec produces a lot of code — confirm which resource(s)).
 
-**Step 5 — Generate the files**, per chosen resource, in this order:
-1. **Models** — one class per referenced component schema (nested schemas as extra classes in the same file).
-2. **Service** — one class per resource, one method per operation, plus raw-string / raw-id overloads for negatives.
-3. **Factory** — one static class building a valid default model with a randomized id.
-4. **Tests** — one class, self-contained and order-independent, following the test matrix.
+**Step 5 — Show the planning table** (see Test Matrix → Planning table): every operation × situation, with
+✓ for generated and the skip reason for everything not generated. Let the user confirm or trim.
 
-**Step 6 — Confirm** each file was written to disk and report the saved paths, the coverage table, and the
-honest caveats (see Reporting).
+**Step 6 — Generate the files**, per resource, in this order:
+1. **Models** — one class per schema the resource uses.
+2. **Service** — one method per operation, plus the raw overloads the negative tests need.
+3. **Factory** — `{Resource}ServiceFactory`: valid request models plus named invalid-input variants.
+4. **Authorization factory** — only when the spec declares security.
+5. **Tests** — one class, self-contained and order-independent, following the Test Matrix.
+
+**Step 7 — Confirm and report** (see Reporting): saved paths, coverage table including skipped situations,
+spec defects, and honest caveats.
 
 ### File Writing Rules
 - Always save directly to the solution using `Filesystem:write_file` (not any sandbox create-file tool). After writing, verify with `Filesystem:get_file_info` or by re-listing the directory.
@@ -136,98 +170,280 @@ honest caveats (see Reporting).
 
 ---
 
+## Spec Analysis
+
+Read the whole spec and record, per resource:
+
+| Aspect | Look at | Record |
+|---|---|---|
+| Base URL | `servers[0].url` | Absolute URL, relative path, or none |
+| Resources | `tags` on operations (first tag), else first path segment | Resource name per group |
+| Operations | every path + method | `operationId`, parameters, request body, responses, security, `deprecated` |
+| Schemas | `components.schemas`, inline schemas, `allOf` / `oneOf` / `anyOf` | Model classes to generate |
+| Resource key | path parameters on item paths; key property in create response | Key name, type, format, who assigns it |
+| Lifecycle | which operations create, read, update, delete | What exists — and what doesn't |
+| Security | root `security`, operation `security`, `components.securitySchemes` | Scheme per operation, or none |
+| Error responses | declared 4xx and their schemas | Codes per operation; error model if a schema exists |
+
+### Base URL
+- **Absolute** `servers[0].url` → `BaseUrl` constant in the service.
+- **Relative** (e.g. `/api/v3`) → the service uses relative endpoints (`{ServerPath}{path}`) and
+  `ApiManager`'s `BaseURL` (from `ApiBaseUrl` in `Configuration.json`) supplies the host. Confirm
+  `ApiBaseUrl` with the user.
+- **No `servers` block** → ask the user for the base URL. Never guess.
+
+### Resource names
+- One resource per tag (first tag when an operation has several). Name it the singular PascalCase of the
+  tag (`pet` → `Pet`, `AuditLog` → `AuditLog`).
+- Multi-word or long tags (`Test Identity Administration`), tags used by operations but not declared in
+  `tags`, or untagged operations → propose resource names to the user (usually the main schema name, e.g.
+  `Identity`) and record the tag mismatch as a spec defect.
+
+### Lifecycle — classify every operation
+- **Create** — POST to a collection path whose 2xx (`200`/`201`) returns the created resource.
+- **Read** — GET of an item (`/{key}`), or a search/list operation (GET with query parameters, or POST to
+  a `/search`-style path) returning one resource, a list or a page.
+- **Update** — PUT/PATCH on an item, or on the collection with the key in the body.
+- **Delete** — DELETE on an item.
+- **Action** — anything else (e.g. `PUT /{key}/revoke`, `POST /auto-populate`). Tested as an ordinary
+  operation; never assumed to be a create or delete.
+
+Record what is **missing**. A missing lifecycle operation is not a defect — it determines what is skipped
+(see Resource Keys and Lifecycle).
+
+---
+
 ## OpenAPI → Class Mapping
 
 | OpenAPI element | Generates |
 |---|---|
-| `servers[0].url` | `baseUrl` constant in each service (or config-driven relative URLs via `ApiBaseUrl` — ask) |
-| `tags` / first path segment | One **resource** = one Service + one Factory + one Test class |
+| `servers[0].url` | `BaseUrl` constant (absolute), or relative endpoints via `ApiBaseUrl` (relative) |
+| tag / first path segment | One **resource** = one Service + one ServiceFactory + one Test class |
 | each `path` + method | One **service method** (named from `operationId`) |
-| `requestBody` schema | `DataObject` handling + a raw-string overload for malformed-body tests |
-| path id `parameters` | Method arg; numeric id also gets a raw-id (`string`) overload |
-| query `parameters` | Appended to the endpoint querystring |
-| `responses` 2xx | Happy-path status test (+ content test if a body is returned) |
-| `responses` 4xx | Negative test(s) — see Test Matrix |
-| `components.schemas.*` | One **model class** each (nested schemas → same-file classes) |
-| `securitySchemes` | Auth handling — see Security |
+| `requestBody` (JSON) | Typed overload (`DataObject`) + raw-string overload (`DataString`) |
+| path parameters | Method args typed from the schema; numeric or formatted keys also get a raw `string` overload |
+| query / header parameters | Method args; a parameterless (or reduced) overload when a parameter is required |
+| `responses` 2xx | Happy-path status test (+ content test when a schema is declared) |
+| `responses` 4xx | Negative tests — see Test Matrix |
+| schemas | One **model class** each |
+| `securitySchemes` + `security` | Auth handling — see Security |
 
-**Resource grouping:** group operations by `tags` (first tag if several); if untagged, group by the first
-path segment. Each group → one Service + Factory + Test class, named for the singular PascalCase resource
-(`pet` → `Pet`).
+**Service method naming:** PascalCase of `operationId` (`addPet` → `AddPet`, `createIdentity` →
+`CreateIdentity`, `revokeIdentityV1` → `RevokeIdentityV1`). No `operationId` → derive from method + path.
 
-**Service method naming:** PascalCase of `operationId` (`addPet` → `AddPet`, `getPetById` → `GetPetById`,
-`findPetsByStatus` → `FindPetsByStatus`). No `operationId` → derive from method + path.
+### Model naming
+- The schema whose name matches the resource → `{Resource}ServiceModel` (`Pet` → `PetServiceModel`).
+- Every other schema → `{Schema}Model` (`IdentityPage` → `IdentityPageModel`). Prefix it with the resource
+  when the schema name is generic and could collide across resources (`Category` → `PetCategoryModel`,
+  `Tag` → `PetTagModel`, `Error` → `{Resource}ErrorModel`, `Page` → `{Resource}PageModel`).
+- Inline request schema → `{Operation}RequestModel`; inline response schema → `{Operation}ResponseModel`.
+- Request and response schemas are separate models whenever the spec separates them
+  (`CreateTestIdentityRequest` in, `Identity` out). Never reuse a response model as the request body unless
+  the spec uses the same schema for both.
+- Generate a model for every schema the resource's operations reference, transitively.
 
-**Model naming:** primary schema → `{Resource}ServiceModel`. Nested schemas → `{Resource}{Schema}Model`
-(prefix with the resource when the schema name is generic, e.g. `Category` → `PetCategoryModel`, to avoid
-collisions). Generate a model for every schema the chosen resource references, transitively.
+### Schema composition
+- **`allOf`** → one flattened class containing the properties of every member, in order; the `required`
+  list is the union of all members' `required` lists. Don't model the members as inheritance.
+- **`oneOf` / `anyOf`** → model the properties common to all alternatives only; skip content assertions
+  beyond them and report the limitation.
+- **`additionalProperties`** map → `Dictionary<string, T>`.
 
-**Type mapping (OpenAPI → C#):** `integer/int64` → `long?`; `integer/int32` → `int?`; `number` → `double?`;
-`boolean` → `bool?`; `string`/enum/date-time → `string`; `array` → `List<T>`; `object` ($ref) → nested
-model type; `additionalProperties` map → `Dictionary<string, T>`. Use **nullable** value types so absent
-fields don't produce false positives.
+### Type mapping (OpenAPI → C#)
+| OpenAPI | C# |
+|---|---|
+| `integer` + `int64` | `long?` |
+| `integer` + `int32` | `int?` |
+| `integer` without format | `long?` (safe default) |
+| `number` | `double?` |
+| `boolean` | `bool?` |
+| `string` (any format: `uuid`, `date`, `date-time`, `email`, `uri`, enum) | `string` |
+| `array` | `List<T>` |
+| object / `$ref` | nested model type |
+
+Use **nullable** value types so absent fields don't produce false positives. Keep `uuid` and dates as
+`string` so malformed values can be sent and echoed exactly.
+
+Every property carries `[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]`, so a property left
+`null` is **omitted** from the request body rather than sent as `"property": null`. Sending `null` is not the
+same as omitting a property — a server may reject it, or overwrite a stored value — and the
+required-fields-only test depends on true omission. Deserialization is unaffected.
 
 ---
 
-## Test Matrix per Operation
+## Resource Keys and Lifecycle
 
-Generate the applicable rows per operation. "Applicable" is driven by what the spec declares — don't invent
-a negative test for an error the operation can't produce.
+### The resource key
+The key is what identifies one resource:
+- the path parameter of the item paths (`/pet/{petId}` → `petId`, `/identities/{identityUuid}` →
+  `identityUuid`), otherwise
+- the identifying property of the create response (`id`, `{resource}Id`, `uuid`…), confirmed by its use
+  in other operations.
 
-### Test method naming
-`Validate_{Operation}_{Case}_Response_{Aspect}` — e.g. `Validate_AddPet_Response_Status`,
-`Validate_AddPet_Response_Content`, `Validate_GetPetById_NotFound_Response_Status`,
-`Validate_AddPet_MalformedJson_Response_Failure`.
+Its **type** follows the schema: `int64` → `long`, `uuid`/`string` → `string`. A resource with no key
+(e.g. a read-only lookup, an audit log search) has **no key-based situations** — skip unknown-id,
+invalid-id and missing-id, and say so.
 
-### Always (every operation)
-- **Happy-path status** — assert the declared 2xx (`200`/`201`/`202`/`204`). `Validate_{Op}_Response_Status`
-- **Happy-path content** — *if* the 2xx has a body schema: deserialize + assert key fields.
-  `Validate_{Op}_Response_Content`. Skip where there's no response body (many DELETEs / 204s).
+### Naming identifiers after the key
+Key-related identifiers are named after the key itself, never with the generic word "Key":
 
-### Request-body operations (POST/PUT with a body) — if 400/422 declared
-- **Empty body** → `Validate_{Op}_EmptyBody_Response_Failure`
-- **Malformed JSON** → `Validate_{Op}_MalformedJson_Response_Failure`
-- **Invalid field type** → `Validate_{Op}_InvalidFieldType_Response_Failure` (raw body with a wrong-typed field)
+| Placeholder | Rule | Pet (`id`) | Identity (`identityUuid`) | User (`username`) |
+|---|---|---|---|---|
+| `{ResourceKey}` | PascalCase of the key property, prefixed with `{Resource}` unless it already starts with it | `PetId` | `IdentityUuid` | `Username` |
+| `{keyName}` | camelCase key property name — parameters and local variables | `id` | `identityUuid` | `username` |
+| `{KeyProperty}` | the C# model property holding the key | `Id` | `IdentityUuid` | `Username` |
 
-### Id-path operations (…/{id}) — if 404/400 declared
-- **Not found** → `Validate_{Op}_NotFound_Response_Status` (id that doesn't exist, e.g. `0` or a fresh id)
-- **Invalid id** (non-numeric where an integer is required) → `Validate_{Op}_InvalidId_Response_Failure`
-  (uses the raw-id overload) — only for numeric ids
+So the factory has `Generate{ResourceKey}()` and `GetInvalid{ResourceKey}()` (`GeneratePetId()`,
+`GetInvalidPetId()`), the test class tracks `created{ResourceKey}s` (`createdPetIds`), and service methods take
+`{KeyType} {keyName}` (`long id`). The key property is the one in the resource schema; when only the path
+parameter names it (e.g. `petId` with no schema property), use the path parameter name.
 
-### Missing required inputs — one test per operation (always)
-Every operation gets exactly one missing-required-input test, derived from what the spec marks `required`:
-- **Request-body operations** (body schema has a `required` list) → send well-formed JSON that binds cleanly
-  but omits every schema-required property (e.g. `{"id": <random>}` when `name`/`photoUrls` are required)
-  → `Validate_{Op}_MissingRequiredFields_Response_Failure`, asserting the spec's declared validation code
-  exactly. If the server does not implement schema validation, the test goes red — that is the finding to
-  raise with the developers, and the test is the acceptance criterion for the fix (never ignored, never
-  loosened).
-- **Required path parameter** → omit the segment via the raw-id overload with `string.Empty` (the route
-  collapses to the parent path, typically 405 Method Not Allowed or 404)
-  → `Validate_{Op}_Missing{Param}_Response_Failure`. Requires a raw-id overload on the service.
-- **Required query parameter** → call the endpoint without the parameter at all (not with an empty value)
-  → `Validate_{Op}_Missing{Param}_Response_Failure`. Requires a parameterless service overload that omits
-  the querystring entirely.
-- Operations with no request body and no required parameters → no test for this row (don't invent one).
+### Who assigns the key
+- **Client-assigned** — the create request schema contains the key property and it is not `readOnly`
+  (e.g. `Pet.id`). The factory generates it (`Generate{ResourceKey}()`) and the test registers it for
+  cleanup **before** calling create.
+- **Server-assigned** — the key is absent from the create request (or `readOnly`) and present in the
+  create response. The test calls create, deserializes the response, then reads and registers the key.
+- **Unclear** — e.g. the key is `required` in the request schema but never defined, or required in a
+  response-only schema that the request inherits → spec defect; ask the user.
 
-### Constrained parameters (enum / min / max) — if 400 declared
-- **Invalid value** → `Validate_{Op}_Invalid{Param}_Response_Failure` (value outside the enum/range)
+### Creating resources for tests
+Tests that need an existing resource (read, update, action, unknown-vs-known comparisons) create it
+in-test through the **create** operation. If the resource has **no create operation**:
+- tests that need an existing resource are **skipped** (report "no create operation"), unless the user
+  supplies known test data (e.g. ids in `Configuration.json`) — then use it, never modify it, and say so;
+- tests that need no existing resource (searches, invalid input, missing input) are still generated.
 
-### Mutating operations on non-existent resources — if 404 declared
-- **Non-existent id** → `Validate_{Op}_NonExistentId_Response_Failure` (update/delete something never created;
-  register nothing for cleanup)
+### Cleanup
+- **Delete operation exists** → track created keys in a `List<{KeyType}>` and delete them in the
+  `[TearDown] CleanUp`.
+- **No delete operation** → no cleanup and no key tracking. Report "test data is not removed — no delete
+  operation". If the user names an alternative cleanup operation (e.g. a revoke or archive action), use it
+  in `CleanUp` exactly like a delete.
+- Generate a `[TearDown] CleanUp` only when the fixture creates resources **and** a cleanup operation
+  exists.
+
+---
+
+## Test Matrix
+
+Generate every situation whose **condition** is met by the spec; skip — and report — every situation whose
+condition is not met. The matrix is the same for every API; the spec decides which rows apply.
+
+### Situation catalogue
+
+| Situation | Generate when the spec defines… | Expected code | Test name |
+|---|---|---|---|
+| Happy path — status | any operation (always) | the declared 2xx | `Validate_{Op}_Response_Status` |
+| Happy path — content | a schema on the 2xx response | the declared 2xx | `Validate_{Op}_Response_Content` |
+| Happy path — required fields only | a create operation with a JSON request body whose schema (after `allOf` merging) has a `required` list **and** at least one optional property | the declared 2xx | `Validate_{Op}_RequiredFieldsOnly_Response_Status` (+ `_Response_Content` when a 2xx schema is declared) |
+| Response headers | `headers` on the 2xx response | the declared 2xx | asserted inside the status test |
+| Empty body | a JSON request body + 400 | 400 | `Validate_{Op}_EmptyBody_Response_Failure` |
+| Malformed JSON | a JSON request body + 400 | 400 | `Validate_{Op}_MalformedJson_Response_Failure` |
+| Wrong type | a JSON request body with a typed property + 400 | 400 | `Validate_{Op}_InvalidFieldType_Response_Failure` |
+| Missing required fields | a body schema (after `allOf` merging) with a `required` list + 400 or 422 | 422 if declared, else 400 | `Validate_{Op}_MissingRequiredFields_Response_Failure` |
+| Missing path parameter | a required path parameter | routing result (405/404) | `Validate_{Op}_Missing{Param}_Response_Failure` |
+| Missing query / header parameter | a required query or header parameter + 400 | 400 | `Validate_{Op}_Missing{Param}_Response_Failure` |
+| Invalid id | a key path parameter with a type or format constraint (integer, `uuid`, pattern) + 400 | 400 | `Validate_{Op}_InvalidId_Response_Failure` |
+| Invalid value — parameter | a constrained path/query/header parameter + 400 | 400 | `Validate_{Op}_Invalid{Param}_Response_Failure` |
+| Invalid value — body property | a constrained body property + 400 or 422 | 422 if declared, else 400 | `Validate_{Op}_Invalid{Property}_Response_Failure` |
+| Unknown resource | an operation identifying a resource by key (path, update body, or search criterion) + 404 | 404 | `Validate_{Op}_NotFound_Response_Status` |
+| Conflict | a create operation + 409, with a determinable duplicate (see below) | 409 | `Validate_{Op}_Duplicate_Response_Failure` |
+| Unsupported media type | a request body + 415 | 415 | `Validate_{Op}_UnsupportedMediaType_Response_Failure` |
+| No access token | a `security` requirement on the operation + an enforcing target | 401 | `Validate_{Op}_MissingAuthorization_Response_Status` |
+| Header variants | security + an enforcing target; one representative write operation only | 401 | `Validate_{Op}_{Variant}_Response_Status` |
+| Insufficient permission | 403 declared + a lower-privilege credential supplied by the user | 403 | `Validate_{Op}_Forbidden_Response_Status` |
+| Page size | a page-size parameter (description or name states it limits entries) + an array in the response | the declared 2xx | `Validate_{Op}_PageSize_Response_Content` |
+
+**Never generated:** 5xx responses, `default` responses, and rules stated only in prose (e.g. "only allowed
+if `auditCodeIn` contains exactly one element", "returns an empty list past the last page"). List prose
+rules in the report as untested.
+
+### Situation details
+
+**Happy path.** Assert the exact declared 2xx (`200`, `201`, `202`, `204`) — the first success code when
+several are declared. Content: deserialize the declared schema and assert the fields the request
+determined (echoed values, the key) plus that every `required` response property is present. When the 2xx
+declares `headers`, assert each declared header is present (Playwright lower-cases header names).
+
+**Happy path — required fields only.** Proves the `required` list is sufficient: a body carrying only the
+required properties must be accepted. It is the positive counterpart of the missing-required-fields test.
+- **Scope:** create operations only. Update operations are skipped (report "update needs the resource key
+  to identify the resource"), because omitting an optional key would no longer target an existing resource.
+- **Body:** exactly the `required` properties, built by `Create{Resource}WithRequiredFieldsOnly()`. Every
+  optional property is **absent** from the JSON, not sent as `null` — this relies on the model omitting null
+  properties (see Model Template).
+- **The key:** when the key property is required, it is part of the body and is client-assigned as usual
+  (register it before the call). When the key is optional, it is omitted, so the server assigns it: read it
+  from the create response, assert it with `asserts.IsNotNull`, and register it for cleanup **after** that
+  assertion. If the server returns no key, the test fails on the assertion — that red test is the finding
+  (the spec does not say the key is assigned when omitted).
+- **Content:** assert every required property is echoed with the sent value, and the server-assigned key is
+  present. For an omitted optional property, assert its value only when the schema declares a `default`
+  (assert the default); otherwise assert nothing about it.
+- **Generate when** at least one optional property exists — if every property is required, this test is
+  identical to the happy path; skip it and report "all properties required".
+
+**Request-body negatives.** Only for JSON request bodies. The wrong-type body changes one typed property
+(preferably the key or a required property) to a value of another JSON type.
+
+**Missing required inputs.** One test per operation, derived from `required`:
+- body → well-formed JSON that binds cleanly but omits every required property;
+- required path parameter → raw overload with `string.Empty` (the route collapses to the parent path);
+- required query/header parameter → an overload that omits the parameter entirely (never an empty value).
+Operations with no required input get no test.
+
+**Invalid values.** One test per constrained parameter or body property. Constraint → invalid value:
+
+| Constraint | Invalid value to send |
+|---|---|
+| `enum` | a value outside the enum (`unknown`) |
+| `minimum` / `maximum` | minimum − 1 / maximum + 1 |
+| `minLength` / `maxLength` | a string one shorter / one longer |
+| `pattern` | a value that violates the pattern (verify it does not match) |
+| `format: uuid` | `not-a-uuid` |
+| `format: date` / `date-time` | `not-a-date` |
+| `format: email` | `not-an-email` |
+
+Send an otherwise valid request so the constraint is the only violation. When an operation has more than
+**8** constrained inputs, list them all in the planning table and propose a default selection — required
+properties first, every enum, and one representative per remaining constraint kind — and let the user
+confirm the trim.
+
+**Unknown resource.** Use a freshly generated, well-formed key that was never created (`Generate{ResourceKey}()`)
+— never a fixed value such as `0`. Register nothing for cleanup. No 404 declared → no test, and report the
+missing 404 as a spec gap for operations that take a key.
+
+**Conflict.** Generate only when the duplicate is determinable from the spec: a client-assigned key (create
+the same key twice) or a property the spec describes as unique. Create once (registering for cleanup),
+then send the duplicate and assert 409. When the spec declares 409 without saying what conflicts, skip and
+report "409 declared but the trigger is not defined".
+
+**Unsupported media type.** Send a valid body with `Content-Type: text/plain` through a service overload
+that sets the header per request (per-request headers override `BaseService`'s JSON default).
+
+**Error response bodies.** When the declared error response has a JSON schema, every negative test for that
+code also deserializes the body and asserts each `required` error property is present. Routing-based codes
+(405/404 from a collapsed route) are not declared, so their bodies are not checked.
+
+**Deprecated operations** (`deprecated: true`) are tested like any other and flagged in the report.
 
 ### Planning table (show the user before generating)
 
+One row per operation, one column per situation group. ✓ = generated; otherwise the skip reason.
+
 ```
-Resource: Pet   (baseUrl: https://petstore3.swagger.io/api/v3)
-Operation           Method  Happy  Content  Missing-required          Negatives
-addPet              POST    ✓      ✓        required body fields      empty, malformed, invalid-type
-getPetById          GET     ✓      ✓        petId path param          not-found, invalid-id
-findPetsByStatus    GET     ✓      ✓        status query param        invalid-status
-updatePet           PUT     ✓      ✓        required body fields      non-existent, malformed
-deletePet           DELETE  ✓      —        petId path param          non-existent
-uploadFile          POST    (skipped — binary upload)
+Resource: Pet   (baseUrl: https://petstore3.swagger.io/api/v3 · key: petId int64, client-assigned · cleanup: deletePet · auth: petstore_auth, enforced)
+Operation          Method  Happy  Content  Missing-required      Body negatives                  Unknown         Invalid id  Invalid value    Conflict      No token
+addPet             POST    200    ✓        body fields           empty, malformed, wrong-type    —               —           status (body)    no 409        ✓
+updatePet          PUT     200    ✓        body fields           empty, malformed, wrong-type    ✓ (404)         —           status (body)    —             ✓
+findPetsByStatus   GET     200    ✓        status (query)        —                               —               —           status (query)   —             ✓
+getPetById         GET     200    ✓        petId (path)          —                               ✓ (404)         ✓           —                —             ✓
+deletePet          DELETE  200    no schema petId (path)         —                               no 404 declared ✓           —                —             ✓
+uploadFile         POST    skipped: binary request body
+Header variants: addPet
+Required fields only: addPet (id optional → omitted, server-assigned, read from response); updatePet skipped: update needs the key
+Not generated: 5xx/default; prose-only rules: none
 ```
 
 ---
@@ -238,67 +454,82 @@ uploadFile          POST    (skipped — binary upload)
 NUnit `Assert.That` directly in a test. Every `asserts` method takes a trailing message (`"Validating ..."`)
 that is logged with a PASSED/FAILED outcome, which is what feeds the test report. This matches the UI tests.
 
-Available methods: `EqualTo`, `IsTrue`, `IsFalse`, `IsNull`, `IsNotNull`, `IsNotEmpty`, `IsAnyOf`,
+Available methods: `EqualTo`, `IsTrue`, `IsFalse`, `IsNull`, `IsNotNull`, `IsNotEmpty`,
 `GreaterThan`, `LessThan`, `DoesContain`, `DoesNotContain`.
 
 - **Positive**: exact status + Ok flag:
   ```csharp
-  asserts.EqualTo(response.Status, 200, "Validating response Status property");
+  asserts.EqualTo(response.Status, 201, "Validating response Status property");
   asserts.EqualTo(response.Ok, true, "Validating response OK property");
   ```
   Content via deserialization, then `asserts.EqualTo(result.X, expected, "Validating response content X property")`.
+  Declared response headers: `asserts.IsTrue(response.Headers.ContainsKey("x-rate-limit"), "Validating response X-Rate-Limit header")`.
 - **Negative**: Ok false + the **exact** expected status code — never a tolerant set:
   ```csharp
   asserts.EqualTo(response.Ok, false, "Validating response OK property");
   asserts.EqualTo(response.Status, 400, "Validating response Status property");
   ```
-  - The expected code is the spec's declared code for that failure (e.g. 400 Invalid input, 404 Pet not
-    found). Where the failure is produced by routing rather than the operation itself (e.g. omitting a
-    required path parameter collapses the route), the expected code is the HTTP-level result (405/404).
-  - Always add a one-line comment naming the expected code and its meaning.
-  - Do **not** use `asserts.IsAnyOf` for status codes in API tests — one operation failure has one
-    expected code.
+  - Always add a one-line comment naming the expected code, its meaning and its source:
+    `// Spec: 400 (Invalid input).`, `// Routing: 405 (Method Not Allowed) - ...`,
+    `// Expected: 401 (Unauthorized) - ... Not declared in the spec.`
+  - Never assert a tolerant set of status codes, and don't add an `IsAnyOf`-style helper to `Asserts` for
+    it — one operation failure has one expected code.
+- **Error bodies**: when the error response declares a schema, deserialize it and
+  `asserts.IsNotNull(error.Property, "Validating error content Property property")` for each required property.
 - **Collections**: `asserts.IsNotNull(result, ...)` plus `asserts.IsTrue(result.All(x => ...), ...)`
   (needs `using System.Linq;`) for all-items checks; `asserts.GreaterThan(list.Count, 0, ...)` for non-empty.
 - **API tests are strict contract tests and are never `[Ignore]`d.** When the server diverges from its
-  spec (e.g. a demo returning 200 for schema-violating input), the test stays strict on the expected code
-  and goes red — that red test is the finding to raise with the developers (spec bug or server bug; someone
-  must decide), and it becomes the acceptance criterion and regression guard for the fix. Never loosen the
-  assertion or ignore the test to make the suite green.
+  spec, the test stays strict on the expected code and goes red — that red test is the finding to raise
+  with the developers, and it becomes the acceptance criterion and regression guard for the fix. Never
+  loosen the assertion or ignore the test to make the suite green.
 - If an assertion shape has no `Asserts` method yet, extend `Asserts.cs` with a new method following its
-  existing try/catch + PASSED/FAILED logging pattern rather than falling back to raw `Assert.That`.
+  existing try/catch + PASSED/FAILED logging pattern (including the failure logging) rather than falling
+  back to raw `Assert.That`.
 
 ---
 
 ## BaseService Contract (services inherit)
 
-`BaseService(ILog logger, IAPIRequestContext request)`. Protected helpers (return `Task<IAPIResponse>`,
-auto-inject a correlation-id header and log request/response):
+`BaseService(ILog logger, IAPIRequestContext request, Dictionary<string, string> headers = null)`.
+Protected helpers (return `Task<IAPIResponse>`, auto-inject the `X-Correlation-Id` and
+`Content-Type: application/json` headers and log request/response):
 `GetAsync`, `PostAsync`, `PutAsync`, `DeleteAsync` — each `(string endpoint, APIRequestContextOptions options = null)`.
-Public: `DeserializeAsync<T>(IAPIResponse response)` (wraps `response.JsonAsync<T>()`).
+Public: `DeserializeAsync<T>(IAPIResponse response)` (wraps `response.JsonAsync<T>()`) and
+`IncludeRequestHeadersLogging` (set `false` to keep headers out of the log).
+
+**Constructor headers** (e.g. authorization) are added to every request the service sends. They are
+fixed for the lifetime of the instance — there is no way to change or clear them afterwards — so a test
+that needs different headers creates a new service instance. Precedence when the same header name is set
+in several places: per-request `options.Headers` first, then constructor headers, then the built-in
+`X-Correlation-Id` / `Content-Type` (added only when no other value is set). Passing `null` (the default)
+sends no extra headers. In the request and response logs, the values of `Authorization`, `X-Api-Key`,
+`Cookie` and `Set-Cookie` are masked as `***REDACTED***` (header names are matched ignoring case); any
+other header (including a deliberately wrong auth header name) is logged in clear text.
 
 Request bodies via `APIRequestContextOptions`: `DataObject = <model>` (typed → JSON) or
-`DataString = <string>` (raw body, for malformed negatives). Set `Headers["Content-Type"] = "application/json"`.
+`DataString = <string>` (raw body, for malformed negatives). Do **not** set a `Content-Type` header in the
+service — `BaseService` adds `Content-Type: application/json` to every request automatically. Only pass
+`Headers` when an operation needs a header the base class does not provide (a header parameter, an apiKey
+header, or the unsupported-media-type test). Operations without a body and without extra headers call the
+helper with no options at all (e.g. `await PutAsync(endpoint)`). `BaseService` has no PATCH helper — a
+PATCH operation needs a `PatchAsync` added to `BaseService` by the framework owners; until then skip it and
+report it.
 
 ## BaseServiceTest / BaseTestFixture Contract (tests inherit)
 
 `BaseServiceTest : BaseTestFixture`. Available: `apiManager` (call `apiManager.GetRequest()` for the
 `IAPIRequestContext`), `logger`, `asserts`. `ApiManager` sets `BaseURL` from `configuration.ApiBaseUrl`.
 
-**Assign `baseService`:** `BaseServiceTest` exposes a `protected BaseService baseService` field and uses it
-in its `[TearDown]` to log the request/response bodies when a test fails. The generated `[OneTimeSetUp]`
-**must** assign the created service to it:
+**The test class owns its service:** `BaseServiceTest` holds no service reference. The generated
+`[OneTimeSetUp]` only creates the service instance the test class uses:
 
 ```csharp
 [OneTimeSetUp]
 public void OneTimeSetUp()
 {
     {resource}Service = new {Resource}Service(logger, apiManager.GetRequest());
-    baseService = {resource}Service;
 }
 ```
-
-Skipping the assignment silently disables failure diagnostics — never omit it.
 
 **Lifecycle:** `BaseTestFixture` already defines `[OneTimeSetUp]`, `[OneTimeTearDown]`, `[SetUp]`, and
 `[TearDown] FinalizeTest` (all `protected virtual`). A generated test class adds its **own** `[TearDown]`
@@ -315,43 +546,45 @@ public async Task CleanUp()
     logger.Info("");
     logger.Info("// Cleanup Testcase");
 
-    foreach (var id in created{Resource}Ids)
-        await {resource}Service.Delete{Resource}(id);
+    foreach (var {keyName} in created{ResourceKey}s)
+        await {resource}Service.Delete{Resource}({keyName});
 
-    created{Resource}Ids.Clear();
+    created{ResourceKey}s.Clear();
 }
 ```
 
-Only generate a cleanup `[TearDown]` when the fixture actually creates server-side resources.
+Only generate a cleanup `[TearDown]` when the fixture creates resources and a cleanup operation exists.
 
 ---
 
 ## The Non-Negotiables
 
-These come from how the shipped `PetServiceTests` was built. Don't relax them:
-
-1. **Self-contained tests** — a test needing a resource creates it in-test (factory + `Add` call), exercises
-   the operation, asserts. No test depends on another test having run.
-2. **No `[Order]` attributes** — order-independent, data-parallel-safe via unique random ids.
-3. **Teardown cleanup** — a per-fixture `List<long>` of created ids, deleted in a `[TearDown] CleanUp`.
-4. **Factory builds, test tracks** — the factory only constructs valid models (stateless). Registering a
-   created id for cleanup is the test class's job, never the factory's. **Every API model instance is built
-   by the `{Resource}Factory` — never construct a model inline in a test class** (e.g. a private static
-   helper `new`-ing up the model with hardcoded values). The only model-creating member allowed in the test
-   class is the thin `Create{Resource}()` wrapper that calls the factory and registers the id for cleanup.
-5. **Honest assertions** — see Assertion Rules.
-6. **Reuse the framework** — services extend `BaseService`; tests extend `BaseServiceTest`; requests come
+1. **Spec-traceable** — every test verifies a spec element; nothing is invented; everything skipped is
+   reported (see Core Principle).
+2. **Self-contained tests** — a test needing a resource creates it in-test through the create operation.
+   No test depends on another test having run. No create operation → those tests are skipped.
+3. **No `[Order]` attributes** — order-independent, data-parallel-safe via unique generated keys and values.
+4. **Teardown cleanup when the spec allows it** — tracked keys deleted in a `[TearDown] CleanUp`, only
+   when a delete (or user-named cleanup) operation exists.
+5. **Factory builds, test tracks** — the factory only constructs test input (stateless): valid request
+   models plus named invalid-input variants (raw bodies, invalid keys, out-of-range values). Registering a
+   created key for cleanup is the test class's job, never the factory's. **Every API model instance is
+   built by the `{Resource}ServiceFactory` — never construct a model inline in a test class.** Raw
+   request bodies and invalid parameter values likewise come from the factory, never as literals in a test
+   method. The only model-creating member allowed in the test class is the thin `Create{Resource}()`
+   wrapper that calls the factory (and, for client-assigned keys, registers the key).
+6. **Honest assertions** — see Assertion Rules.
+7. **Reuse the framework** — services extend `BaseService`; tests extend `BaseServiceTest`; requests come
    from `apiManager.GetRequest()`. Never hand-roll HTTP or JSON.
-7. **Framework asserts** — all validations go through the `asserts` class with a logging message, exactly
-   like the UI tests. No direct NUnit `Assert.That` in test methods.
-8. **`baseService` assignment** — `[OneTimeSetUp]` assigns the created service to `baseService` so the base
-   teardown can log request/response bodies on failure.
+8. **Framework asserts** — all validations go through the `asserts` class with a logging message. No direct
+   NUnit `Assert.That` in test methods.
 
 ---
 
 ## Model Template
 
-One file per top-level schema; nested schemas as extra classes in the same file.
+All models of a resource in one file. Nested and related schemas are extra classes in the same file. The
+example shows the Pet schema — properties always come from the resource's own schemas.
 
 ```csharp
 using System.Collections.Generic;
@@ -359,53 +592,59 @@ using System.Text.Json.Serialization;
 
 namespace {Company}.{Project}.Web.Models
 {
+    // Null properties are omitted from request bodies, so a model with only some properties set
+    // sends exactly those properties (e.g. a required-fields-only request).
     public class {Resource}ServiceModel
     {
         [JsonPropertyName("id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public long? Id { get; set; }
 
         [JsonPropertyName("name")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Name { get; set; }
 
         [JsonPropertyName("category")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public {Resource}CategoryModel Category { get; set; }
 
         [JsonPropertyName("photoUrls")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string> PhotoUrls { get; set; }
 
-        [JsonPropertyName("tags")]
-        public List<{Resource}TagModel> Tags { get; set; }
-
         [JsonPropertyName("status")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Status { get; set; }
     }
 
     public class {Resource}CategoryModel
     {
         [JsonPropertyName("id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public long? Id { get; set; }
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
-    }
-
-    public class {Resource}TagModel
-    {
-        [JsonPropertyName("id")]
-        public long? Id { get; set; }
-
-        [JsonPropertyName("name")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Name { get; set; }
     }
 }
 ```
 
+An `allOf` schema is one flattened class (e.g. `Identity` = all `TestIdentity` properties + `identityUuid`,
+`name`, `acceptedLegalDocuments`). An error schema becomes `{Resource}ErrorModel`.
+
 ---
 
 ## Service Template
 
-One method per operation. Include a **raw-string overload** for any operation with a request body, and a
-**raw-id overload** for numeric path-id operations, so negative tests can send malformed input.
+One method per operation, named from `operationId`, with parameters typed from the spec. Add the raw
+overloads the negative tests need:
+- **raw-string body overload** for every JSON request body;
+- **raw-key overload** (`string`) for every key path parameter that is numeric or format-constrained;
+- **omitting overload** for every required query/header parameter;
+- **content-type overload** when 415 is declared.
+
+**Constants use PascalCase** (`BaseUrl`, `{Resource}Path`) — never camelCase.
 
 ```csharp
 using {Company}.{Project}.Web.Models;
@@ -418,78 +657,75 @@ namespace {Company}.{Project}.Web.Services
 {
     public class {Resource}Service : BaseService
     {
-        private const string baseUrl = "{baseUrl}";        // from spec servers[0].url
-        private const string {resource}Path = "{path}";    // e.g. "/pet"
+        private const string BaseUrl = "{baseUrl}";        // absolute servers[0].url; for a relative server URL use "" and relative paths
+        private const string {Resource}Path = "{path}";    // e.g. "/pet"
 
-        public {Resource}Service(ILog logger, IAPIRequestContext request) : base(logger, request)
+        public {Resource}Service(ILog logger, IAPIRequestContext request, Dictionary<string, string> headers = null)
+            : base(logger, request, headers)
         {
         }
 
-        public async Task<IAPIResponse> Add{Resource}({Resource}ServiceModel model)
+        public async Task<IAPIResponse> Create{Resource}({Resource}ServiceModel model)
         {
-            var endpoint = $"{baseUrl}{{resource}Path}";
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
             var options = new APIRequestContextOptions
             {
-                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
                 DataObject = model
             };
             return await PostAsync(endpoint, options);
         }
 
-        public async Task<IAPIResponse> Add{Resource}(string rawBody)
+        public async Task<IAPIResponse> Create{Resource}(string rawBody)
         {
-            var endpoint = $"{baseUrl}{{resource}Path}";
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
             var options = new APIRequestContextOptions
             {
-                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
                 DataString = rawBody
             };
             return await PostAsync(endpoint, options);
         }
 
-        public async Task<IAPIResponse> Update{Resource}({Resource}ServiceModel model)
+        public async Task<IAPIResponse> Create{Resource}WithContentType(string rawBody, string contentType)
         {
-            var endpoint = $"{baseUrl}{{resource}Path}";
+            // Only when 415 is declared: per-request headers override BaseService's JSON content type.
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
             var options = new APIRequestContextOptions
             {
-                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
-                DataObject = model
+                DataString = rawBody,
+                Headers = new Dictionary<string, string> { ["Content-Type"] = contentType }
             };
-            return await PutAsync(endpoint, options);
+            return await PostAsync(endpoint, options);
         }
 
-        public async Task<IAPIResponse> Update{Resource}(string rawBody)
+        public async Task<IAPIResponse> Get{Resource}ById({KeyType} {keyName})
         {
-            var endpoint = $"{baseUrl}{{resource}Path}";
-            var options = new APIRequestContextOptions
-            {
-                Headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
-                DataString = rawBody
-            };
-            return await PutAsync(endpoint, options);
-        }
-
-        public async Task<IAPIResponse> Get{Resource}ById(long id)
-        {
-            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            var endpoint = $"{BaseUrl}{{Resource}Path}/{{keyName}}";
             return await GetAsync(endpoint);
         }
 
-        public async Task<IAPIResponse> Get{Resource}ByRawId(string id)
+        public async Task<IAPIResponse> Get{Resource}ByRawId(string {keyName})
         {
-            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            var endpoint = $"{BaseUrl}{{Resource}Path}/{{keyName}}";
             return await GetAsync(endpoint);
         }
 
-        public async Task<IAPIResponse> Find{Resource}sByStatus(string status)
+        public async Task<IAPIResponse> Find{Resource}s(string requiredParam)
         {
-            var endpoint = $"{baseUrl}{{resource}Path}/findByStatus?status={status}";
+            // Example of a query-parameter operation; escape values with Uri.EscapeDataString.
+            var endpoint = $"{BaseUrl}{{Resource}Path}/find?param={System.Uri.EscapeDataString(requiredParam)}";
             return await GetAsync(endpoint);
         }
 
-        public async Task<IAPIResponse> Delete{Resource}(long id)
+        public async Task<IAPIResponse> Find{Resource}s()
         {
-            var endpoint = $"{baseUrl}{{resource}Path}/{id}";
+            // Omits the required query parameter entirely.
+            var endpoint = $"{BaseUrl}{{Resource}Path}/find";
+            return await GetAsync(endpoint);
+        }
+
+        public async Task<IAPIResponse> Delete{Resource}({KeyType} {keyName})
+        {
+            var endpoint = $"{BaseUrl}{{Resource}Path}/{{keyName}}";
             return await DeleteAsync(endpoint);
         }
 
@@ -498,25 +734,68 @@ namespace {Company}.{Project}.Web.Services
             return await DeserializeAsync<{Resource}ServiceModel>(response);
         }
 
-        public async Task<List<{Resource}ServiceModel>> DeserializeList(IAPIResponse response)
+        public async Task<{Resource}ErrorModel> DeserializeError(IAPIResponse response)
         {
-            return await DeserializeAsync<List<{Resource}ServiceModel>>(response);
+            // Only when error responses declare a schema.
+            return await DeserializeAsync<{Resource}ErrorModel>(response);
         }
     }
 }
 ```
 
-> Note the `baseUrl` constant mirrors the shipped `PetService` (self-contained, spec-driven). If the user
-> prefers config-driven URLs, use relative endpoints and let `ApiManager`'s `BaseURL` apply — offer this as
-> an option rather than the default.
+`{KeyType}` is `long` for int64 keys and `string` for uuid/string keys. For a string key the typed and
+raw overloads collapse into one method. Add one `Deserialize{Model}` method per response model the
+operations return (e.g. `DeserializeList`, `DeserializePage`).
 
 ---
 
 ## Factory Template
 
-Stateless. Builds a **valid** default model. Randomized id avoids collisions with server seed data and lets
-tests run in parallel without stepping on each other. Populate required properties with valid values; for
-enums use the first declared value.
+**Naming:** `{Resource}ServiceFactory`, named after the model it builds, mirroring the
+`{Page}PageFactory` convention for page models. Never `{Resource}Factory`.
+
+Stateless. Builds **valid request models** plus the named invalid-input variants the negative tests need.
+
+### Valid values come from the schema
+For every property of the request schema (after `allOf` merging): always set `required` properties; set
+optional properties when they are simple to fill. Choose each value from the schema:
+- `example` when present and consistent with the type, format and pattern;
+- `enum` → the first declared value;
+- `format: uuid` → `Guid.NewGuid().ToString()`; `date` → a fixed valid date; `date-time` → a fixed UTC
+  timestamp; `email` → `{company}-test@example.dev`;
+- `pattern` without a usable `example` → a value you have checked against the pattern; if unsure, ask the
+  user for a valid value rather than guessing;
+- properties that must be unique per resource → append a `Randomizer` value so parallel tests don't
+  collide.
+
+### Every factory method is self-contained
+- **No class-level `const`, `static readonly`, or fields** — every literal lives inside the method that
+  returns it.
+- **No shared state** — the factory is stateless; key tracking belongs to the test class.
+- A method may start from another factory method of the same class for the base model
+  (`Create{Resource}()` passes `Generate{ResourceKey}()`; `CreateUpdated{Resource}({keyName})` starts from
+  `Create{Resource}({keyName})`) and then sets the values that make it differ, inline.
+- Every invalid-input method carries a one-line comment naming what it violates.
+
+### Methods (generate only what the tests use)
+
+| Method | Returns | When |
+|---|---|---|
+| `Create{Resource}()` | request model | A create operation exists |
+| `Create{Resource}({KeyType} {keyName})` | request model | Client-assigned key |
+| `Create{Resource}WithRequiredFieldsOnly()` | request model | Required-fields-only test — only the `required` properties set, every optional property left `null` (takes `{KeyType} {keyName}` when the key itself is required) |
+| `CreateUpdated{Resource}({KeyType} {keyName})` | request model | An update operation exists |
+| `CreateMalformed{Resource}Body()` | string | JSON request body — malformed-JSON test |
+| `CreateEmpty{Resource}Body()` | string | JSON request body — empty-body test |
+| `CreateWronglyTyped{Resource}Body()` | string | JSON request body — wrong-type test |
+| `CreateMissingRequiredFields{Resource}Body()` | string | Body schema with a `required` list |
+| `CreateInvalid{Property}{Resource}Body()` | string | Each constrained body property |
+| `GetInvalid{ResourceKey}()` | string | Key path parameter with a type/format constraint |
+| `GetInvalid{Resource}{Param}()` | string | Each constrained parameter |
+| `Generate{ResourceKey}()` | `{KeyType}` | Client-assigned key, or a well-formed unknown key for not-found tests |
+
+Body variants take the key as a parameter (`CreateMissingRequiredFields{Resource}Body(long id)`) when the
+key is client-assigned, so the test can register it for cleanup.
 
 ```csharp
 using {Company}.{Project}.Web.Models;
@@ -524,50 +803,96 @@ using System.Collections.Generic;
 
 namespace {Company}.{Project}.Web.Tests.Factories
 {
-    public static class {Resource}Factory
+    public static class {Resource}ServiceFactory
     {
         public static {Resource}ServiceModel Create{Resource}()
         {
-            return Create{Resource}(Generate{Resource}Id());
+            return Create{Resource}(Generate{ResourceKey}());
         }
 
         public static {Resource}ServiceModel Create{Resource}(long id)
         {
+            // Values from the Pet schema: required properties set, first enum value for status.
             return new {Resource}ServiceModel
             {
                 Id = id,
                 Name = "{Company}-{Resource}",
                 Category = new {Resource}CategoryModel { Id = 1, Name = "Dogs" },
                 PhotoUrls = new List<string> { "https://example.dev/{resource}.png" },
-                Tags = new List<{Resource}TagModel> { new {Resource}TagModel { Id = 1, Name = "friendly" } },
-                Status = "available"   // first valid enum value from the schema
+                Status = "available"
             };
         }
 
-        public static long Generate{Resource}Id()
+        public static {Resource}ServiceModel CreateUpdated{Resource}(long id)
+        {
+            var model = Create{Resource}(id);
+
+            model.Name = "{Company}-{Resource}-Updated";
+            model.Status = "sold";
+
+            return model;
+        }
+
+        public static string CreateMalformed{Resource}Body()
+        {
+            // Not parsable as JSON at all.
+            return "{ this is not valid json";
+        }
+
+        public static string CreateEmpty{Resource}Body()
+        {
+            // No request body at all.
+            return string.Empty;
+        }
+
+        public static string CreateWronglyTyped{Resource}Body()
+        {
+            // The id property is an int64 in the schema, a string violates the type.
+            return "{\"id\":\"not-a-number\",\"name\":\"{Company}-{Resource}\",\"photoUrls\":[]}";
+        }
+
+        public static string CreateMissingRequiredFields{Resource}Body(long id)
+        {
+            // Well-formed JSON omitting the schema-required name and photoUrls properties.
+            return $"{{\"id\":{id}}}";
+        }
+
+        public static string CreateInvalidStatus{Resource}Body(long id)
+        {
+            // Otherwise valid {resource} whose status is outside the enum: available, pending, sold.
+            return $"{{\"id\":{id},\"name\":\"{Company}-{Resource}\",\"photoUrls\":[\"https://example.dev/{resource}.png\"],\"status\":\"unknown\"}}";
+        }
+
+        public static string GetInvalid{ResourceKey}()
+        {
+            // The petId path parameter is an int64, a non-numeric value violates the type.
+            return "not-a-number";
+        }
+
+        public static long Generate{ResourceKey}()
         {
             // Random high-range id to avoid colliding with existing/seed data.
-            // Reuse the shared Randomizer helper that already lives in the Factories namespace.
             return Randomizer.GetRandomInteger(1_000_000, 9_000_000);
         }
     }
 }
 ```
 
-> The factory reuses the shipped `Randomizer` helper (in `{Company}.{Project}.Web.Tests.Factories`) rather
-> than calling `Random.Shared` directly — check its available methods (`GetRandomInteger`, `GetRandomString`,
-> `GetUniqueId`, `GetDateTimeId`) and pick the one matching the id type. `GetRandomInteger` takes `int`
-> bounds; if the schema id must span the full `long` range, add a `long` overload to `Randomizer` rather
-> than inlining `Random.Shared` here.
+For a **uuid key**, `Generate{ResourceKey}()` returns `Guid.NewGuid().ToString()` and
+`GetInvalid{ResourceKey}()` returns `"not-a-uuid"`. The factory reuses the shipped `Randomizer` helper for
+numeric and string values (`GetRandomInteger`, `GetRandomString`, `GetUniqueId`, `GetDateTimeId`);
+`GetRandomInteger` takes `int` bounds — if an int64 key must span the full range, add a `long` overload to
+`Randomizer` rather than inlining `Random.Shared`.
 
 ---
 
 ## API Test Template
 
-Self-contained, order-independent, with teardown cleanup. The local `Create{Resource}()` wrapper is the one
-place that both builds (via factory) and registers the id for cleanup — keep that bridge in the test class,
-not the factory. `Add{Resource}ForTest()` creates the resource on the server and returns the model whose id
-read/update tests then use — this is how those tests stay self-contained.
+Self-contained, order-independent. Two key patterns; use the one the spec defines.
+
+### Pattern A — client-assigned key, delete exists (cleanup)
+
+The local `Create{Resource}()` wrapper builds via the factory and registers the key **before** create.
 
 ```csharp
 using {Company}.{Project}.Web.Models;
@@ -585,13 +910,12 @@ namespace {Company}.{Project}.Web.Tests.ApiTests
     {
         private {Resource}Service {resource}Service;
 
-        private readonly List<long> created{Resource}Ids = new List<long>();
+        private readonly List<long> created{ResourceKey}s = new List<long>();
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             {resource}Service = new {Resource}Service(logger, apiManager.GetRequest());
-            baseService = {resource}Service;
         }
 
         [TearDown]
@@ -600,43 +924,29 @@ namespace {Company}.{Project}.Web.Tests.ApiTests
             logger.Info("");
             logger.Info("// Cleanup Testcase");
 
-            foreach (var id in created{Resource}Ids)
-                await {resource}Service.Delete{Resource}(id);
+            foreach (var {keyName} in created{ResourceKey}s)
+                await {resource}Service.Delete{Resource}({keyName});
 
-            created{Resource}Ids.Clear();
+            created{ResourceKey}s.Clear();
         }
 
         [Test]
-        public async Task Validate_Add{Resource}_Response_Status()
+        public async Task Validate_Create{Resource}_Response_Status()
         {
             var model = Create{Resource}();
 
-            var response = await {resource}Service.Add{Resource}(model);
+            var response = await {resource}Service.Create{Resource}(model);
 
             asserts.EqualTo(response.Status, 200, "Validating response Status property");
             asserts.EqualTo(response.Ok, true, "Validating response OK property");
         }
 
         [Test]
-        public async Task Validate_Add{Resource}_Response_Content()
+        public async Task Validate_Create{Resource}_Response_Content()
         {
             var model = Create{Resource}();
 
-            var response = await {resource}Service.Add{Resource}(model);
-
-            var result = await {resource}Service.Deserialize(response);
-
-            asserts.EqualTo(result.Id, model.Id, "Validating response content Id property");
-            asserts.EqualTo(result.Name, model.Name, "Validating response content Name property");
-            asserts.EqualTo(result.Status, "available", "Validating response content Status property");
-        }
-
-        [Test]
-        public async Task Validate_Get{Resource}ById_Response_Content()
-        {
-            var model = await Add{Resource}ForTest();
-
-            var response = await {resource}Service.Get{Resource}ById(model.Id.Value);
+            var response = await {resource}Service.Create{Resource}(model);
 
             var result = await {resource}Service.Deserialize(response);
 
@@ -647,7 +957,7 @@ namespace {Company}.{Project}.Web.Tests.ApiTests
         [Test]
         public async Task Validate_Get{Resource}ById_NotFound_Response_Status()
         {
-            var response = await {resource}Service.Get{Resource}ById(0);
+            var response = await {resource}Service.Get{Resource}ById({Resource}ServiceFactory.Generate{ResourceKey}());
 
             // Spec: 404 (Not found).
             asserts.EqualTo(response.Ok, false, "Validating response OK property");
@@ -655,48 +965,27 @@ namespace {Company}.{Project}.Web.Tests.ApiTests
         }
 
         [Test]
-        public async Task Validate_Add{Resource}_EmptyBody_Response_Failure()
+        public async Task Validate_Create{Resource}_MalformedJson_Response_Failure()
         {
-            var response = await {resource}Service.Add{Resource}(string.Empty);
+            var response = await {resource}Service.Create{Resource}({Resource}ServiceFactory.CreateMalformed{Resource}Body());
 
             // Spec: 400 (Invalid input).
             asserts.EqualTo(response.Ok, false, "Validating response OK property");
             asserts.EqualTo(response.Status, 400, "Validating response Status property");
         }
 
-        [Test]
-        public async Task Validate_Add{Resource}_MalformedJson_Response_Failure()
-        {
-            var response = await {resource}Service.Add{Resource}("{ this is not valid json");
-
-            // Spec: 400 (Invalid input).
-            asserts.EqualTo(response.Ok, false, "Validating response OK property");
-            asserts.EqualTo(response.Status, 400, "Validating response Status property");
-        }
-
-        [Test]
-        public async Task Validate_Add{Resource}_InvalidFieldType_Response_Failure()
-        {
-            // id is int64 in the schema; a string violates the type.
-            var response = await {resource}Service.Add{Resource}("{\"id\":\"not-a-number\",\"name\":\"x\"}");
-
-            // Spec: 400 (Invalid input).
-            asserts.EqualTo(response.Ok, false, "Validating response OK property");
-            asserts.EqualTo(response.Status, 400, "Validating response Status property");
-        }
-
-        private async Task<{Resource}ServiceModel> Add{Resource}ForTest()
+        private async Task<{Resource}ServiceModel> Create{Resource}ForTest()
         {
             var model = Create{Resource}();
-            await {resource}Service.Add{Resource}(model);
+            await {resource}Service.Create{Resource}(model);
             return model;
         }
 
         private {Resource}ServiceModel Create{Resource}()
         {
-            var model = {Resource}Factory.Create{Resource}();
+            var model = {Resource}ServiceFactory.Create{Resource}();
 
-            created{Resource}Ids.Add(model.Id.Value);
+            created{ResourceKey}s.Add(model.{KeyProperty}.Value);
 
             return model;
         }
@@ -704,72 +993,295 @@ namespace {Company}.{Project}.Web.Tests.ApiTests
 }
 ```
 
-List-returning endpoints use `DeserializeList` and assert with
-`asserts.IsNotNull(result, ...)` + `asserts.IsTrue(result.All(x => ...), ...)` (add `using System.Linq;`).
+### Pattern B — server-assigned key (read it from the create response)
+
+The key exists only after create. Register it only when a cleanup operation exists; with no delete there
+is no `created{ResourceKey}s` list and no `CleanUp`.
+
+```csharp
+        [Test]
+        public async Task Validate_Create{Resource}_Response_Status()
+        {
+            var model = {Resource}ServiceFactory.Create{Resource}();
+
+            var response = await {resource}Service.Create{Resource}(model);
+
+            asserts.EqualTo(response.Status, 201, "Validating response Status property");
+            asserts.EqualTo(response.Ok, true, "Validating response OK property");
+        }
+
+        [Test]
+        public async Task Validate_Create{Resource}_Response_Content()
+        {
+            var model = {Resource}ServiceFactory.Create{Resource}();
+
+            var response = await {resource}Service.Create{Resource}(model);
+
+            var result = await {resource}Service.Deserialize(response);
+
+            asserts.IsNotNull(result.{KeyProperty}, "Validating response content {KeyProperty} property");
+            asserts.EqualTo(result.{Property}, model.{Property}, "Validating response content {Property} property");
+        }
+
+        [Test]
+        public async Task Validate_Create{Resource}_EmptyBody_Response_Failure()
+        {
+            var response = await {resource}Service.Create{Resource}({Resource}ServiceFactory.CreateEmpty{Resource}Body());
+
+            // Spec: 400 (Bad Request).
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 400, "Validating response Status property");
+
+            var error = await {resource}Service.DeserializeError(response);
+
+            asserts.IsNotNull(error.Code, "Validating error content Code property");
+        }
+
+        private async Task<{Resource}ServiceModel> Create{Resource}ForTest()
+        {
+            var response = await {resource}Service.Create{Resource}({Resource}ServiceFactory.Create{Resource}());
+            var created = await {resource}Service.Deserialize(response);
+
+            // Only when a cleanup operation exists: the key is assigned by the server.
+            created{ResourceKey}s.Add(created.{KeyProperty});
+
+            return created;
+        }
+```
+
+List- and page-returning operations deserialize their own model and assert with
+`asserts.IsNotNull(result, ...)` + `asserts.IsTrue(result.Entries.All(x => ...), ...)` (add `using System.Linq;`).
 
 ---
 
 ## Security
 
-The shipped reference targets an unauthenticated demo, so it sends no auth. For a real API:
-- `apiKey` (header) → add the header in the service options (like `Content-Type`), value from config.
-- `http bearer` (JWT) → `Headers["Authorization"] = $"Bearer {token}"`.
-- `oauth2` → obtain a token out of band; inject as bearer.
+Security is defined by the spec's standard fields — vendor extensions such as `x-secure` are informational
+only:
+- root-level `security` applies to every operation;
+- an operation's own `security` replaces the root requirement;
+- `security: []` on an operation means **no security** for that operation;
+- no `security` anywhere and no `securitySchemes` → **no auth code and no auth tests** (services are
+  created without headers).
 
-Add **negative auth tests** (missing/invalid credentials → 401/403) only when the target enforces auth. Ask
-the user whether the target enforces security before generating auth code — don't assume.
+When security is declared, ask the user whether the target enforces it and which environment variable
+holds each credential — don't assume.
+
+**How credentials reach a request:** never inside service methods. Build the header as a
+`Dictionary<string, string>` in `AuthorizationFactory` and pass it to the service constructor:
+
+| Scheme | Header |
+|---|---|
+| `http` `bearer`, `oauth2`, `openIdConnect` | `Authorization: Bearer {token}` (obtain oauth2/OIDC tokens out of band) |
+| `http` `basic` | `Authorization: Basic {base64(user:password)}` |
+| `apiKey` `in: header` | `{name from the spec}: {key}` |
+| `apiKey` `in: query` | appended to the endpoint by the service — report that it appears in logs and URLs |
+| `apiKey` `in: cookie` | `Cookie: {name}={key}` |
+
+When an operation accepts alternative schemes, use one valid scheme for the fixture's service.
+
+**Authorization factory** (`{Tests}\Factories\AuthorizationFactory.cs`, namespace
+`{Company}.{Project}.Web.Tests.Factories`) — stateless, one static method per credential variant, each
+building and returning a header dictionary. Secrets come from environment variables, never from source or
+`Configuration.json`; a missing variable throws with a clear message rather than silently sending a
+malformed header that could pass for the wrong reason.
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public static class AuthorizationFactory
+    {
+        private const string AuthorizationHeader = "Authorization";
+        private const string AccessTokenVariable = "{PROJECT}_ACCESS_TOKEN";
+
+        public static Dictionary<string, string> CreateValidTokenAuthorization()
+        {
+            var headers = new Dictionary<string, string>
+            {
+                { AuthorizationHeader, $"Bearer {GetAccessToken()}" }
+            };
+
+            return headers;
+        }
+
+        public static string GetAccessToken()
+        {
+            var accessToken = Environment.GetEnvironmentVariable(AccessTokenVariable);
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+                throw new InvalidOperationException($"Environment variable {AccessTokenVariable} is not available...");
+
+            return accessToken;
+        }
+    }
+}
+```
+
+**Using it in a test class:**
+
+```csharp
+{resource}Service = new {Resource}Service(logger, apiManager.GetRequest(), AuthorizationFactory.CreateValidTokenAuthorization());
+```
+
+**Negative auth tests** (only when the target enforces auth) go in the same `{Resource}ServiceTests` class
+as every other test for the resource — never a separate authorization fixture. Place them in their own
+`// authorization` section after the operation sections, before the private helpers:
+- **No access token** — one per secured operation (Test Matrix), through a local
+  `unauthorized{Resource}Service` created without headers. Make the request otherwise valid (create the
+  resource first with the authorized service when the operation needs one), so missing credentials are the
+  only reason to reject it. An operation accepting alternative schemes still gets exactly one test, sending
+  none of them.
+- **Header variants** — one representative write operation only: invalid token, missing token, missing
+  scheme, wrong scheme, wrong header name, empty value. One factory method per variant; "no header at all"
+  is a service created without headers.
+- **Insufficient permission** — only when 403 is declared and the user supplies a lower-privilege
+  credential; otherwise skip and report.
+- Name them `Validate_{Operation}_{Variant}_Response_Status`; assert the exact expected code (typically
+  401). If the spec does not declare it, still assert it, and report the spec gap.
+- Don't generate a valid-token positive test — the fixture's service is already built with valid
+  credentials, so every happy-path test covers it.
+- Cleanup goes through the fixture's authorized service. Register every created key, including from
+  requests that should have been rejected — a non-enforcing server creates the resource anyway.
+- A variant that puts the real credential under a header name other than `Authorization` is logged in
+  clear text by `BaseService`; set `IncludeRequestHeadersLogging = false` on that test's service.
+- Variants with no single expected code (e.g. whitespace around the scheme or token) are not generated;
+  say so in the report.
+
+```csharp
+        // authorization
+
+        [Test]
+        public async Task Validate_Create{Resource}_MissingAuthorization_Response_Status()
+        {
+            var unauthorized{Resource}Service = new {Resource}Service(logger, apiManager.GetRequest());
+            var model = Create{Resource}();
+
+            var response = await unauthorized{Resource}Service.Create{Resource}(model);
+
+            // Expected: 401 (Unauthorized) - no credentials. Not declared in the spec.
+            asserts.EqualTo(response.Ok, false, "Validating response OK property");
+            asserts.EqualTo(response.Status, 401, "Validating response Status property");
+        }
+```
 
 ---
 
-## Operations to Skip (and say so)
+## Operations and Situations to Skip (and say so)
 
-- **Binary upload/download** (`application/octet-stream`, `multipart/form-data` file bodies, e.g. `uploadFile`)
-  — doesn't fit the JSON-service pattern. Skip by default; mention it and offer a bespoke method if wanted.
-- **Callbacks / webhooks** — inbound to the API, not client-callable; no test.
-- **Non-JSON-only responses** (`text/plain`, XML-only) — generate the call + status test, skip JSON content
-  assertions, note the limitation.
+| Skip | Reason to report |
+|---|---|
+| Binary upload/download (`application/octet-stream`, `multipart/form-data` file bodies) | Doesn't fit the JSON-service pattern; offer a bespoke method if wanted |
+| Non-JSON-only request bodies (`application/x-www-form-urlencoded`, XML-only) | `BaseService` sends JSON; generate the call only if a JSON alternative exists |
+| Non-JSON-only responses (`text/plain`, XML-only) | Generate the call + status test; no content assertions |
+| Callbacks / webhooks | Inbound to the API, not client-callable |
+| PATCH operations | `BaseService` has no PATCH helper yet |
+| Situations whose condition is not met | Name the missing spec element (see Test Matrix) |
+| Tests needing an existing resource when there is no create operation | "no create operation" |
+| Cleanup when there is no delete operation | "test data is not removed" |
+| 5xx, `default`, prose-only rules | Not testable from the spec's machine-readable contract |
 
 ---
 
-## Reporting (Step 6)
+## Spec Defects to Report
+
+Check during analysis and list them in the report. **Blocking** defects stop generation of the affected
+tests until the user decides how to proceed.
+
+| Defect | Blocking? |
+|---|---|
+| A `required` property that is not defined in `properties` (including through `allOf`) | Yes — no valid body can be built |
+| An unresolvable `$ref` | Yes |
+| Relative or missing server URL with no `ApiBaseUrl` | Yes |
+| Key is required in the request but described as server-assigned | Yes — ask who assigns it |
+| Operations using tags not declared in `tags` | No |
+| A key-taking operation with no 404, or a write with no 400 | No — report as a spec gap |
+| 401/403 described in prose but not declared on secured operations | No — report as a spec gap |
+| Field names in prose that differ from the schema (e.g. `errorCode` vs `code`) | No |
+| Patterns that are not anchored (`[0-9]{1,4}` instead of `^[0-9]{1,4}$`) | No — note that they accept almost anything |
+| Contradictory constraints (e.g. `minLength: 0` with a pattern needing one character) | No |
+| Examples that violate their own schema (e.g. a numeric example on a string) | No |
+| Read operations using POST, or 409 declared on operations that create nothing | No |
+| Inconsistent trailing slashes across paths | No |
+
+---
+
+## Reporting (Step 7)
 
 After generating, report plainly:
 - The saved file paths (verified on disk).
-- The coverage table (operation × status/content/negative).
+- The resource profile: base URL, key (type, who assigns it), lifecycle operations present and missing,
+  cleanup method, security.
+- The coverage table: operation × situation, ✓ for generated and the reason for every skipped situation.
+- The spec defects found, blocking ones first.
 - That the code was **not compiled or run** — recommend a local build + a single run of the new test class.
-- Where assertions are **loose on purpose**, and any test likely to fail for server-behavior reasons rather
-  than a real defect (e.g. a demo returning 200 for an unknown enum value or a delete of a non-existent id).
-- Any operation skipped and why.
+- Any test likely to fail for server-behavior reasons rather than a real defect (e.g. a demo server that
+  doesn't validate or enforce auth), and where assertions rely on routing-based codes.
+- Prose-only rules that are not tested, and any operation skipped and why.
 
 ---
 
 ## Common Mistakes to Avoid
 
+- Inventing what the spec doesn't define — an operation, a status code, an id format, a cleanup step, a
+  field. Undefined means skipped and reported.
+- Assuming every resource has numeric client-assigned ids, a create and a delete — derive the key, its type
+  and who assigns it from the spec, and skip what is missing.
+- Asserting 200 for every success — assert the declared 2xx (`201` for many creates, `204` for no-content
+  operations).
+- Registering a server-assigned key before create — read it from the create response.
+- Generating cleanup without a delete (or user-named cleanup) operation.
+- Reusing a response model as the request body when the spec defines separate schemas.
+- Modelling `allOf` as inheritance or ignoring its members — flatten it into one class with the union of
+  `required` lists.
+- Guessing a base URL — resolve a relative server URL against `ApiBaseUrl`, or ask.
 - Guessing namespaces — always derive from `Configuration.json`, sanity-check against shipped source.
 - Hardcoding the root namespace instead of `{Company}.{Project}`.
 - Adding `[Order]` attributes or otherwise coupling tests to execution order.
 - Tests that depend on another test having created data — each test sets up its own state.
-- Putting cleanup/id-tracking in the factory — the factory is stateless; the test class tracks created ids.
-- Building models inline in the test class (e.g. a `private static Create{Resource}()` constructing the
-  model with `new`) instead of generating a `{Resource}Factory` — model construction always lives in the
-  factory class under `{Tests}\Factories\`; the test class only keeps the thin wrapper that calls the
-  factory and registers the created id for cleanup.
+- Putting cleanup/key-tracking in the factory — the factory is stateless; the test class tracks created keys.
+- Building models inline in the test class instead of the `{Resource}ServiceFactory`.
+- Naming the factory `{Resource}Factory` — service model factories are always `{Resource}ServiceFactory`.
+- Splitting a resource's tests across several fixtures (e.g. a separate `{Resource}ServiceAuthorizationTests`
+  class) — one resource, one `{Resource}ServiceTests` file; authorization tests are a section inside it.
+- Class-level `const` / `static readonly` / fields in a service model factory — every factory method is
+  self-contained and holds its values inline.
+- Raw request bodies or invalid parameter values as literals in a test method — they come from named
+  factory variants.
+- Filling pattern-constrained properties with values you haven't checked against the pattern.
+- Generating dozens of invalid-value tests unasked — above 8 constrained inputs per operation, propose a
+  selection and let the user trim.
 - Naming the cleanup method `FinalizeTest` (collides with the base fixture) — use a distinct name like `CleanUp`.
-- Calling NUnit `Assert.That` directly in tests — always use the framework `asserts` class (with a `"Validating ..."` message) so results are logged; extend `Asserts.cs` if a method is missing.
-- Forgetting `baseService = {resource}Service;` in `[OneTimeSetUp]` — without it the base teardown cannot log request/response bodies on failure.
-- Omitting the `logger.Info("// Cleanup Testcase")` header in the cleanup `[TearDown]` — cleanup calls blur into the test steps in the log.
-- Using `asserts.IsAnyOf` for status codes — every test asserts the single exact expected code with `asserts.EqualTo` and a comment naming it.
-- Marking an API test `[Ignore]` — API tests are never ignored; a spec/implementation divergence stays red as the finding to raise with the developers.
-- Fixed/shared resource ids — use `Generate{Resource}Id()` random ids to avoid collisions and enable parallelism.
+- Calling NUnit `Assert.That` directly in tests — always use the framework `asserts` class.
+- Omitting the `logger.Info("// Cleanup Testcase")` header in the cleanup `[TearDown]`.
+- Asserting a tolerant set of status codes (e.g. an `IsAnyOf`-style helper) — every test asserts the single
+  exact expected code with `asserts.EqualTo` and a comment naming it.
+- Marking an API test `[Ignore]` — a spec/implementation divergence stays red as the finding to raise.
+- Fixed/shared keys such as `0` — use `Generate{ResourceKey}()`.
+- Naming key identifiers with the generic word "Key" (`GeneratePetKey()`, `createdPetKeys`, a `key`
+  parameter) — name them after the key itself (`GeneratePetId()`, `createdPetIds`, `id`).
+- Generating a not-found test without a declared 404, or a conflict test without a determinable duplicate.
+- Treating a vendor extension (`x-secure`) as the security definition — use `security` and
+  `securitySchemes`.
+- Putting every authorization test on one operation — each secured operation gets its own no-access-token
+  test; only the header variants stay on one operation.
+- Testing rules stated only in prose — list them as untested instead.
 - Hand-rolling HTTP or JSON instead of `BaseService` helpers.
-- Missing the raw-string / raw-id overloads that malformed-input and invalid-id tests depend on.
-- Omitting the per-operation missing-required-input test, or faking a "missing" query parameter by sending
-  an empty value instead of omitting the parameter entirely (add a parameterless service overload).
-- Loosening a missing-required-fields assertion to make a non-validating server pass — keep it strict on
-  the spec code and let it fail; the red test is the record of the server's non-conformance.
-- Generating a service for a binary upload/download operation — skip it and say so.
+- Setting `Content-Type: application/json` in service methods — `BaseService` already adds it.
+- Missing the raw overloads that malformed-input, invalid-key and missing-parameter tests depend on, or
+  faking a missing query parameter by sending an empty value.
+- Loosening an assertion to make a non-conforming server pass.
 - Non-nullable model value types (e.g. `long` instead of `long?`) causing false-positive content assertions.
-- Generating the whole spec without confirming scope — a large spec is a lot of code; confirm the resource(s) first.
-- Only presenting files as chat output, or writing to a sandbox, instead of saving to the solution with `Filesystem:write_file` and verifying they landed on disk.
+- Model properties without `JsonIgnore(WhenWritingNull)` — unset properties are then sent as `null`, so a
+  "required fields only" request silently carries every optional property.
+- Registering a server-assigned key with `.Value` before asserting it is present — assert `IsNotNull` first,
+  then register, so a missing key fails on the assertion instead of throwing.
+- Generating a required-fields-only test for an update operation, or asserting values of omitted optional
+  properties that have no declared `default`.
+- Generating the whole spec without confirming scope.
+- Only presenting files as chat output, or writing to a sandbox, instead of saving to the solution with
+  `Filesystem:write_file` and verifying they landed on disk.
 - Writing into `bin\` or `obj\`.
 - Claiming the code compiles/passes — you have not built or run it; say so and recommend a local build + run.

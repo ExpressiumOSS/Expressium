@@ -7,11 +7,10 @@ namespace $Namespace$.Controls
     {
         protected IPage page;
         protected ILocator locator;
-        protected ILocator childLocator;
 
-        public WebControl(IPage driver, ILocator locator)
+        public WebControl(IPage page, ILocator locator)
         {
-            this.page = driver;
+            this.page = page;
             this.locator = locator;
         }
 
@@ -23,6 +22,11 @@ namespace $Namespace$.Controls
         public async Task WaitForPageElementIsEnabled()
         {
             await locator.WaitForElementIsEnabled();
+        }
+
+        public async Task WaitForPageElementText(string text)
+        {
+            await locator.WaitForElementText(text);
         }
 
         public async Task<bool> IsVisible()

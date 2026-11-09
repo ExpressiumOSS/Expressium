@@ -60,22 +60,22 @@ namespace $Namespace$.Pages
 
         protected async Task WaitForPageTitleEquals(string title)
         {
-            await page.WaitForFunctionAsync($"() => document.title === '{title}'");
+            await page.WaitForFunctionAsync("title => document.title === title", title);
         }
 
         protected async Task WaitForPageTitleContains(string title)
         {
-            await page.WaitForFunctionAsync($"() => document.title.includes('{title}')");
+            await page.WaitForFunctionAsync("title => document.title.includes(title)", title);
         }
 
         protected async Task WaitForPageUrlEquals(string urlPath)
         {
-            await page.WaitForFunctionAsync($"() => window.location.pathname === '{urlPath}'");
+            await page.WaitForFunctionAsync("urlPath => window.location.pathname === urlPath", urlPath);
         }
 
         protected async Task WaitForPageUrlContains(string urlPath)
         {
-            await page.WaitForFunctionAsync($"() => window.location.pathname.includes('{urlPath}')");
+            await page.WaitForFunctionAsync("urlPath => window.location.pathname.includes(urlPath)", urlPath);
         }
 
         protected async Task WaitForPageElementIsVisible(WebControl control)
@@ -118,12 +118,67 @@ namespace $Namespace$.Pages
             await page.EvaluateAsync("window.scrollTo(0, document.body.scrollHeight);");
         }
 
-        public void SwitchToAlertAccept()
+        public async Task<string> AcceptNextDialog(Func<Task> action, string promptText = null)
         {
+            logger.Info("AcceptNextDialog()");
+            return await HandleNextDialog(action, dialog => dialog.AcceptAsync(promptText));
         }
 
-        public void SwitchToAlertDismiss()
+        public async Task<string> DismissNextDialog(Func<Task> action)
         {
+            logger.Info("DismissNextDialog()");
+            return await HandleNextDialog(action, dialog => dialog.DismissAsync());
+        }
+
+        private async Task<string> HandleNextDialog(Func<Task> action, Func<IDialog, Task> handling)
+        {
+            var completion = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            void Handler(object sender, IDialog dialog)
+            {
+                page.Dialog -= Handler;
+                logger.Info($"Dialog [{dialog.Type}] with message [{dialog.Message}]");
+                handling(dialog).ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                        completion.TrySetException(task.Exception.InnerExceptions);
+                    else
+                        completion.TrySetResult(dialog.Message);
+                });
+            }
+
+            page.Dialog += Handler;
+
+            try
+            {
+                await action();
+            }
+            catch
+            {
+                page.Dialog -= Handler;
+                throw;
+            }
+
+            var completed = await Task.WhenAny(completion.Task, Task.Delay(PageReadyStateTimeout));
+            if (completed != completion.Task)
+            {
+                page.Dialog -= Handler;
+                throw new TimeoutException($"No dialog was raised within {PageReadyStateTimeout} ms...");
+            }
+
+            return await completion.Task;
+        }
+
+        public async Task<IPage> OpenInNewTab(Func<Task> action)
+        {
+            logger.Info("OpenInNewTab()");
+
+            var newPage = await page.Context.RunAndWaitForPageAsync(action, new() { Timeout = PageReadyStateTimeout });
+            await newPage.WaitForLoadStateAsync(LoadState.DOMContentLoaded, new() { Timeout = PageReadyStateTimeout });
+            await newPage.BringToFrontAsync();
+
+            logger.Info($"New tab opened [{newPage.Url}]");
+            return newPage;
         }
 
         public int GetNumberOfBrowserTabs()
@@ -131,14 +186,6 @@ namespace $Namespace$.Pages
             int count = page.Context.Pages.Count;
             logger.Info($"GetNumberOfBrowserTabs() [{count}]");
             return count;
-        }
-
-        public void WaitForNewBrowserTabIsOpened(int currentTabCount)
-        {
-        }
-
-        public void SelectBrowserTab(int index)
-        {
         }
     }
 }

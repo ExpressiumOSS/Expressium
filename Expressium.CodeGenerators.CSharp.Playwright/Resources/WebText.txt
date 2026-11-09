@@ -15,5 +15,11 @@ namespace $Namespace$.Controls
             await locator.HighlightValidation(page);
             return await locator.InnerTextAsync();
         }
+
+        public async Task WaitForElementText(string text)
+        {
+            await locator.WaitForElementIsVisible();
+            await locator.WaitForElementText(text);
+        }
     }
 }

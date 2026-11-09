@@ -74,11 +74,11 @@ namespace $Namespace$.Pages
             return await baseControl.GetCellText(rowId, columnId);
         }
 
-        //public virtual async Task<string> GetCellText(string cellText)
-        //{
-        //    logger.Info($"GetCellText({cellText})");
-        //    return await baseControl.GetCellText(cellText);
-        //}
+        public virtual async Task<string> GetCellText(string cellText)
+        {
+            logger.Info($"GetCellText({cellText})");
+            return await baseControl.GetCellText(cellText);
+        }
 
         public virtual async Task ClickContextMenu(object rowId, object columnId, string menuEntry)
         {

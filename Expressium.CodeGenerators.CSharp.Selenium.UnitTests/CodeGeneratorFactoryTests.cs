@@ -70,7 +70,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var listOfLines = codeGeneratorFactory.GenerateClass(page);
 
             Assert.That(listOfLines.Count, Is.EqualTo(1), "codeGeneratorFactoryCSharp GenerateClass validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public class RegistrationPageModelFactory"), "codeGeneratorFactoryCSharp GenerateClass validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public class RegistrationPageFactory"), "codeGeneratorFactoryCSharp GenerateClass validation");
         }
 
         [Test]

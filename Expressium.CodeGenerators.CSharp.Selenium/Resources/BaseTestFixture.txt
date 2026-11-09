@@ -103,9 +103,7 @@ namespace $Namespace$.Tests.Infrastructure
                 statusCode = "Testcase was successfully executed...";
 
             logger.Info(statusCode + "\r\n");
-
-            if (configuration.Loggings)
-                logger.Logger.Repository.Shutdown();
+            logger.Logger.Repository.Shutdown();
         }
 
         [SetUp]

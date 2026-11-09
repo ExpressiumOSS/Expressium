@@ -37,7 +37,7 @@ namespace $Namespace$.Tests.Infrastructure
             });
         }
 
-        public async Task Quit()
+        public async Task Close()
         {
             if (request != null)
             {

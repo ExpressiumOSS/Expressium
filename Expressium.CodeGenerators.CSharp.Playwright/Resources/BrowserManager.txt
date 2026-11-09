@@ -27,7 +27,7 @@ namespace $Namespace$.Tests.Infrastructure
             return page;
         }
 
-        public async Task Quit()
+        public async Task Close()
         {
             if (page != null)
             {

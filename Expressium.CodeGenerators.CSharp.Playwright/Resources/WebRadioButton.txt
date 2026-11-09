@@ -1,4 +1,5 @@
 using Microsoft.Playwright;
+using System;
 using System.Threading.Tasks;
 
 namespace $Namespace$.Controls
@@ -11,13 +12,17 @@ namespace $Namespace$.Controls
 
         public virtual async Task SetSelected(bool value)
         {
-            if ((await locator.IsCheckedAsync() == false && value) || (await locator.IsCheckedAsync() == true && !value))
-            {
-                await locator.WaitForElementIsVisible();
-                await locator.HighlightAction(page);
-                await locator.HighlightClear(page);
-                await locator.ClickAsync();
-            }
+            await locator.WaitForElementIsVisible();
+
+            if (await locator.IsCheckedAsync() == value)
+                return;
+
+            if (!value)
+                return;
+
+            await locator.HighlightAction(page);
+            await locator.HighlightClear(page);
+            await locator.CheckAsync();
         }
 
         public virtual async Task<bool> GetSelected()

@@ -1,8 +1,7 @@
 ﻿using log4net;
 using NUnit.Framework;
-using System;
 
-namespace $Namespace$.Tests
+namespace $Namespace$.Tests.Infrastructure
 {
     public class Asserts
     {
@@ -24,6 +23,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [{expected}] but was [{actual}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be equal [{expected}] but was [{actual}] - FAILED");
             }
         }
@@ -39,6 +41,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [True] but was [False] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be equal [True] but was [False] - FAILED");
             }
         }
@@ -54,6 +59,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [False] but was [True] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be equal [False] but was [True] - FAILED");
             }
         }
@@ -69,6 +77,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be equal [Null] but was [{actual}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be equal [Null] but was [{actual}] - FAILED");
             }
         }
@@ -84,6 +95,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be different from [Null] but was [Null] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be different from [Null] but was [Null] - FAILED");
             }
         }
@@ -99,6 +113,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be different from [Empty] but was [Empty] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be different from [Empty] but was [Empty] - FAILED");
             }
         }
@@ -114,6 +131,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be greater than [{expected}] but was [{actual}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be greater than [{expected}] but was [{actual}] - FAILED");
             }
         }
@@ -129,6 +149,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to be less than [{expected}] but was [{actual}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to be less than [{expected}] but was [{actual}] - FAILED");
             }
         }
@@ -146,6 +169,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to contain [{expected}] in [{actualTruncated}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to contain [{expected}] in [{actualTruncated}] - FAILED");
             }
         }
@@ -163,6 +189,9 @@ namespace $Namespace$.Tests
             }
             catch (AssertionException)
             {
+                logger.Info($"{message}");
+                logger.Info($"Expected to not contain [{expected}] in [{actualTruncated}] - FAILED");
+
                 throw new AssertionException($"{message}\nExpected to not contain [{expected}] in [{actualTruncated}] - FAILED");
             }
         }

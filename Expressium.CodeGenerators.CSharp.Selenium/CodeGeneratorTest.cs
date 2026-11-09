@@ -123,7 +123,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
 
             if (page.Model)
             {
-                listOfLines.Add($"private {page.Name}Model {page.Name.CamelCase()}Model = {page.Name}ModelFactory.Default();");
+                listOfLines.Add($"private {page.Name}Model {page.Name.CamelCase()}Model = {page.Name}Factory.Default();");
             }
             else
             {

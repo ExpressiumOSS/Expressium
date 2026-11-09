@@ -34,7 +34,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateSourceCode(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(44), "CodeGeneratorPageCSharp GenerateSourceCode validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(41), "CodeGeneratorPageCSharp GenerateSourceCode validation");
         }
 
         [Test]
@@ -69,8 +69,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateMembers(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(2), "CodeGeneratorPageCSharp GenerateMembers validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public MainMenuBar Menu { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(0), "CodeGeneratorPageCSharp GenerateMembers validation");
+            //Assert.That(listOfLines[0], Is.EqualTo("public MainMenuBar Menu { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
         }
 
         [Test]
@@ -81,9 +81,9 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
 
             var listOfLines = codeGeneratorPage.GenerateMembers(tabelPage);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorPageCSharp GenerateMembers validation");
-            Assert.That(listOfLines[0], Is.EqualTo("public MainMenuBar Menu { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
-            Assert.That(listOfLines[1], Is.EqualTo("public BaseTable Grid { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(2), "CodeGeneratorPageCSharp GenerateMembers validation");
+            //Assert.That(listOfLines[0], Is.EqualTo("public MainMenuBar Menu { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
+            Assert.That(listOfLines[0], Is.EqualTo("public BaseTable Grid { get; private set; }"), "CodeGeneratorPageCSharp GenerateMembers validation");
         }
 
         [Test]
@@ -100,10 +100,10 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
         {
             var listOfLines = codeGeneratorPage.GenerateContructor(page);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(7), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(6), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IWebDriver driver) : base(logger, driver)"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, driver);"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[4], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            //Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, driver);"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[3], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 
         [Test]
@@ -114,11 +114,11 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
 
             var listOfLines = codeGeneratorPage.GenerateContructor(tabelPage);
 
-            Assert.That(listOfLines.Count, Is.EqualTo(8), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines.Count, Is.EqualTo(7), "CodeGeneratorPageCSharp GenerateContructor validation");
             Assert.That(listOfLines[0], Is.EqualTo("public LoginPage(ILog logger, IWebDriver driver) : base(logger, driver)"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, driver);"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[3], Is.EqualTo("Grid = new BaseTable(logger, driver, By.Id(\"products\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
-            Assert.That(listOfLines[5], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            //Assert.That(listOfLines[2], Is.EqualTo("Menu = new MainMenuBar(logger, driver);"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[2], Is.EqualTo("Grid = new BaseTable(logger, driver, By.Id(\"products\"));"), "CodeGeneratorPageCSharp GenerateContructor validation");
+            Assert.That(listOfLines[4], Is.EqualTo("WaitForPageTitleEquals(\"Home\");"), "CodeGeneratorPageCSharp GenerateContructor validation");
         }
 
         [Test]

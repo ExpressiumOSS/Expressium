@@ -4,6 +4,7 @@ using log4net.Config;
 using log4net.Core;
 using log4net.Layout;
 using log4net.Layout.Pattern;
+using System;
 using System.IO;
 
 namespace $Namespace$.Tests.Infrastructure
@@ -12,7 +13,8 @@ namespace $Namespace$.Tests.Infrastructure
     {
         public static ILog Initialize(string name, string filePath = null)
         {
-            var repository = LoggerManager.CreateRepository(name);
+            var repositoryName = $"{name}-{Guid.NewGuid():N}";
+            var repository = LoggerManager.CreateRepository(repositoryName);
 
             var patternLayout = new PatternLayout();
             patternLayout.AddConverter("shortType", typeof(ShortTypePatternConverter));
@@ -42,7 +44,7 @@ namespace $Namespace$.Tests.Infrastructure
                 BasicConfigurator.Configure(repository, rollingFileAppender, consoleAppender);
             }
 
-            return LogManager.GetLogger(name, name);
+            return LogManager.GetLogger(repositoryName, name);
         }
 
         private class ShortTypePatternConverter : PatternLayoutConverter

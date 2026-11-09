@@ -106,7 +106,7 @@ namespace $Namespace$.Tests.Infrastructure
                 if (configuration.Videos)
                     videoPath = await page.Video.PathAsync();
 
-                await browserManager.Quit();
+                await browserManager.Close();
 
                 if (configuration.Videos)
                 {
@@ -116,7 +116,7 @@ namespace $Namespace$.Tests.Infrastructure
             }
 
             if (apiManager.Initialized)
-                await apiManager.Quit();
+                await apiManager.Close();
 
             LogMessageAsError(GetTestResultMessage());
             LogMessageAsDebug(GetTestResultStackTrace());
@@ -140,9 +140,7 @@ namespace $Namespace$.Tests.Infrastructure
             }
 
             logger.Info(statusCode + "\r\n");
-
-            if (configuration.Loggings)
-                logger.Logger.Repository.Shutdown();
+            logger.Logger.Repository.Shutdown();
         }
 
         [SetUp]

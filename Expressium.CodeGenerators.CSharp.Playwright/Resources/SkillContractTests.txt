@@ -1,0 +1,903 @@
+---
+name: expressium-contract-tests
+description: >
+  Use this skill whenever generating API contract tests as BDD (Gherkin/Reqnroll) feature files from an
+  OpenAPI (Swagger) specification for any Expressium-based test automation project. Triggers include: any
+  request for "contract tests", "API BDD tests", "BDD tests from a spec", "feature files per operation",
+  "feature file per path / operationId", or pointing at a .yaml/.json/.yml OpenAPI spec and asking for BDD,
+  Gherkin, Reqnroll or contract coverage. Always read this skill before generating any {OperationId}.feature,
+  {Resource}Steps.cs, or the Service, Model and Factory files they use — it defines the folder layout (one
+  feature per operation, plus one Authenticate{Resource}.feature), the complete scenario matrix, the step rules
+  and the code templates.
+---
+
+# Expressium Contract Tests Skill
+
+Generates **API contract tests as BDD scenarios** from any OpenAPI 3.x specification, for any project built on
+the Expressium framework. Scenarios run real HTTP against a running server; each one verifies one element of
+the spec, and every situation the spec supports becomes a scenario.
+
+Always follow this skill — never use existing project files as a pattern source.
+
+| Artifact | Location |
+|---|---|
+| Models — one class per schema the resource uses | `{Web}\Models\{Resource}ServiceModel.cs` |
+| Service — one method per operation plus raw overloads | `{Web}\Services\{Resource}Service.cs` |
+| Model factory — valid models and named invalid variants | `{Tests}\Factories\{Resource}ServiceFactory.cs` |
+| Authorization factory — builds the credential headers (only with security) | `{Tests}\Factories\AuthorizationFactory.cs` |
+| One feature per operation | `{Tests}\BusinessTests\Features\{ServiceName}\{OperationId}.feature` |
+| One authentication feature per secured resource | `{Tests}\BusinessTests\Features\{ServiceName}\Authenticate{Resource}.feature` |
+| One steps class per resource | `{Tests}\BusinessTests\Steps\{Resource}Steps.cs` |
+
+When a Service, Model or Factory already exists for the resource, extend it with what is missing — never
+replace it. Never write or edit `*.feature.cs` (the build generates it).
+
+---
+
+## Core Principles
+
+1. **The spec is the contract.** Every scenario traces to a spec element — an operation, a declared response
+   code, a `required` list, a constraint, a `security` requirement.
+2. **Undefined means skipped, not guessed.** Never invent an operation, a code, an id format or a field. Every
+   skipped situation is reported with its reason.
+3. **Complete coverage, no cap.** Every situation of the Test Matrix the spec supports gets its own scenario.
+4. **One exact expected code, never loosened.** Codes come from the spec; the only exception is a routing
+   result (omitted path segment → 405/404). When the server diverges, the scenario goes red — that is the
+   finding. Never use `@Ignore` to make the suite green.
+5. **No cleanup.** Scenarios create the data they need and leave it: no key tracking, no `[AfterScenario]`
+   hook, no delete calls outside the delete scenarios.
+
+---
+
+## Project Identity and Layout
+
+Read `<root>\{Company}.{Project}.Web.Tests\Configuration.json` before writing any file. `Profiles.Development`
+gives `Company`, `Project` and `ApiBaseUrl`. Namespaces: `{Company}.{Project}.Web.Services`, `.Web.Models`,
+`.Web.Tests.Factories`, `.Web.Tests.BusinessTests.Steps`. If an existing `*Service.cs` / `*Steps.cs` disagrees,
+prefer the shipped source and tell the user.
+
+```
+<root>\
+├── {Company}.{Project}.Web\
+│   ├── Services\        ← {Resource}Service.cs; BaseService.cs (do not modify)
+│   ├── Models\          ← {Resource}ServiceModel.cs
+│   └── Specs\           ← INPUT: OpenApiSpec{ServiceName}.json / .yaml
+└── {Company}.{Project}.Web.Tests\
+    ├── BusinessTests\
+    │   ├── Features\{ServiceName}\   ← {OperationId}.feature (flat, no sub-folders)
+    │   ├── Steps\                    ← {Resource}Steps.cs; BaseSteps.cs, BaseContext.cs (do not modify)
+    │   └── Hooks\                    ← BaseHooks.cs (do not modify)
+    ├── Factories\        ← factories; Randomizer.cs (do not modify)
+    ├── Infrastructure\   ← Asserts.cs (extend-only); ApiManager, BaseTestFixture (do not modify)
+    └── Configuration.json
+```
+
+Confirm folder names with `Filesystem:directory_tree` before deriving paths.
+
+### Names
+
+| Name | Rule | Petstore example |
+|---|---|---|
+| `{ServiceName}` | Suffix of the spec file `OpenApiSpec{ServiceName}.*`; otherwise propose one from `info.title` and confirm | `Petstore` |
+| `{Resource}` | Singular PascalCase of the operation's first tag (else first path segment). Long, undeclared or missing tags → propose a name (usually the main schema) and confirm | `Pet` |
+| `{OperationId}` | PascalCase of `operationId` (derive from method + path when missing) | `AddPet` |
+| `{domain}` | Noun for where resources are added/removed (`… to the {domain}`). Derive from `info`, confirm in the planning table | `store` |
+| `{collection}` | Noun for the searchable set (`the {resource} {collection}`). Derive and confirm the same way | `catalogue` |
+| `{ResourceKey}` | PascalCase key property, prefixed with `{Resource}` unless it already starts with it — never the word "Key" | `PetId` |
+| `{keyName}` / `{KeyProperty}` | camelCase key name for parameters / the C# model property | `id` / `Id` |
+| `{KeyType}` | `long` for int64 keys, `string` for uuid/string keys | `long` |
+
+Feature: `Feature: {OperationId}`, tag `@{OperationId}`. Authentication feature: `Feature: Authenticate{Resource}`,
+tag `@Authenticate{Resource}`. Classes: `{Resource}Steps`, `{Resource}Service`, `{Resource}ServiceFactory`.
+
+---
+
+## Workflow
+
+1. **Read `Configuration.json`** → namespaces, paths, `ApiBaseUrl`.
+2. **Explore the solution tree** → existing Services, Models, Factories, Steps, and every `.feature` file
+   (recursively, for TC numbering).
+3. **Analyse the spec** → one resource profile per resource (see Spec Analysis).
+4. **Ask before generating** when: the base URL can't be resolved; security is declared and you don't know
+   whether it's enforced or which environment variable holds the credential; the scope is unclear;
+   `{ServiceName}`, `{domain}` or `{collection}` is unclear; who assigns the key is unclear; a blocking spec
+   defect exists.
+5. **Show the planning table** and let the user confirm or trim.
+6. **Generate**, per resource: Models → Service → Factory → AuthorizationFactory → one feature per
+   operation → `Authenticate{Resource}.feature` → Steps.
+7. **Verify and report.**
+
+**File writing:** save with `Filesystem:write_file` and verify each file landed; derive paths from
+`directory_tree`; never write to `bin\` or `obj\`; skip files that already have the correct content. When
+restructuring, **move** feature files together with their `.feature.cs` and tell the user which leftovers to
+delete — stale code-behind runs scenarios twice.
+
+---
+
+## Spec Analysis
+
+Record per resource: base URL, operations (`operationId`, `summary`, parameters, body, responses, security,
+`deprecated`), schemas, resource key, lifecycle, security, declared 4xx codes, spec defects.
+
+**Base URL.** Absolute `servers[0].url` → `BaseUrl` constant. Relative → relative endpoints when `ApiBaseUrl`
+points at this API, otherwise ask for the host and use an absolute `BaseUrl`. No `servers` → ask.
+
+**Lifecycle.** Create = POST to a collection returning the resource. Read = GET item, or a search/list (GET
+with query parameters or POST to a `/search`-style path). Update = PUT on an item or on the collection with
+the key in the body. Delete = DELETE item. Action = anything else, tested as an ordinary operation.
+
+**Resource key.** The item path parameter, else the identifying property of the create response. Type from the
+schema. **Client-assigned** when the create schema contains it and it is not `readOnly` (factory generates it);
+**server-assigned** when absent or `readOnly` (steps read it from the create response and store it). A resource
+without a key gets no key-based scenarios.
+
+**No create operation** → scenarios needing an existing resource are skipped, unless the user supplies known
+test data (use it, never modify it). Scenarios needing no existing resource are still generated.
+
+**Out of scope — skip, report, and ask the user if it matters:** 5xx and `default` responses, prose-only rules,
+binary or multipart bodies, non-JSON-only bodies, callbacks, PATCH (no `BaseService` helper), `oneOf`/`anyOf`
+beyond their common properties, and any security scheme other than bearer/OAuth2/OIDC or an apiKey header.
+Non-JSON-only responses get a status scenario but no content step.
+
+---
+
+## Models
+
+| OpenAPI | Generates |
+|---|---|
+| tag | one resource = Service + Factory + Steps class + one feature per operation |
+| path + method | one service method (from `operationId`) and one feature |
+| JSON `requestBody` | typed overload (`DataObject`) + raw-string overload (`DataString`) |
+| schema | one model class |
+
+**Naming.** The resource schema → `{Resource}ServiceModel`. Other schemas → `{Schema}Model`, prefixed with the
+resource when generic (`Category` → `PetCategoryModel`, `Error` → `{Resource}ErrorModel`). Inline schemas →
+`{Operation}RequestModel` / `{Operation}ResponseModel`. Keep request and response models separate when the spec
+separates them. All models of a resource go in one file; include every referenced schema, transitively.
+
+**Composition.** `allOf` → one flattened class; `required` is the union of the members' lists.
+`additionalProperties` → `Dictionary<string, T>`.
+
+**Types.** `int64` / integer without format → `long?`; `int32` → `int?`; `number` → `double?`;
+`boolean` → `bool?`; every `string` (uuid, date, enum…) → `string`; `array` → `List<T>`; object → nested model.
+Every resource model also carries `[JsonExtensionData] public Dictionary<string, object> AdditionalProperties` (null by default) so the unknown-property scenario can express an undeclared property. Every property is nullable and carries `JsonIgnore(WhenWritingNull)` so unset properties are omitted from the
+body — the required-fields-only and missing-required-fields scenarios depend on it.
+
+```csharp
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
+namespace {Company}.{Project}.Web.Models
+{
+    public class {Resource}ServiceModel
+    {
+        [JsonPropertyName("id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public long? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string Name { get; set; }
+
+        [JsonPropertyName("category")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public {Resource}CategoryModel Category { get; set; }
+
+        [JsonPropertyName("photoUrls")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<string> PhotoUrls { get; set; }
+
+        [JsonPropertyName("status")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string Status { get; set; }
+    }
+
+    public class {Resource}CategoryModel
+    {
+        [JsonPropertyName("id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public long? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string Name { get; set; }
+    }
+}
+```
+
+---
+
+## Test Matrix
+
+One scenario per situation whose condition the spec meets. Status and content of the happy path and
+required-fields-only situations are verified in **one** scenario (status `Then`, then content `And`).
+
+| Situation | Generate when the spec defines… | Expected | Scenario name |
+|---|---|---|---|
+| Happy path | any operation (content step when the 2xx has a schema) | declared 2xx | `{Action} {a/an Existing} {Resource} with Valid Details` |
+| Required fields only | create op whose body has ≥1 optional property | declared 2xx | `{Action} a New {Resource} with Required Details Only` |
+| Empty body | JSON body + 400 | 400 | `Reject an Empty Request Body when {Action-ing} a {Resource}` |
+| Malformed JSON | JSON body + 400 | 400 | `Reject a Malformed Request Body when {Action-ing} a {Resource}` |
+| Wrong type | typed body property + 400 | 400 | `Reject a Wrongly Typed {Property} when {Action-ing} a {Resource}` |
+| Null value | non-`nullable` body property + 400/422 | 422 if declared, else 400 | `Reject a Null {Property} when {Action-ing} a {Resource}` |
+| Unknown property | JSON object body whose schema does not set `additionalProperties: false` | declared 2xx | `Accept an Unknown Property when {Action-ing} a {Resource}` |
+| Missing required fields | `required` list + 400/422 | 422 if declared, else 400 | `Reject Missing Required Details when {Action-ing} a {Resource}` |
+| Missing path parameter | required path parameter | routing (405/404) | `Reject a {Resource} {Action} without an Identifier` |
+| Missing query/header parameter | required parameter + 400 | 400 | `Reject a {Search} without a {Param}` |
+| Invalid id | constrained key path parameter + 400 | 400 | `Reject a {Lookup} with a {Non-Numeric / Malformed} Identifier` |
+| Invalid value — parameter | constrained parameter + 400 | 400 | `Reject a {Search} by {a/an} {Qualifier} {Param}` |
+| Invalid value — body property | constrained property + 400/422 | 422 if declared, else 400 | `Reject {a/an} {Qualifier} {Property} when {Action-ing} a {Resource}` |
+| Valid enum values | `enum` property or parameter, further values beyond the first | declared 2xx | Outline: `{Action} {a/an} {Resource} with the {Property} <{property}>` |
+| Boundary values | constrained parameter or body property with `minimum` / `maximum` / `minLength` / `maxLength` / `minItems` / `maxItems` | declared 2xx | Outline: `{Action} {a/an} {Resource} with the {Property} Boundary <{property}>` |
+| Unknown resource | key-identified op + 404 | 404 | `Reject {a Lookup / an Update} of an Unknown {Resource}` |
+| Conflict | create + 409 with a determinable duplicate | 409 | `Reject a Duplicate {Resource}` |
+| Unsupported media type | request body + 415 | 415 | `Reject an Unsupported Content Type when {Action-ing} a {Resource}` |
+| No credential | `security` + enforcing target | 401 | `Reject {Action-ing} a {Resource} without {Credential}` |
+| Header variants | security + enforcing target, one write operation, in `Authenticate{Resource}.feature` | 401 | `Reject {Action-ing} a {Resource} with {Variant}` |
+| Insufficient permission | 403 + lower-privilege credential from the user | 403 | `Reject {Action-ing} a {Resource} with Insufficient Permissions` |
+| Page size | page-size parameter + array response | 2xx | `Limit the Number of {Resources} Returned by the Page Size` |
+
+### Situation details
+
+- **Happy path** — the first declared 2xx; content asserts the echoed values and the key.
+- **Required fields only** — create operations only (update needs the key). Body carries exactly the `required`
+  properties. When the key is optional it is omitted and the server-key step asserts it is assigned. Content
+  asserts the required properties, plus declared `default`s of omitted properties. Skip when every property is
+  required.
+- **Wrong type** — change one typed property to another JSON type: the key, every required property, and one
+  further property per JSON type kind (string, integer, boolean, array, object) not yet covered. One property per
+  scenario; each is its own `Scenario` because the factory body differs.
+- **Null value** — send an explicit `null` (the model omits nulls, so the body is a raw string) for one required
+  property and for one optional property. In OpenAPI 3.0 a property is not nullable unless it says
+  `nullable: true`; skip a property that does. Create operations only (a raw body cannot carry an existing key).
+- **Unknown property** — the otherwise valid request plus one undeclared property, set through the model's
+  `AdditionalProperties`. OpenAPI allows extra properties unless the schema forbids them, so the expected result is
+  the declared 2xx, verified like the happy path (status, then content). Skip an operation whose schema sets
+  `additionalProperties: false` and add a rejection scenario instead.
+- **Missing inputs** — body: well-formed JSON omitting every required property; path: raw overload with
+  `string.Empty`; query/header: omit the parameter entirely (never send it empty). Skip the missing-path
+  scenario when the collapsed route resolves to another operation.
+- **Invalid values** — one per constraint, otherwise valid request:
+
+  | Constraint | Value | `{Qualifier}` |
+  |---|---|---|
+  | `enum` | `unknown` | `Unknown` |
+  | `minimum` / `maximum` | min − 1 / max + 1 (`exclusiveMinimum` / `exclusiveMaximum`: the bound itself) | `Out-of-Range` |
+  | `minLength` / `maxLength` | one shorter / longer | `Too Short` / `Too Long` |
+  | `minItems` / `maxItems` | one item fewer / more | `Too Few` / `Too Many` |
+  | `pattern`, `uuid`, `date`, `date-time`, `email` | a verified non-matching value / `not-a-uuid` / `not-a-date` / `not-a-date-time` / `not-an-email` | `Malformed` |
+
+  Above 8 constrained inputs per operation, propose a selection (required first, every enum, one per remaining
+  constraint kind).
+- **Unknown resource** — a freshly generated key, never `0`: for a body, the factory model's own generated key
+  left unchanged; for a path parameter, `Generate{ResourceKey}()`.
+- **Conflict** — only when the duplicate is determinable: a client-assigned key or a property described as unique.
+- **Unsupported media type** — valid body sent as `Content-Type: text/plain`.
+- **Deprecated** operations are tested normally and flagged in the report.
+
+### Partitions and boundaries
+
+Each constrained input splits into **equivalence partitions** (below the range, inside it, above it; each
+`enum` value; each format) and the **boundary values** between them. Test one representative per partition, plus
+the values on each side of every boundary — never several values from the same partition.
+
+| Constraint | Valid boundary scenarios (2xx) | Invalid boundary scenarios (see Invalid values) |
+|---|---|---|
+| `minimum` / `maximum` | the minimum; the maximum | min − 1; max + 1 |
+| `exclusiveMinimum` / `exclusiveMaximum` | the smallest / largest value inside (bound ± the type's step: 1 for integers, the stated `multipleOf` or one decimal place for numbers) | the bound itself |
+| `minLength` / `maxLength` | a string of exactly min / max length | one shorter / longer |
+| `minItems` / `maxItems` | exactly min / max items | one fewer / more |
+
+- **Two-value analysis.** Test the boundary value and its nearest invalid neighbour. `min + 1` and `max − 1` add
+  no partition and are not generated; the happy path already covers the inside of the range.
+- **Valid boundary values** are one `Scenario Outline` per constrained property: the `Examples` rows are the
+  minimum and the maximum (for lengths and item counts, the length or count as a number). The step forwards the
+  value to `Create{Resource}With{Property}(value)`, which starts from the happy-path model and sets only that
+  property. Status and content are verified in the same outline like the happy path; the content step asserts
+  the value is echoed or stored unchanged, not truncated or clamped. Invalid boundary values (min − 1, max + 1)
+  expect another code, so they are their own outline or `Scenario`s, never rows of the valid one.
+- **Only declared bounds.** A bound that is not in the spec (including a plain `int32` / `int64` format) is never
+  invented; ask in the report instead. Skip a boundary scenario when the boundary value collides with another
+  rule (for example a `pattern` that rejects it, or a key that must be unique) and say so in the report.
+- **Empty and zero.** `minLength: 1` is covered by the Too Short scenario (empty string); a `minLength` of 0 or an
+  absent bound gets no empty-value scenario. An optional property sent as `null` is not a boundary.
+- **`enum`.** The happy path uses the first value (see Valid values). Every further value is a partition of its
+  own: one row each in a `Scenario Outline` per operation and property (`Examples` header `status`), which
+  sends the otherwise valid request with that value and expects the same declared 2xx. The step sets the
+  property from the forwarded value on the model from `Create{Resource}()`; a `Given` that needs an existing
+  resource with that value uses its own forwarding step. The invalid value stays a separate `Scenario`.
+- **Combinations.** Never combine two violations or two boundaries in one request: one constrained property
+  deviates per scenario, so a failure points to one cause.
+- **Budget.** Boundary scenarios count towards the 8-constrained-inputs limit above. When selecting, take required
+  properties first, then keys, then one boundary pair per remaining constraint kind. An outline counts as one
+  scenario, but every row runs as a test.
+
+---
+
+## Feature Files
+
+Every operation feature lives flat in `Features\{ServiceName}\`. The description names method, path and
+`operationId` — the traceability link to the spec:
+
+```gherkin
+@TC-X000 @{OperationId} @BusinessTests
+Feature: {OperationId}
+	As a {Actor}
+	I want to {operation summary} through {METHOD} {path} ({operationId}) of the {resource} service
+	So that {benefit}
+
+Rule: Adding a Pet with Valid Details
+	A pet with valid details is added to the store
+
+@TC-X001 @Review
+Scenario: Add a New Pet to the Store with Valid Details
+	When I add a new pet to the store with valid details
+	Then the pet service response status should be 200
+	And the pet service response should contain the added pet
+```
+
+**Rule blocks**, each with a one-line description, in this order (omit empty ones): valid requests
+(e.g. `Rule: Adding a Pet with Valid Details`), rejected requests (e.g. `Rule: Rejecting Invalid Pets`),
+`Rule: Requiring {Credential}` (no credential, insufficient permission).
+
+**Authentication feature** — one per secured resource, holding only the header variants under
+`Rule: Rejecting Invalid Credentials`:
+
+```gherkin
+@TC-X000 @Authenticate{Resource} @BusinessTests
+Feature: Authenticate{Resource}
+	As a {Actor}
+	I want the {resource} service to reject invalid {securityScheme} credentials, verified through {METHOD} {path} ({operationId})
+	So that only authenticated clients can use the {resource} service
+
+Rule: Rejecting Invalid Credentials
+	Malformed or misplaced {securityScheme} credentials are rejected
+```
+
+**Scenarios**
+- One `Scenario` per case. A `Scenario Outline` with `Examples` only for **data variation**: the same behaviour,
+  the same steps and the same expected status, where only a value that a step forwards differs (the further
+  `enum` values, the valid boundary values). A different behaviour or a different expected code is always its own
+  `Scenario`. No `Background:`, no login step. A `DataTable` only for one payload inside one scenario.
+- **Outline rules:** one outline per situation and property (the happy-path `Scenario` stays a plain `Scenario`);
+  the placeholder `<name>` appears in the title and in the steps, the header row is the lowercase property name,
+  one row per value; each outline step binds the value with `(.*)` and only forwards it — no `if`/`switch` on the
+  value. The outline carries one `@TC-` tag, the next free number of its feature (extending never renumbers), and
+  sits in the `Rule` of its situation. Outlines are named after the placeholder
+  (`Add a New Pet to the Store with the Status <status>`).
+- Tag new scenarios `@Review` (`@Done` once verified).
+- A scenario needing an existing resource starts with
+  `Given I have added a new {resource} to the {domain} with valid details`.
+- The first `Then` is always `the {resource} service response status should be {code}`.
+- The happy path continues with `And the {resource} service response should contain the added {resource}` when
+  the 2xx has a schema. Required-fields-only continues with
+  `And the {resource} service response should contain a server assigned identifier` (server-assigned key) and
+  `And the {resource} service response should contain the required details of the added {resource}`.
+- Inline values are fine when the step only forwards them (`… for the status available`).
+- **Names:** Title Case; minor words (`a`, `an`, `the`, `with`, `when`, `for`, `of`, `to`, `and`, `or`, `in`,
+  `by`, `without`, `under`, `but`) lowercase unless first. The name states the single case it covers.
+
+**TC numbering**
+1. Find the highest TC block across all `.feature` files under `BusinessTests\Features\` (recursively).
+2. Give each new feature the next block (steps of 1000) in spec order; `Authenticate{Resource}.feature` takes the
+   block after its resource's operation features.
+3. Scenarios: block + sequential offset, in Rule order.
+4. When extending or restructuring, continue existing sequences and keep existing tags; never renumber unasked.
+   When merging a content scenario into its status scenario, keep the status scenario's tag.
+
+---
+
+## Steps
+
+`{Resource}Steps` extends `BaseSteps(BaseContext)`, which exposes `logger`, `request` (`IAPIRequestContext`) and
+`asserts`. One class per resource, shared by all its features — Reqnroll bindings are global, so each phrase
+exists exactly once. Order: operation sections in spec order, header variants, `Then` steps, private helpers.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using {Company}.{Project}.Web.Services;
+using {Company}.{Project}.Web.Tests.Factories;
+using Microsoft.Playwright;
+using Reqnroll;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Tests.BusinessTests.Steps
+{
+    [Binding]
+    public class {Resource}Steps : BaseSteps
+    {
+        private readonly {Resource}Service {resource}Service;
+
+        private {Resource}ServiceModel {resource}ServiceModel;
+        private IAPIResponse response;
+
+        public {Resource}Steps(BaseContext baseContext) : base(baseContext)
+        {
+            // Without security: omit the headers argument.
+            {resource}Service = new {Resource}Service(logger, request, AuthorizationFactory.CreateValid{Credential}Authorization());
+        }
+    }
+}
+```
+
+**Rules**
+- No `if`/`else`/`switch`/ternary or behaviour-selecting loop; one step, one behaviour. LINQ inside an
+  assertion is fine.
+- Identical bodies → stack `[Given]`/`[When]` on one method named after the `When` phrase. Partly shared work →
+  a private helper.
+- Request bodies, invalid ids and values come from named factory methods — no literals or inline models.
+- Factory methods take no key argument. A step that must target an existing resource saves its key, takes the
+  factory model, and puts the saved key back (`existing{ResourceKey}` pattern below) — never pass the key into
+  the factory and never add a helper for it.
+- A body the factory returns as a model is sent through the typed overload (`DataObject`); only the empty,
+  malformed and wrongly typed bodies use the raw-string overload.
+- No `#region`, `PendingStepException` or `NotImplementedException`; every step is implemented.
+- Awaiting steps are `async Task` with an `Async` suffix; the status `Then` is `public void`.
+- The authorized service is a field; unauthorized and variant services are locals. A variant putting the real
+  credential under a non-`Authorization` header sets `IncludeRequestHeadersLogging = false`.
+- Assert only through `asserts` (`EqualTo`, `IsTrue`, `IsFalse`, `IsNull`, `IsNotNull`, `IsNotEmpty`,
+  `GreaterThan`, `LessThan`, `DoesContain`, `DoesNotContain`) with a message — never `Assert.That`. Add a missing
+  assert to `Asserts.cs` in its existing style; never change existing ones.
+
+**Phrase uniqueness** — include the resource noun in every phrase, and never let a capture-group phrase also
+match another step (`… for the status (.*)` would swallow `… for the status available without an access token`;
+phrase the variant `… by status without an access token`).
+
+| Purpose | Phrase | Body |
+|---|---|---|
+| Create | `I have added a new {resource} to the {domain} with valid details` / `I add a new {resource} to the {domain} with valid details` | `Create{Resource}()` → create method |
+| Required only | `I add a new {resource} to the {domain} with required details only` | `Create{Resource}WithRequiredFieldsOnly()` |
+| Body negatives | `I attempt to {action} … with an empty request body` / `a malformed request body` / `a wrongly typed {property}` / `a null {property}` / `missing required details` / `{a/an} {qualifier} {property}` | one factory variant each |
+| Valid enum value | `I add a new {resource} to the {domain} with the {property} (.*)` | model from `Create{Resource}()` with the property set from the forwarded value → create method |
+| Boundary | `I add a new {resource} to the {domain} with the {property} (.*)` for a bound; prefer `… with the {property} boundary (.*)` to keep phrases unique | `Create{Resource}With{Property}(value)` → create method |
+| Unknown property | `I add a new {resource} to the {domain} with an unknown property` / `I update the {resource} in the {domain} with an unknown property` | `CreateUnknownProperty{Resource}Body()` (+ existing key for update) |
+| Update | `I update the {resource} in the {domain} with valid details` | `CreateUpdated{Resource}()` + existing key |
+| Update negatives | `I attempt to update the {resource} in the {domain} with missing required details` / `{a/an} {qualifier} {property}` / `without {credential}` | factory variant + existing key |
+| Unknown update | `I attempt to update a {resource} that does not exist in the {domain}` | `CreateUpdated{Resource}()` with its generated key unchanged |
+| Read | `I retrieve the {resource} by its identifier` | stored key |
+| Unknown | `I retrieve a {resource} that does not exist in the {domain}` | `Generate{ResourceKey}()` |
+| Invalid / missing id | `I retrieve a {resource} by a {non-numeric / malformed} identifier` / `… without an identifier` | `GetInvalid{ResourceKey}()` / `GetMissing{ResourceKey}()` via raw overload |
+| Search | `I search the {resource} {collection} for the {param} (.*)` / `… without a {param}` | forwards the value / omitting overload |
+| No credential | `I attempt to {action} the {resource} without {credential}` | local service without headers |
+| Header variant | `I attempt to {action phrase of the representative operation} with {variant}` | local service with `Create{Variant}Authorization()` |
+| Status | `the {resource} service response status should be (.*)` | `asserts.EqualTo(response.Status, expectedStatus, …)` |
+| Content | `the {resource} service response should contain the added / updated {resource}` | compare echoed schema properties and key |
+| Required content | `the {resource} service response should contain the required details of the added {resource}` | compare required properties (and defaults) |
+| Server key | `the {resource} service response should contain a server assigned identifier` | `asserts.IsNotNull(model.{KeyProperty}, …)` |
+| Collection | `every {resource} in the {resource} service response should have the {property} (.*)` | `GreaterThan(count, 0)` + `IsTrue(All(...))` |
+
+Example bindings (Petstore — compare the properties of your own schema):
+
+```csharp
+[Given(@"I have added a new pet to the store with valid details")]
+[When(@"I add a new pet to the store with valid details")]
+public async Task WhenIAddANewPetToTheStoreWithValidDetailsAsync()
+{
+    petServiceModel = PetServiceFactory.CreatePet();
+
+    response = await petService.AddPet(petServiceModel);
+}
+
+[When(@"I attempt to add a new pet to the store without an access token")]
+public async Task WhenIAttemptToAddANewPetToTheStoreWithoutAnAccessTokenAsync()
+{
+    var unauthorizedPetService = new PetService(logger, request);
+
+    response = await unauthorizedPetService.AddPet(PetServiceFactory.CreatePet());
+}
+
+[When(@"I update the pet in the store with valid details")]
+public async Task WhenIUpdateThePetInTheStoreWithValidDetailsAsync()
+{
+    var existingPetId = petServiceModel.Id;
+    petServiceModel = PetServiceFactory.CreateUpdatedPet();
+    petServiceModel.Id = existingPetId;
+
+    response = await petService.UpdatePet(petServiceModel);
+}
+
+[Then(@"the pet service response status should be (.*)")]
+public void ThenThePetServiceResponseStatusShouldBe(int expectedStatus)
+{
+    asserts.EqualTo(response.Status, expectedStatus, "Validate the PetService response status...");
+}
+
+[Then(@"the pet service response should contain the added pet")]
+public async Task ThenThePetServiceResponseShouldContainTheAddedPetAsync()
+{
+    var model = await petService.Deserialize(response);
+
+    asserts.EqualTo(model.Id, petServiceModel.Id, "Validate the PetService response id property...");
+    asserts.EqualTo(model.Name, petServiceModel.Name, "Validate the PetService response name property...");
+}
+```
+
+---
+
+## Service
+
+`BaseService(ILog, IAPIRequestContext, Dictionary<string, string> headers = null)` — do not modify.
+- `GetAsync`, `PostAsync`, `PutAsync`, `DeleteAsync(endpoint, options = null)` add `X-Correlation-Id` and
+  `Content-Type: application/json` and log the exchange; never set `Content-Type` yourself.
+- Constructor headers apply to every request and can't change afterwards — different headers need a new
+  instance. Precedence for the same header name: per-request `options.Headers` first, then constructor
+  headers, then the built-in `X-Correlation-Id` / `Content-Type`.
+- The values of `Authorization`, `X-Api-Key`, `Cookie` and `Set-Cookie` are masked in the request and
+  response logs (header names matched ignoring case); any other header is logged in clear text.
+- `DeserializeAsync<T>(response)` and `IncludeRequestHeadersLogging` are public.
+
+Service rules: PascalCase constants (`BaseUrl`, `{Resource}Path`); one method per operation named from
+`operationId`; add only the overloads the scenarios need — raw-string body (only for the empty, malformed and
+wrongly typed bodies), raw `string` key (numeric or formatted keys), omitting overload for each required
+query/header parameter, content-type overload when 415 is declared; escape query values with `Uri.EscapeDataString` and repeat exploded arrays; one `Deserialize{Model}`
+per response model.
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using log4net;
+using Microsoft.Playwright;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace {Company}.{Project}.Web.Services
+{
+    public class {Resource}Service : BaseService
+    {
+        private const string BaseUrl = "{baseUrl}";        // "" for relative endpoints via ApiBaseUrl
+        private const string {Resource}Path = "{path}";
+
+        public {Resource}Service(ILog logger, IAPIRequestContext request, Dictionary<string, string> headers = null)
+            : base(logger, request, headers)
+        {
+        }
+
+        public async Task<IAPIResponse> Add{Resource}({Resource}ServiceModel model)
+        {
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
+            return await PostAsync(endpoint, new APIRequestContextOptions { DataObject = model });
+        }
+
+        public async Task<IAPIResponse> Add{Resource}(string rawBody)
+        {
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
+            return await PostAsync(endpoint, new APIRequestContextOptions { DataString = rawBody });
+        }
+
+        public async Task<IAPIResponse> Add{Resource}WithContentType(string rawBody, string contentType)
+        {
+            var endpoint = $"{BaseUrl}{{Resource}Path}";
+            var options = new APIRequestContextOptions
+            {
+                DataString = rawBody,
+                Headers = new Dictionary<string, string> { ["Content-Type"] = contentType }
+            };
+            return await PostAsync(endpoint, options);
+        }
+
+        public async Task<IAPIResponse> Get{Resource}ById({KeyType} {keyName})
+        {
+            return await GetAsync($"{BaseUrl}{{Resource}Path}/{{keyName}}");
+        }
+
+        public async Task<IAPIResponse> Get{Resource}ById(string {keyName})
+        {
+            // Raw key for invalid and missing identifiers (one method when the key is a string).
+            return await GetAsync($"{BaseUrl}{{Resource}Path}/{{keyName}}");
+        }
+
+        public async Task<IAPIResponse> Find{Resource}sByStatus(string status)
+        {
+            return await GetAsync($"{BaseUrl}{{Resource}Path}/findByStatus?status={System.Uri.EscapeDataString(status)}");
+        }
+
+        public async Task<IAPIResponse> Find{Resource}sByStatus()
+        {
+            // Omits the required query parameter.
+            return await GetAsync($"{BaseUrl}{{Resource}Path}/findByStatus");
+        }
+
+        public async Task<{Resource}ServiceModel> Deserialize(IAPIResponse response)
+        {
+            return await DeserializeAsync<{Resource}ServiceModel>(response);
+        }
+
+        public async Task<List<{Resource}ServiceModel>> DeserializeList(IAPIResponse response)
+        {
+            return await DeserializeAsync<List<{Resource}ServiceModel>>(response);
+        }
+    }
+}
+```
+
+---
+
+## Model Factory
+
+Static and stateless; no class-level constants or fields — each method holds its own values and may start from
+another method of the class. Every invalid variant has a one-line comment naming what it violates. Generate only
+what the scenarios use.
+
+**Self-contained methods.** No factory method takes a key (or any other) argument — the one exception is
+`Create{Resource}With{Property}(value)` for a boundary outline — and there are no key
+overloads. Every model carrying a client-assigned key sets it from `Generate{ResourceKey}()` inside the method.
+Targeting an existing resource is the step's job (see the `existing{ResourceKey}` pattern under Steps).
+
+**Request bodies are models.** Every body-producing method returns the request model — valid bodies and every
+invalid variant the model can express: missing required fields (leave them `null`) and invalid values that fit
+the property's C# type (an unknown `enum` string, an out-of-range number, a too-short or too-long string, a
+malformed uuid/date/email/pattern string) — and the valid boundary values that fit the C# type, forwarded from an outline. Return a raw `string` only when the model cannot represent the body:
+the empty body, malformed JSON and a wrongly typed property. Never build JSON by hand for a body the model can
+express.
+
+**Valid values from the schema:** `example` when consistent; first `enum` value; `Guid.NewGuid().ToString()`
+for uuid; fixed valid dates; `{company}-test@example.dev` for email; a value checked against any `pattern` (ask
+if unsure); a `Randomizer` value for properties that must be unique. If an int64 key needs the full range, add a
+`long` overload to `Randomizer`.
+
+| Method | Purpose |
+|---|---|
+| `Create{Resource}()` | valid model |
+| `Create{Resource}WithRequiredFieldsOnly()` | only `required` properties set |
+| `CreateUpdated{Resource}()` | update body |
+| `CreateMissingRequiredFields{Resource}Body()` / `CreateInvalid{Property}{Resource}Body()` | body negatives the model can express (model) |
+| `Create{Resource}With{Property}(value)` | valid boundary value forwarded from an `Examples` row (model); the only factory method with an argument |
+| `CreateUnknownProperty{Resource}Body()` | valid model plus an undeclared property in `AdditionalProperties` (model) |
+| `CreateEmpty{Resource}Body()` / `CreateMalformed{Resource}Body()` / `CreateWronglyTyped{Resource}Body()` / `CreateWronglyTyped{Property}{Resource}Body()` / `CreateNull{Property}{Resource}Body()` | body negatives the model cannot express (string); `CreateWronglyTyped{Resource}Body()` types the key |
+| `Get{Resource}{Param}()` / `GetInvalid{Resource}{Param}()` | parameter values |
+| `GetInvalid{ResourceKey}()` / `GetMissing{ResourceKey}()` | invalid / missing id |
+| `Generate{ResourceKey}()` | client-assigned and unknown keys |
+
+```csharp
+using {Company}.{Project}.Web.Models;
+using System.Collections.Generic;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public static class {Resource}ServiceFactory
+    {
+        public static {Resource}ServiceModel Create{Resource}()
+        {
+            return new {Resource}ServiceModel
+            {
+                Id = Generate{ResourceKey}(),
+                Name = "{Company}-{Resource}",
+                Category = new {Resource}CategoryModel { Id = 1, Name = "Dogs" },
+                PhotoUrls = new List<string> { "https://example.dev/{resource}.png" },
+                Status = "available"
+            };
+        }
+
+        public static {Resource}ServiceModel Create{Resource}WithRequiredFieldsOnly()
+        {
+            // Only the schema-required name and photoUrls; optional properties stay null and are omitted.
+            return new {Resource}ServiceModel
+            {
+                Name = "{Company}-{Resource}",
+                PhotoUrls = new List<string> { "https://example.dev/{resource}.png" }
+            };
+        }
+
+        public static {Resource}ServiceModel CreateUpdated{Resource}()
+        {
+            return new {Resource}ServiceModel
+            {
+                Id = Generate{ResourceKey}(),
+                Name = "{Company}-{Resource}-Updated",
+                Category = new {Resource}CategoryModel { Id = 2, Name = "Cats" },
+                PhotoUrls = new List<string> { "https://example.dev/{resource}-updated.png" },
+                Status = "pending"
+            };
+        }
+
+        public static string CreateMalformed{Resource}Body()
+        {
+            // Not parsable as JSON.
+            return "{ this is not valid json";
+        }
+
+        public static string CreateWronglyTyped{Resource}Body()
+        {
+            // id is int64 in the schema; a string violates the type.
+            return "{\"id\":\"not-a-number\",\"name\":\"{Company}-{Resource}\",\"photoUrls\":[]}";
+        }
+
+        public static {Resource}ServiceModel CreateMissingRequiredFields{Resource}Body()
+        {
+            // Well-formed JSON omitting the required name and photoUrls (null properties are not serialized).
+            return new {Resource}ServiceModel
+            {
+                Id = Generate{ResourceKey}()
+            };
+        }
+
+        public static {Resource}ServiceModel CreateInvalidStatus{Resource}Body()
+        {
+            // status is an enum of available, pending and sold; unknown violates it.
+            var model = Create{Resource}();
+            model.Status = "unknown";
+            return model;
+        }
+
+        public static string GetInvalid{ResourceKey}()
+        {
+            // int64 key; a non-numeric value violates the type. Use "not-a-uuid" for uuid keys.
+            return "not-a-number";
+        }
+
+        public static string GetMissing{ResourceKey}()
+        {
+            // Empty path segment collapses the route to the parent path.
+            return string.Empty;
+        }
+
+        public static long Generate{ResourceKey}()
+        {
+            // High-range id avoids existing data. Use Guid.NewGuid().ToString() for uuid keys.
+            return Randomizer.GetRandomInteger(1_000_000, 9_000_000);
+        }
+    }
+}
+```
+
+---
+
+## Authentication and Authorization
+
+**Terminology.** Use the word that matches what the scenario checks:
+- **Authentication** — *who is the client?* Missing, malformed, invalid or misplaced credentials → **401**.
+  Every no-credential scenario and every header variant is an authentication test.
+- **Authorization** — *may this client do this?* A valid credential without the needed permission or scope
+  → **403**. Only the insufficient-permission scenario is an authorization test.
+- **The `Authorization` header** keeps its HTTP name (it carries the credential despite the name), as do
+  `AuthorizationFactory`, its `Create…Authorization()` methods, and the `AuthorizationHeader` constant —
+  they name the header, not the concept. In scenario text, say "an empty authorization header" only for that
+  header; for `Bearer`/`Basic`, say "authentication scheme" (the HTTP term).
+
+**From the spec:** root `security` applies to all operations; an operation's own `security` replaces it;
+`security: []` means none. No `security` at all → no AuthorizationFactory, no authentication or authorization scenarios. Vendor
+extensions such as `x-secure` are ignored. Ask whether the target enforces security; without enforcement, skip
+the 401 scenarios and report it.
+
+**Credentials** come from environment variables (ask for the names) and reach requests only through the service
+constructor. A missing variable throws `InvalidOperationException`. The header-name and variable constants are
+the only class-level constants allowed.
+
+| Item | Bearer / OAuth2 / OIDC | apiKey (header) |
+|---|---|---|
+| Header | `Authorization: Bearer {token}` | `{name from spec}: {key}` |
+| `{Credential}` (methods / text) | `Token` / `an access token` | `ApiKey` / `an API key` |
+| Valid | `CreateValidTokenAuthorization` | `CreateValidApiKeyAuthorization` |
+| Invalid value | `CreateInvalidTokenAuthorization` — an invalid access token | `CreateInvalidApiKeyAuthorization` — an invalid API key |
+| Scheme without value | `CreateMissingTokenAuthorization` — a bearer scheme but no access token | — |
+| Value without scheme | `CreateMissingSchemeAuthorization` — an access token but no scheme | — |
+| Wrong scheme | `CreateWrongSchemeAuthorization` — a wrong authentication scheme | — |
+| Wrong header name | `CreateWrongHeaderNameAuthorization` — the access token under a wrong header name | `CreateWrongHeaderNameAuthorization` — the API key under a wrong header name |
+| Empty header | `CreateEmptyAuthorization` — an empty authorization header | `CreateEmptyAuthorization` — an empty API key header |
+
+The variant text ends both the step phrase and the scenario title. An operation accepting several schemes is
+tested with one, and its no-credential scenario sends none.
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+namespace {Company}.{Project}.Web.Tests.Factories
+{
+    public static class AuthorizationFactory
+    {
+        private const string AuthorizationHeader = "Authorization";
+        private const string AccessTokenVariable = "{PROJECT}_ACCESS_TOKEN";
+
+        public static Dictionary<string, string> CreateValidTokenAuthorization()
+        {
+            return new Dictionary<string, string> { { AuthorizationHeader, $"Bearer {GetAccessToken()}" } };
+        }
+
+        public static Dictionary<string, string> CreateInvalidTokenAuthorization()
+        {
+            // Well-formed bearer header with a token never issued.
+            return new Dictionary<string, string> { { AuthorizationHeader, $"Bearer invalid-{Guid.NewGuid()}" } };
+        }
+
+        public static Dictionary<string, string> CreateWrongHeaderNameAuthorization()
+        {
+            // Valid value under another header name (logged in clear text - disable header logging).
+            return new Dictionary<string, string> { { "X-Authorization", $"Bearer {GetAccessToken()}" } };
+        }
+
+        // CreateMissingTokenAuthorization ("Bearer"), CreateMissingSchemeAuthorization (token only),
+        // CreateWrongSchemeAuthorization ("Basic {token}") and CreateEmptyAuthorization ("") follow the same shape.
+
+        public static string GetAccessToken()
+        {
+            var accessToken = Environment.GetEnvironmentVariable(AccessTokenVariable);
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+                throw new InvalidOperationException($"Environment variable {AccessTokenVariable} is not available...");
+
+            return accessToken;
+        }
+    }
+}
+```
+
+**Scenarios:** no credential — one per secured operation, otherwise valid request, in that operation's feature.
+Header variants — one representative write operation, in `Authenticate{Resource}.feature`. Insufficient
+permission — only with a declared 403 and a lower-privilege credential. An undeclared 401 is still asserted and
+reported as a spec gap. No valid-credential scenario (every happy path covers it); no variants without a single
+expected code.
+
+---
+
+## Planning Table
+
+Show one per service before writing any file, filled from your own spec analysis. Repeat the `Resource:` line
+and its rows for every resource in scope.
+
+```
+Service: {ServiceName} ({SpecFile}) · folder: BusinessTests\Features\{ServiceName}\
+Resource: {Resource} · baseUrl: {BaseUrl} · key: {keyName} {KeyType}, {client|server}-assigned · auth: {scheme} ({type}, {EnvVar}), {enforced|not enforced|none} · phrases: the {domain} / the {resource} {collection} · cleanup: none
+
+Feature (TC)                          Valid                  Rejected                 Auth
+{OperationId}.feature ({TC block})    {valid situations}     {rejected situations}    {auth situations}
+… one row per operation, in spec order …
+Authenticate{Resource}.feature ({TC}) —                      —                        {variants} (via {operationId})
+Skipped: {operation or situation} ({reason}); …
+```
+
+- **Valid:** `happy` / `req-only`, each with what it verifies — `status+content`, `status+key+content`, or
+  `status only` when the 2xx has no schema.
+- **Rejected:** one entry per rejected situation; codes other than 400 in brackets; note missing codes
+  (e.g. `no 404 declared`).
+- **Auth:** the no-credential and insufficient-permission entries per operation; header variants only on the
+  `Authenticate{Resource}.feature` row; `—` without security.
+- Keep each feature on one row; add the trim proposal when an operation has more than 8 constrained inputs.
+
+### Example (Petstore — format only, never copy its values)
+
+```
+Service: Petstore (OpenApiSpecPetstore.json) · folder: BusinessTests\Features\Petstore\
+Resource: Pet · baseUrl: https://petstore3.swagger.io/api/v3 · key: id int64, client-assigned · auth: petstore_auth (OAuth2 Bearer, PETSTORE_ACCESS_TOKEN), enforced · phrases: the store / the pet catalogue · cleanup: none
+
+Feature (TC)                      Valid                                                   Rejected                                                         Auth
+AddPet.feature (6000)             happy (status+content), req-only (status+key+content)   empty, malformed, wrong-type, missing (422), status enum (422)   no token
+GetPetById.feature (9000)         happy (status+content)                                  missing id (405 routing), non-numeric id, not found              no token
+DeletePet.feature (11000)         happy (status only, no schema)                          missing id (405 routing), non-numeric id; no 404 declared        no token
+AuthenticatePet.feature (12000)   —                                                       —                                                                6 header variants (via addPet)
+Skipped: uploadFile (binary body); 5xx/default responses
+```
+
+---
+
+## Reporting
+
+Report: saved paths (verified); features with TC blocks and scenario counts; the resource profile; coverage per
+operation with every skip and reason; deprecated operations; spec defects and gaps; untested prose rules; that
+**test data is not removed** (use a disposable environment); that nothing was compiled or run (recommend a
+build and one run); scenarios likely to go red for server reasons or relying on routing codes; leftover files
+to delete after a restructuring.
+
+**Blocking spec defects** (stop and ask): a `required` property not defined in `properties`; an unresolvable
+`$ref`; no usable base URL; a key required in the request but described as server-assigned. Report every other
+inconsistency (undeclared tags, missing 404/400/401, unanchored patterns, invalid examples…) as non-blocking.
+
+---
+
+## Common Mistakes
+
+- `Scenario Outline`/`Examples` for different behaviour or different expected codes (only data variation
+  qualifies), or one `Scenario` per value where only a forwarded value differs.
+- Branching in a step, or adding a parameter just to branch on it.
+- Splitting status and content of the same situation into two scenarios.
+- Header variants placed in an operation feature instead of `Authenticate{Resource}.feature`.
+- Calling a 401 scenario "authorization" — invalid or missing credentials are authentication; reserve
+  "authorization" for 403 permission checks and for the `Authorization` header itself.
+- A capture-group phrase that also matches another step.
+- Model properties without `JsonIgnore(WhenWritingNull)`, so unset properties are sent as `null`.
+- Returning a hand-built JSON string from the factory for a body the model can express (missing required
+  fields, invalid enum or constraint values) instead of returning the model.
+- Passing a key into a factory method (`CreateUpdated{Resource}(id)`) instead of keeping the factory
+  self-contained and restoring the existing key in the step.
+- Carrying Petstore wording (`store`, `catalogue`, `non-numeric`, 422 codes) into another API.
+- Inventing codes or fields, or loosening an assertion to make a non-conforming server pass.

@@ -1,4 +1,4 @@
-> ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+> ⚠️ This skill MUST be read before generating any Page Object, Model, Factory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageFactory.cs`, `*PageTests.cs`) file.
 > Do not rely on existing project files as a pattern source — always follow this skill.
 ---
 name: expressium-code-generation
@@ -8,7 +8,7 @@ description: >
   or UI test (NUnit) for a project built with the Expressium framework; any mention of "page object",
   "model", "factory", "UI test", "enroll a page", "code generation", or "Expressium" in the context of
   authoring the page-object layer or NUnit UI tests. Always use this skill before generating any
-  {Page}Page.cs, {Page}PageModel.cs, {Page}PageModelFactory.cs, or {Page}PageTests.cs file — it defines
+  {Page}Page.cs, {Page}PageModel.cs, {Page}PageFactory.cs, or {Page}PageTests.cs file — it defines
   how to discover namespaces from Configuration.json, the folder layout, the control taxonomy, the
   setter/getter method conventions per control type, and the exact C# code structure that must be
   followed strictly across all Expressium projects.
@@ -29,7 +29,7 @@ The four artifacts this skill produces, per page:
 |---|---|---|
 | Page Object | Locators + actions (`Set*`/`Get*`/`Click*`/`FillForm`) | `{Api}\Pages\{Page}Page.cs` |
 | Page Model | Plain data holder for the form fields | `{Api}\Models\{Page}PageModel.cs` |
-| Model Factory | Static `Default()` builder with valid data | `{Tests}\Factories\{Page}PageModelFactory.cs` |
+| Model Factory | Static `Default()` builder with valid data | `{Tests}\Factories\{Page}PageFactory.cs` |
 | UI Test | NUnit fixture validating title + each property | `{Tests}\UiTests\{Page}PageTests.cs` |
 
 ---
@@ -88,7 +88,7 @@ From `Company = "Expressium"` and `Project = "Coffeeshop"`:
 │   └── Controls\           ← Control wrappers — reference for method signatures, do not modify
 │
 └── {Company}.{Project}.Web.Tests\
-    ├── Factories\          ← OUTPUT: {Page}PageModelFactory.cs
+    ├── Factories\          ← OUTPUT: {Page}PageFactory.cs
     ├── UiTests\            ← OUTPUT: {Page}PageTests.cs, plus BasePageTest.cs (do not modify)
     ├── Infrastructure\     ← BaseTestFixture, Asserts, BrowserManager — do not modify
     └── Configuration.json  ← Source of truth for Company/Project/namespace
@@ -321,7 +321,7 @@ using System;
 
 namespace {Company}.{Project}.Web.Tests.Factories
 {
-    public class {Page}PageModelFactory
+    public class {Page}PageFactory
     {
         public static {Page}PageModel Default()
         {
@@ -380,7 +380,7 @@ namespace {Company}.{Project}.Web.Tests.UiTests
     public class {Page}PageTests : BasePageTest
     {
         private {Page}Page {page}Page;
-        private {Page}PageModel {page}PageModel = {Page}PageModelFactory.Default();
+        private {Page}PageModel {page}PageModel = {Page}PageFactory.Default();
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()

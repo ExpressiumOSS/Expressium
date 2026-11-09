@@ -45,7 +45,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             if (File.Exists(loginTestFile))
                 File.Delete(loginTestFile);
 
-            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageModelFactory.cs");
+            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageFactory.cs");
             if (File.Exists(loginFactoryFile))
                 File.Delete(loginFactoryFile);
 
@@ -80,7 +80,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             if (File.Exists(loginTestFile))
                 File.Delete(loginTestFile);
 
-            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageModelFactory.cs");
+            var loginFactoryFile = Path.Combine(directory, "Expressium.Coffeeshop.Web.Tests", "Factories", "LoginPageFactory.cs");
             if (File.Exists(loginFactoryFile))
                 File.Delete(loginFactoryFile);
 
@@ -142,7 +142,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
             var codeGenerator = new CodeGenerator(configuration, objectRepository);
             var result = codeGenerator.GenerateFactoryPreview("LoginPage");
 
-            Assert.That(result, Does.Contain("LoginPageModelFactory"), "CodeGenerator GenerateFactoryPreview validation");
+            Assert.That(result, Does.Contain("LoginPageFactory"), "CodeGenerator GenerateFactoryPreview validation");
         }
 
         private ObjectRepositoryPage CreateLoginPage()

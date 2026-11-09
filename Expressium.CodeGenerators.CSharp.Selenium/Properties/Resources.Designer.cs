@@ -75,7 +75,6 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using NUnit.Framework;
-        ///using System;
         ///
         ///namespace $Namespace$.Tests.Infrastructure
         ///{
@@ -95,7 +94,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///                Assert.That(actual, Is.EqualTo(expected), message);
         ///
         ///                logger.Info($&quot;{message}&quot;);
-        ///    [rest of string was truncated]&quot;;.
+        ///                lo [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Asserts {
             get {
@@ -196,8 +195,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///        }
         ///
         ///        public virtual void InitializeBrowserWithLogin()
-        ///        {
-        ///            I [rest of string was truncated]&quot;;.
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageTest {
             get {
@@ -343,7 +341,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///
         ///set PROFILE=Development
         ///
-        ///rmdir /q /s .\$Namespace$.Tests\bin\Debug\net8.0\TestResults
+        ///rmdir /q /s .\$Namespace$.Tests\bin\Debug\net10.0\TestResults
         ///
         ///dotnet nuget
         ///dotnet build
@@ -358,14 +356,14 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or ModelFactory.cs file.
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or Factory.cs file.
         ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
         ///---
         ///name: expressium-bdd-tests
         ///description: &gt;
         ///  Use this skill whenever writing BDD tests for any Expressium-based test automation project.
         ///  Triggers include: any request to create a feature file, step definition file, or model factory
-        ///  for a project built with the Expressium framework; any mention of &quot;BDD&quot;, &quot;Gherkin&quot; [rest of string was truncated]&quot;;.
+        ///  for a project built with the Expressium framework; any mention of &quot;BDD&quot;, &quot;Gherkin&quot;, &quot;Re [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BddSkill {
             get {
@@ -453,8 +451,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///        public string Company { get; set; }
         ///        public string Project { get; set; }
         ///        public string Environment { get; set; }
-        ///        public bool Loggings { get; set; }
-        ///        public  [rest of string was truncated]&quot;;.
+        ///        public bool Loggings { get; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Configuration {
             get {
@@ -582,6 +579,9 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///using log4net.Config;
         ///using log4net.Core;
         ///using log4net.Layout;
+        ///using log4net.Layout.Pattern;
+        ///using System;
+        ///using System.IO;
         ///
         ///namespace $Namespace$.Tests.Infrastructure
         ///{
@@ -589,11 +589,10 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///    {
         ///        public static ILog Initialize(string name, string filePath = null)
         ///        {
-        ///            var repository = LoggerManager.CreateRepository(name);
+        ///            var repositoryName = $&quot;{name}-{Guid.NewGuid():N}&quot;;
+        ///            var repository = LoggerManager.CreateRepository(repositoryName);
         ///
-        ///            var patternLayout = new PatternLayout();
-        ///            patternLayout.ConversionPattern = &quot;%date{HH:mm:ss} %level %type # %message%newline&quot;;
-        ///            pa [rest of string was truncated]&quot;;.
+        ///            var patternLayou [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Logger {
             get {
@@ -636,22 +635,15 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.3.1&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;114.0.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.44.0&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.44.0&quot; /&gt;
-        ///	&lt;/ItemGroup&gt;
-        ///
-        ///	&lt;ItemGroup&gt;
-        ///		&lt;Folder Include=&quot;Models\&quot; /&gt;
-        ///		&lt;Folder Include=&quot;Pages\&quot; /&gt;
-        ///	&lt;/ItemGroup&gt;
-        ///
-        ///&lt;/Proje [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.5.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReferen [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ProjectFileApi {
+        internal static string ProjectFileTests {
             get {
-                return ResourceManager.GetString("ProjectFileApi", resourceCulture);
+                return ResourceManager.GetString("ProjectFileTests", resourceCulture);
             }
         }
         
@@ -663,15 +655,22 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.4.6&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.8&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.8&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.8&quot; /&gt;
-        ///		&lt;PackageReference  [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.5.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;RestSharp&quot; Version=&quot;114.0.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.Support&quot; Version=&quot;4.51.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Selenium.WebDriver&quot; Version=&quot;4.51.0&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///	&lt;ItemGroup&gt;
+        ///		&lt;Folder Include=&quot;Models\&quot; /&gt;
+        ///		&lt;Folder Include=&quot;Pages\&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///&lt;/Proje [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ProjectFileApiTests {
+        internal static string ProjectFileWeb {
             get {
-                return ResourceManager.GetString("ProjectFileApiTests", resourceCulture);
+                return ResourceManager.GetString("ProjectFileWeb", resourceCulture);
             }
         }
         
@@ -696,6 +695,25 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.Properties {
         internal static string Randomizer {
             get {
                 return ResourceManager.GetString("Randomizer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to # Overview
+        ///
+        ///This solution is a Selenium test automation framework generated by Expressium for web application and API testing. A layered structure separates the application layer from the test layer, promoting reusability and maintainability:
+        ///
+        ///- **$Company$.$Project$.Web** — Application layer:
+        ///  - **Controls** — Page object control wrappers.
+        ///  - **Models** — Data models.
+        ///  - **Pages** — Page objects.
+        ///  - **Services** — API service objects.
+        ///- **$Company$.$Project$.Web.Tests** — Test layer:
+        ///  - **Ap [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReadMe {
+            get {
+                return ResourceManager.GetString("ReadMe", resourceCulture);
             }
         }
         

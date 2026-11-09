@@ -103,9 +103,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using log4net;
         ///using NUnit.Framework;
-        ///using System;
         ///
-        ///namespace $Namespace$.Tests
+        ///namespace $Namespace$.Tests.Infrastructure
         ///{
         ///    public class Asserts
         ///    {
@@ -169,8 +168,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    {
         ///        private readonly FeatureContext featureContext;
         ///        private readonly ScenarioContext scenarioContext;
-        ///        private readonly IReqnrollOutputHelper reqnrollOutputHelper;
-        ///       [rest of string was truncated]&quot;;.
+        ///        private readonly IReqnrollOutputHelper reqnrollOutpu [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseHooks {
             get {
@@ -228,8 +226,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        }
         ///
         ///        public async Task InitializeBrowserWithLogin()
-        ///        {
-        ///             [rest of string was truncated]&quot;;.
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BasePageTest {
             get {
@@ -242,21 +239,19 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using Microsoft.Playwright;
         ///using System;
         ///using System.Collections.Generic;
+        ///using System.Diagnostics;
+        ///using System.Text.Encodings.Web;
         ///using System.Text.Json;
         ///using System.Threading.Tasks;
         ///
-        ///namespace  $Namespace$.Services
+        ///namespace $Namespace$.Services
         ///{
         ///    public class BaseService
         ///    {
-        ///        private const string correlationIdHeader = &quot;X-Correlation-Id&quot;;
-        ///
-        ///        private static readonly JsonSerializerOptions prettyPrintOptions = new JsonSerializerOptions { WriteIndented = true };
-        ///
-        ///        protected ILog logger;
-        ///        protected IAPIRequestContext request;
-        ///
-        ///  [rest of string was truncated]&quot;;.
+        ///        private const string CorrelationIdHeader = &quot;X-Correlation-Id&quot;;
+        ///        private const string ContentTypeHeader = &quot;Content-Type&quot;;
+        ///        private const string JsonContentType = &quot;application/json&quot;;
+        ///        private cons [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseService {
             get {
@@ -265,10 +260,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using NUnit.Framework;
-        ///using $Namespace$.Services;
-        ///using System.Threading.Tasks;
-        ///using $Namespace$.Tests.Infrastructure;
+        ///   Looks up a localized string similar to using $Namespace$.Tests.Infrastructure;
+        ///using NUnit.Framework;
         ///
         ///namespace $Namespace$.Tests.ApiTests
         ///{
@@ -359,7 +352,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    {
         ///        protected readonly Configuration configuration;
         ///        protected readonly BrowserManager browserManager;
-        ///        protected readonly ApiManager apiManage [rest of string was truncated]&quot;;.
+        ///        protected readonly Ap [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseTestFixture {
             get {
@@ -438,7 +431,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public IPage GetPage()
         ///        {
-        ///            if (page = [rest of string was truncated]&quot;;.
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserManager {
             get {
@@ -610,6 +603,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///using log4net.Core;
         ///using log4net.Layout;
         ///using log4net.Layout.Pattern;
+        ///using System;
         ///using System.IO;
         ///
         ///namespace $Namespace$.Tests.Infrastructure
@@ -618,10 +612,10 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    {
         ///        public static ILog Initialize(string name, string filePath = null)
         ///        {
-        ///            var repository = LoggerManager.CreateRepository(name);
+        ///            var repositoryName = $&quot;{name}-{Guid.NewGuid():N}&quot;;
+        ///            var repository = LoggerManager.CreateRepository(repositoryName);
         ///
-        ///            var patternLayout = new PatternLayout();
-        ///            patternLayout.AddConverter(&quot;shortType&quot;, typeof(ShortTypePatternConve [rest of string was truncated]&quot;;.
+        ///            var patternLayou [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Logger {
             get {
@@ -673,9 +667,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            if (playwright != null)
         ///                return playwright;
         ///
-        ///            await initLock.WaitAsync();
-        ///            try
-        /// [rest of string was truncated]&quot;;.
+        ///            await initLock.WaitAsync();        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PlaywrightProvider {
             get {
@@ -691,20 +683,15 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.3.2&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Playwright&quot; Version=&quot;1.61.0&quot; /&gt;
-        ///	&lt;/ItemGroup&gt;
-        ///
-        ///	&lt;ItemGroup&gt;
-        ///		&lt;Folder Include=&quot;Models\&quot; /&gt;
-        ///		&lt;Folder Include=&quot;Pages\&quot; /&gt;
-        ///	&lt;/ItemGroup&gt;
-        ///
-        ///&lt;/Project&gt;.
+        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.5.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.12&quot; /&gt;
+        ///		&lt;PackageReferen [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ProjectFileApi {
+        internal static string ProjectFileTests {
             get {
-                return ResourceManager.GetString("ProjectFileApi", resourceCulture);
+                return ResourceManager.GetString("ProjectFileTests", resourceCulture);
             }
         }
         
@@ -716,15 +703,20 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///	&lt;/PropertyGroup&gt;
         ///
         ///	&lt;ItemGroup&gt;
-        ///		&lt;PackageReference Include=&quot;Expressium.LivingDoc.ReqnrollPlugin&quot; Version=&quot;1.4.8&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration&quot; Version=&quot;10.0.10&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Binder&quot; Version=&quot;10.0.10&quot; /&gt;
-        ///		&lt;PackageReference Include=&quot;Microsoft.Extensions.Configuration.Json&quot; Version=&quot;10.0.10&quot; /&gt;
-        ///		&lt;PackageReferen [rest of string was truncated]&quot;;.
+        ///		&lt;PackageReference Include=&quot;log4net&quot; Version=&quot;3.5.0&quot; /&gt;
+        ///		&lt;PackageReference Include=&quot;Microsoft.Playwright&quot; Version=&quot;1.63.0&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///	&lt;ItemGroup&gt;
+        ///		&lt;Folder Include=&quot;Models\&quot; /&gt;
+        ///		&lt;Folder Include=&quot;Pages\&quot; /&gt;
+        ///	&lt;/ItemGroup&gt;
+        ///
+        ///&lt;/Project&gt;.
         /// </summary>
-        internal static string ProjectFileApiTests {
+        internal static string ProjectFileWeb {
             get {
-                return ResourceManager.GetString("ProjectFileApiTests", resourceCulture);
+                return ResourceManager.GetString("ProjectFileWeb", resourceCulture);
             }
         }
         
@@ -755,15 +747,15 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         /// <summary>
         ///   Looks up a localized string similar to # Overview
         ///
-        ///This solution is a test automation framework generated by Expressium for web application and API testing. A layered structure separates the application layer from the test layer, promoting reusability and maintainability:
+        ///This solution is a Playwright test automation framework generated by Expressium for web application and API testing. A layered structure separates the application layer from the test layer, promoting reusability and maintainability:
         ///
-        ///- **Expressium.Coffeeshop.Web** — Application layer:
-        ///  - **Pages** — Page objects.
+        ///- **$Company$.$Project$.Web** — Application layer:
         ///  - **Controls** — Page object control wrappers.
         ///  - **Models** — Data models.
+        ///  - **Pages** — Page objects.
         ///  - **Services** — API service objects.
-        ///- **Expressium.Coffeeshop.Web.Tests** — Test layer:
-        ///  - **UiTests** — Page- [rest of string was truncated]&quot;;.
+        ///- **$Company$.$Project$.Web.Tests** — Test layer:
+        ///  - ** [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReadMe {
             get {
@@ -809,13 +801,11 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Service, Model, Factory, or API test (`*Service.cs`, `*Model.cs`, `*ServiceFactory.cs`, `*ServiceTests.cs`) file from an OpenAPI specification.
         ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
+        ///&gt; This skill is aligned with the real framework conventions (verified against the shipped PetService / PetServiceTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins.
         ///---
-        ///name: expressium-code-generation
-        ///description: &gt;
-        ///  Use this skill whenever generating code artifacts for any Expressium-based test automation project.
-        ///  Triggers include: any request to create, enroll, or scaffold a page object, page model, m [rest of string was truncated]&quot;;.
+        ///na [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SkillApiTests {
             get {
@@ -824,13 +814,9 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or ModelFactory.cs file.
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or Factory.cs file.
         ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
-        ///&gt; This skill is aligned with the real framework conventions (verified against the shipped BusinessTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins.
-        ///---
-        ///name: expressium-bdd-tests
-        ///description: &gt;
-        ///  Use this skill whenever writing BDD tests for any Expressium-based tes [rest of string was truncated]&quot;;.
+        ///&gt; This skill is aligned with the real framework conventions (verified against the shipped BusinessTests). Where a rule below differs from an older version of this skill, the shipped-code convention wins — **except** for the `Scenario Outline` and step-logic prohibitions below, which intentionally override the shipped `Orders.feat [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SkillBddTests {
             get {
@@ -839,17 +825,52 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Page Object, Model, ModelFactory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageModelFactory.cs`, `*PageTests.cs`) file.
+        ///   Looks up a localized string similar to ---
+        ///name: expressium-contract-tests
+        ///description: &gt;
+        ///  Use this skill whenever generating API contract tests as BDD (Gherkin/Reqnroll) feature files from an
+        ///  OpenAPI (Swagger) specification for any Expressium-based test automation project. Triggers include: any
+        ///  request for &quot;contract tests&quot;, &quot;API BDD tests&quot;, &quot;BDD tests from a spec&quot;, &quot;feature files per operation&quot;,
+        ///  &quot;feature file per path / operationId&quot;, or pointing at a .yaml/.json/.yml OpenAPI spec and asking for BDD,
+        ///  Gherkin, Reqnroll or contract [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkillContractTests {
+            get {
+                return ResourceManager.GetString("SkillContractTests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt; ⚠️ This skill MUST be read before generating any Page Object, Model, Factory, or UI test (`*Page.cs`, `*PageModel.cs`, `*PageFactory.cs`, `*PageTests.cs`) file.
         ///&gt; Do not rely on existing project files as a pattern source — always follow this skill.
         ///---
         ///name: expressium-code-generation
         ///description: &gt;
         ///  Use this skill whenever generating code artifacts for any Expressium-based test automation project.
-        ///  Triggers include: any request to create, enroll, or scaffold a page object, page model, m [rest of string was truncated]&quot;;.
+        ///  Triggers include: any request to create, enroll, or scaffold a page object, page model, model facto [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SkillUiTests {
             get {
                 return ResourceManager.GetString("SkillUiTests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expressium Claude Skills
+        ///
+        ///Here&apos;s the updated prompt, referencing the actual file paths so there&apos;s no ambiguity between the folder name and the skill&apos;s internal identifier:
+        ///
+        ///For API tests:
+        ///Create API tests for {ResourceName} based on the {OpenApiSpecFileName}.yaml spec, following the skill at skills\ApiTests\SKILL.md (expressium-api-tests).
+        ///
+        ///For BDD tests:
+        ///Create BDD tests for {ResourceName}Service (or {PageName}Page), following the skill at skills\BddTests\SKILL.md (expressium-bdd-tests).
+        ///
+        ///Combined (both in [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkillUsage {
+            get {
+                return ResourceManager.GetString("SkillUsage", resourceCulture);
             }
         }
         
@@ -913,9 +934,13 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public virtual async Task SetChecked(bool value)
         ///        {
-        ///            if ((await locator.IsCheckedAsync() == false &amp;&amp; value) || (await locator.IsCheckedAsync() == true &amp;&amp; !value))
-        ///            {
-        ///                await locator.WaitForElementIsVisible( [rest of string was truncated]&quot;;.
+        ///            await locator.WaitForElementIsVisible();
+        ///
+        ///            if (await locator.IsCheckedAsync() == value)
+        ///                return;
+        ///
+        ///            await locator.HighlightAction(page);
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebCheckBox {
             get {
@@ -960,11 +985,10 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///    {
         ///        protected IPage page;
         ///        protected ILocator locator;
-        ///        protected ILocator childLocator;
         ///
-        ///        public WebControl(IPage driver, ILocator locator)
+        ///        public WebControl(IPage page, ILocator locator)
         ///        {
-        ///            this.page = driver;
+        ///            this.page = page;
         ///            this.locator = locator;
         ///        }
         ///
@@ -973,7 +997,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            await locator.WaitForElementIsVisible();
         ///        }
         ///
-        ///  [rest of string was truncated]&quot;;.
+        ///        public async Task [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebControl {
             get {
@@ -1035,8 +1059,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        public static int HighlightWidth { get; set; }
         ///        public static string HighlightActionColor { get; set; }
         ///        public static string HighlightValidationColor { get; set; }
-        ///        public static string HighlightFailureColor { get; set; }
-        ///     [rest of string was truncated]&quot;;.
+        ///        public static string HighlightFailureColor { get [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebLocators {
             get {
@@ -1046,6 +1069,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using Microsoft.Playwright;
+        ///using System;
         ///using System.Threading.Tasks;
         ///
         ///namespace $Namespace$.Controls
@@ -1058,9 +1082,13 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///
         ///        public virtual async Task SetSelected(bool value)
         ///        {
-        ///            if ((await locator.IsCheckedAsync() == false &amp;&amp; value) || (await locator.IsCheckedAsync() == true &amp;&amp; !value))
-        ///            {
-        ///                await locator.WaitForElementIsV [rest of string was truncated]&quot;;.
+        ///            await locator.WaitForElementIsVisible();
+        ///
+        ///            if (await locator.IsCheckedAsync() == value)
+        ///                return;
+        ///
+        ///            if (!value)
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebRadioButton {
             get {
@@ -1071,6 +1099,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         /// <summary>
         ///   Looks up a localized string similar to using Microsoft.Playwright;
         ///using System;
+        ///using System.Linq;
+        ///using System.Text.RegularExpressions;
         ///using System.Threading.Tasks;
         ///
         ///namespace $Namespace$.Controls
@@ -1081,15 +1111,12 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///        {
         ///        }
         ///
+        ///        protected ILocator Rows =&gt; locator.Locator(&quot;:scope &gt; tbody &gt; tr&quot;);
+        ///
         ///        public virtual async Task&lt;int&gt; GetNumberOfRows()
         ///        {
-        ///            var rows = locator.Locator(&quot;tr&quot;);
-        ///            return await rows.CountAsync();
-        ///        }
-        ///
-        ///        public virtual async Task&lt;int&gt; GetNumberOfColumns()
-        ///        {
-        ///            var columns =  [rest of string was truncated]&quot;;.
+        ///            return await Rows.CountAsync();
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebTable {
             get {
@@ -1115,8 +1142,8 @@ namespace Expressium.CodeGenerators.CSharp.Playwright.Properties {
         ///            await locator.HighlightValidation(page);
         ///            return await locator.InnerTextAsync();
         ///        }
-        ///    }
-        ///}.
+        ///
+        ///        public async Task WaitForElement [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string WebText {
             get {

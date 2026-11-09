@@ -163,11 +163,11 @@
 	<data name="LoginSteps" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\LoginSteps.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>
-	<data name="ProjectFileApi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ProjectFileApi.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="ProjectFileWeb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ProjectFileWeb.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
-	<data name="ProjectFileApiTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\Resources\ProjectFileApiTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	<data name="ProjectFileTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\ProjectFileTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
 	<data name="Randomizer" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\Randomizer.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -240,7 +240,13 @@
 	</data>
 	<data name="SkillApiTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\SkillApiTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
+	<data name="SkillContractTests" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\SkillContractTests.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>	
+	<data name="SkillUsage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\Resources\SkillUsage.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+	</data>
 	<data name="BaseService" type="System.Resources.ResXFileRef, System.Windows.Forms">
 		<value>..\Resources\BaseService.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
 	</data>

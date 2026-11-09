@@ -106,8 +106,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
         {
             var listOfLines = new List<string>();
 
-            foreach (var member in page.Members)
-                listOfLines.Add($"public {member.Page} {member.Name} {{ get; private set; }}");
+            //foreach (var member in page.Members)
+            //    listOfLines.Add($"public {member.Page} {member.Name} {{ get; private set; }}");
 
             foreach (var control in page.Controls)
             {
@@ -115,7 +115,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
                     listOfLines.Add($"public BaseTable {control.Name} {{ get; private set; }}");
             }
 
-            if (page.Members.Count > 0 || page.Controls.Any(c => c.IsTable()))
+            // if (page.Members.Count > 0 || page.Controls.Any(c => c.IsTable()))
+            if (page.Controls.Any(c => c.IsTable()))
                 listOfLines.Add("");
 
             return listOfLines;
@@ -158,8 +159,8 @@ namespace Expressium.CodeGenerators.CSharp.Selenium
             listOfLines.Add($"public {page.Name}(ILog logger, IWebDriver driver) : base(logger, driver)");
             listOfLines.Add($"{{");
 
-            foreach (var member in page.Members)
-                listOfLines.Add($"{member.Name} = new {member.Page}(logger, driver);");
+            //foreach (var member in page.Members)
+            //    listOfLines.Add($"{member.Name} = new {member.Page}(logger, driver);");
 
             foreach (var control in page.Controls)
             {

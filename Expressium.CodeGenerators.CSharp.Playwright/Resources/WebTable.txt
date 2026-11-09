@@ -1,5 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace $Namespace$.Controls
@@ -10,10 +12,11 @@ namespace $Namespace$.Controls
         {
         }
 
+        protected ILocator Rows => locator.Locator(":scope > tbody > tr");
+
         public virtual async Task<int> GetNumberOfRows()
         {
-            var rows = locator.Locator("tr");
-            return await rows.CountAsync();
+            return await Rows.CountAsync();
         }
 
         public virtual async Task<int> GetNumberOfColumns()
@@ -24,125 +27,130 @@ namespace $Namespace$.Controls
 
         public virtual async Task ClickCell(object rowId, object columnId)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//*");
-            var control = new WebButton(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebButton(page, cellLocator.Locator("a, button, input").First);
             await control.Click();
         }
 
         public virtual async Task SetCellTextBox(object rowId, object columnId, string value)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebTextBox(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebTextBox(page, cellLocator.Locator("input"));
             await control.SetText(value);
         }
 
         public virtual async Task<string> GetCellTextBox(object rowId, object columnId)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebTextBox(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebTextBox(page, cellLocator.Locator("input"));
             return await control.GetText();
         }
 
         public virtual async Task SetCellCheckBox(object rowId, object columnId, bool value)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebCheckBox(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebCheckBox(page, cellLocator.Locator("input"));
             await control.SetChecked(value);
         }
 
         public virtual async Task<bool> GetCellCheckBox(object rowId, object columnId)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebCheckBox(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebCheckBox(page, cellLocator.Locator("input"));
             return await control.GetChecked();
         }
 
         public virtual async Task SetCellRadioButton(object rowId, object columnId, bool value)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebRadioButton(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebRadioButton(page, cellLocator.Locator("input"));
             await control.SetSelected(value);
         }
 
         public virtual async Task<bool> GetCellRadioButton(object rowId, object columnId)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, "//input");
-            var control = new WebRadioButton(page, cellLocator);
+            var cellLocator = await GetCellLocator(rowId, columnId);
+            var control = new WebRadioButton(page, cellLocator.Locator("input"));
             return await control.GetSelected();
         }
 
         public virtual async Task<string> GetCellText(object rowId, object columnId)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, null);
+            var cellLocator = await GetCellLocator(rowId, columnId);
             var control = new WebText(page, cellLocator);
             return await control.GetText();
         }
 
-        //public virtual string GetCellText(string cellText)
-        //{
-        //    var cellLocator = By.XPath($"./tbody/tr/td[contains(normalize-space(),'{cellText}')]");
-        //    var control = new WebText(driver, locator, cellLocator);
-        //    return control.GetText();
-        //}
+        public virtual async Task<string> GetCellText(string cellText)
+        {
+            var cellLocator = Rows.Locator(":scope > td").Filter(new() { HasTextRegex = ContainsText(cellText) }).First;
+            var control = new WebText(page, cellLocator);
+            return await control.GetText();
+        }
 
         public virtual async Task ClickContextMenu(object rowId, object columnId, string menuEntry)
         {
-            var cellLocator = await GetCellLocator(rowId, columnId, null);
+            var cellLocator = await GetCellLocator(rowId, columnId);
 
             await cellLocator.WaitForElementIsVisible();
             await cellLocator.HighlightAction(page);
             await cellLocator.HighlightClear(page);
             await cellLocator.ClickAsync();
 
-            var contextMenuLocator = page.Locator($"//div[contains(@style, 'display: block')]//li[@role='menuitem']//a[normalize-space()='{menuEntry}']");
+            var contextMenuLocator = page.Locator("//div[contains(@style, 'display: block')]//li[@role='menuitem']//a")
+                .Filter(new() { HasTextRegex = new Regex($"^\\s*{Regex.Escape(menuEntry)}\\s*$") });
             var contextMenuControl = new WebButton(page, contextMenuLocator);
             await contextMenuControl.Click();
         }
 
-        protected virtual async Task<ILocator> GetCellLocator(object rowId, object columnId, string subXPath)
+        protected virtual async Task<ILocator> GetCellLocator(object rowId, object columnId)
         {
-            if (rowId is int rowIndex && columnId is int columnIndex)
+            var rowLocator = GetRowLocator(rowId);
+            var columnIndex = await ResolveColumnIndex(columnId);
+
+            return rowLocator.Locator(":scope > td").Nth(columnIndex - 1);
+        }
+
+        protected virtual ILocator GetRowLocator(object rowId)
+        {
+            if (rowId is int rowIndex)
+                return Rows.Nth(rowIndex - 1);
+
+            if (rowId is string rowText)
             {
-                return locator.Locator($"xpath=./tbody/tr[{rowIndex}]/td[{columnIndex}]{subXPath}");
+                var cellWithText = page.Locator("td", new() { HasTextRegex = ContainsText(rowText) });
+                return Rows.Filter(new() { Has = cellWithText });
             }
-            else if (rowId is int rowIndexInt && columnId is string columnNameStr)
-            {
-                return await GetCellLocator(rowIndexInt, await GetColumnIndex(columnNameStr), subXPath);
-            }
-            else if (rowId is string rowTextStr && columnId is int columnIndexInt)
-            {
-                return locator.Locator($"xpath=./tbody/tr[td[contains(normalize-space(),'{rowTextStr}')]]/td[{columnIndexInt}]{subXPath}");
-            }
-            else if (rowId is string rowTextStrAlt && columnId is string columnNameStrAlt)
-            {
-                return await GetCellLocator(rowTextStrAlt, await GetColumnIndex(columnNameStrAlt), subXPath);
-            }
-            else
-            {
-                throw new ArgumentException("Invalid argument types for GetCellElement...");
-            }
+
+            throw new ArgumentException("The row must be an index (int, 1-based) or a cell text (string)...");
+        }
+
+        protected virtual async Task<int> ResolveColumnIndex(object columnId)
+        {
+            if (columnId is int columnIndex)
+                return columnIndex;
+
+            if (columnId is string columnName)
+                return await GetColumnIndex(columnName);
+
+            throw new ArgumentException("The column must be an index (int, 1-based) or a header text (string)...");
         }
 
         protected virtual async Task<int> GetColumnIndex(string columnName)
         {
-            var columns = locator.Locator("th");
-            int count = await columns.CountAsync();
-
-            int index = -1;
-            for (int i = 0; i < count; i++)
-            {
-                var text = await columns.Nth(i).InnerTextAsync();
-                if (text.Trim() == columnName)
-                {
-                    index = i;
-                    break;
-                }
-            }
+            var headers = await locator.Locator("th").AllInnerTextsAsync();
+            var index = headers.Select(header => header.Trim()).ToList().IndexOf(columnName);
 
             if (index == -1)
-                throw new ApplicationException($"The column name '{columnName}' was not found...");
+                throw new ApplicationException($"The column name '{columnName}' was not found - available columns [{string.Join(", ", headers)}]...");
 
             return index + 1;
+        }
+
+        // Case-sensitive "contains" match, safe for quotes and special characters
+        private static Regex ContainsText(string text)
+        {
+            return new Regex(Regex.Escape(text));
         }
     }
 }

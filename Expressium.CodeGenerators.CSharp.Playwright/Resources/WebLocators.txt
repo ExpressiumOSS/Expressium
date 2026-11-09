@@ -13,6 +13,7 @@ namespace $Namespace$.Controls
         public static string HighlightValidationColor { get; set; }
         public static string HighlightFailureColor { get; set; }
         public static string HighlightStyle { get; set; }
+        public static int HighlightEvaluateTimeout { get; set; }
 
         static WebLocators()
         {
@@ -23,6 +24,7 @@ namespace $Namespace$.Controls
             HighlightValidationColor = "mediumseagreen";
             HighlightFailureColor = "darkred";
             HighlightStyle = "dashed";
+            HighlightEvaluateTimeout = 500;
         }
 
         public static async Task WaitForElementIsVisible(this ILocator locator)
@@ -35,6 +37,17 @@ namespace $Namespace$.Controls
             await locator.WaitForAsync(new() { State = WaitForSelectorState.Visible });
             if (!await locator.IsEnabledAsync())
                 throw new PlaywrightException("Element is visible but not enabled...");
+        }
+
+        public static async Task WaitForElementText(this ILocator locator, string text, int timeout = 10000)
+        {
+            try
+            {
+                await locator.Filter(new() { HasText = text }).WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = timeout });
+            }
+            catch
+            {
+            }
         }
 
         public static async Task HighlightAction(this ILocator locator, IPage page)
@@ -72,7 +85,8 @@ namespace $Namespace$.Controls
                             el.style.outline = `${args.outlineWidth}px ${args.outlineStyle} ${args.outlineColor}`;
                             el.style.outlineOffset = args.outlineOffset;
                         }",
-                        new { outlineWidth = width, outlineStyle = style, outlineColor = color, outlineOffset = -1 }
+                        new { outlineWidth = width, outlineStyle = style, outlineColor = color, outlineOffset = -1 },
+                        new() { Timeout = HighlightEvaluateTimeout }
                     );
                 }
                 catch

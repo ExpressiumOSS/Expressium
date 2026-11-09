@@ -3,192 +3,167 @@ using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace  $Namespace$.Services
+namespace $Namespace$.Services
 {
     public class BaseService
     {
-        private const string correlationIdHeader = "X-Correlation-Id";
+        private const string CorrelationIdHeader = "X-Correlation-Id";
+        private const string ContentTypeHeader = "Content-Type";
+        private const string JsonContentType = "application/json";
+        private const string RedactedValue = "***REDACTED***";
 
-        private static readonly JsonSerializerOptions prettyPrintOptions = new JsonSerializerOptions { WriteIndented = true };
-
-        protected ILog logger;
-        protected IAPIRequestContext request;
-
-        public TimeSpan Duration { get; private set; } = TimeSpan.Zero;
-
-        public string RequestBody { get; private set; }
-        public string ResponseBody { get; private set; }
-
-        public bool EnableBodyLogging { get; set; } = false;
-
-        public BaseService(ILog logger, IAPIRequestContext request)
+        private static readonly HashSet<string> RedactedHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            this.logger = logger;
-            this.request = request;
+            "Authorization",
+            "X-Api-Key",
+            "Cookie",
+            "Set-Cookie"
+        };
+
+        private static readonly JsonSerializerOptions PrettyPrintOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        protected readonly ILog logger;
+        protected readonly IAPIRequestContext request;
+        protected readonly Dictionary<string, string> headers;
+
+        public bool IncludeRequestHeadersLogging { get; set; } = true;
+        public bool IncludeRequestBodyLogging { get; set; } = true;
+        public bool IncludeResponseHeadersLogging { get; set; } = true;
+        public bool IncludeResponseBodyLogging { get; set; } = true;
+
+        public BaseService(ILog logger, IAPIRequestContext request, Dictionary<string, string> headers = null)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.request = request ?? throw new ArgumentNullException(nameof(request));
+            this.headers = new Dictionary<string, string>(headers ?? new Dictionary<string, string>(), StringComparer.OrdinalIgnoreCase);
         }
 
-        protected async Task<IAPIResponse> GetAsync(string endpoint, APIRequestContextOptions options = null)
-        {
-            logger.Info($"Request: GET {endpoint}");
+        protected Task<IAPIResponse> GetAsync(string endpoint, APIRequestContextOptions options = null) => SendAsync("GET", endpoint, options);
+        protected Task<IAPIResponse> PostAsync(string endpoint, APIRequestContextOptions options = null) => SendAsync("POST", endpoint, options);
+        protected Task<IAPIResponse> PutAsync(string endpoint, APIRequestContextOptions options = null) => SendAsync("PUT", endpoint, options);
+        protected Task<IAPIResponse> DeleteAsync(string endpoint, APIRequestContextOptions options = null) => SendAsync("DELETE", endpoint, options);
 
-            options = AddRequestOptions(options);
-            SetRequestBody(options);
-
-            var stopwatch = Stopwatch.StartNew();
-
-            var response = await request.GetAsync(endpoint, options);
-
-            stopwatch.Stop();
-            Duration = stopwatch.Elapsed;
-
-            await SetResponseBodyAsync(response);
-
-            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
-            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
-
-            return response;
-        }
-
-        protected async Task<IAPIResponse> PostAsync(string endpoint, APIRequestContextOptions options = null)
-        {
-            logger.Info($"Request: POST {endpoint}");
-
-            options = AddRequestOptions(options);
-            SetRequestBody(options);
-
-            var stopwatch = Stopwatch.StartNew();
-
-            var response = await request.PostAsync(endpoint, options);
-
-            stopwatch.Stop();
-            Duration = stopwatch.Elapsed;
-
-            await SetResponseBodyAsync(response);
-
-            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
-            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
-
-            return response;
-        }
-
-        protected async Task<IAPIResponse> PutAsync(string endpoint, APIRequestContextOptions options = null)
-        {
-            logger.Info($"Request: PUT {endpoint}");
-
-            options = AddRequestOptions(options);
-            SetRequestBody(options);
-
-            var stopwatch = Stopwatch.StartNew();
-
-            var response = await request.PutAsync(endpoint, options);
-
-            stopwatch.Stop();
-            Duration = stopwatch.Elapsed;
-
-
-            await SetResponseBodyAsync(response);
-
-            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
-            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
-
-            return response;
-        }
-
-        protected async Task<IAPIResponse> DeleteAsync(string endpoint, APIRequestContextOptions options = null)
-        {
-            logger.Info($"Request: DELETE {endpoint}");
-
-            options = AddRequestOptions(options);
-            SetRequestBody(options);
-
-            var stopwatch = Stopwatch.StartNew();
-
-            var response = await request.DeleteAsync(endpoint, options);
-
-            stopwatch.Stop();
-            Duration = stopwatch.Elapsed;
-
-            await SetResponseBodyAsync(response);
-
-            logger.Info($"Response: Status {response.StatusText} [{response.Status}]");
-            logger.Info($"Duration: {stopwatch.ElapsedMilliseconds} ms");
-
-            return response;
-        }
-
-        public async Task<T> DeserializeAsync<T>(IAPIResponse response)
+        protected async Task<T> DeserializeAsync<T>(IAPIResponse response)
         {
             return await response.JsonAsync<T>();
         }
 
-        private APIRequestContextOptions AddRequestOptions(APIRequestContextOptions options)
+        private async Task<IAPIResponse> SendAsync(string method, string endpoint, APIRequestContextOptions options)
         {
             options ??= new APIRequestContextOptions();
+            options.Method = method;
+            options.Headers = BuildHeaders(options);
 
-            var headers = options.Headers != null
-                ? new Dictionary<string, string>(options.Headers)
-                : new Dictionary<string, string>();
+            LogRequest(endpoint, options);
 
-            var correlationId = Guid.NewGuid().ToString();
-            headers[correlationIdHeader] = correlationId;
+            var stopwatch = Stopwatch.StartNew();
+            var response = await request.FetchAsync(endpoint, options);
+            stopwatch.Stop();
 
-            options.Headers = headers;
+            await LogResponseAsync(response, stopwatch.Elapsed);
 
-            logger.Info($"{correlationIdHeader}: {correlationId}");
-
-            return options;
+            return response;
         }
 
-        private void SetRequestBody(APIRequestContextOptions options)
+        // Priority: per-call headers, then service-level headers, then defaults
+        private Dictionary<string, string> BuildHeaders(APIRequestContextOptions options)
         {
-            if (options?.DataObject != null)
-                RequestBody = JsonSerializer.Serialize(options.DataObject, prettyPrintOptions);
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            if (options?.DataString != null)
-                RequestBody = options.DataString;
-
-            if (EnableBodyLogging && !string.IsNullOrWhiteSpace(RequestBody))
+            if (options.Headers != null)
             {
-                logger.Debug("Request Body:");
-                LogBodyAsLines(RequestBody);
+                foreach (var header in options.Headers)
+                    result[header.Key] = header.Value;
+            }
+
+            foreach (var header in headers)
+                result.TryAdd(header.Key, header.Value);
+
+            result.TryAdd(CorrelationIdHeader, Guid.NewGuid().ToString());
+
+            if (options.DataObject != null || options.DataString != null)
+                result.TryAdd(ContentTypeHeader, JsonContentType);
+
+            return result;
+        }
+
+        private void LogRequest(string endpoint, APIRequestContextOptions options)
+        {
+            logger.Debug("");
+            logger.Debug("[REQUEST]");
+            logger.Debug($"Method: {options.Method}");
+            logger.Debug($"URL: {endpoint}");
+
+            if (IncludeRequestHeadersLogging)
+                LogHeaders(options.Headers);
+
+            if (IncludeRequestBodyLogging)
+                LogBody(options.DataString ?? SerializeOrNull(options.DataObject));
+        }
+
+        private async Task LogResponseAsync(IAPIResponse response, TimeSpan duration)
+        {
+            logger.Debug("");
+            logger.Debug("[RESPONSE]");
+            logger.Debug($"Status: {response.Status} {response.StatusText}");
+            logger.Debug($"Duration: {(long)duration.TotalMilliseconds} ms");
+
+            if (IncludeResponseHeadersLogging)
+                LogHeaders(response.Headers);
+
+            if (IncludeResponseBodyLogging)
+                LogBody(PrettyPrintOrRaw(await response.TextAsync()));
+        }
+
+        private void LogHeaders(IEnumerable<KeyValuePair<string, string>> headersToLog)
+        {
+            if (headersToLog == null)
+                return;
+
+            logger.Debug("Headers:");
+            foreach (var header in headersToLog)
+            {
+                var value = RedactedHeaders.Contains(header.Key) ? RedactedValue : header.Value;
+                logger.Debug($"  {header.Key} = {value}");
             }
         }
 
-        private async Task SetResponseBodyAsync(IAPIResponse response)
+        private void LogBody(string body)
         {
-            var text = await response.TextAsync();
-
-            if (string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(body))
                 return;
+
+            logger.Debug("Body:");
+            foreach (var line in body.Replace("\r\n", "\n").Split('\n'))
+                logger.Debug(line);
+        }
+
+        private static string SerializeOrNull(object value)
+        {
+            return value == null ? null : JsonSerializer.Serialize(value, PrettyPrintOptions);
+        }
+
+        private static string PrettyPrintOrRaw(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
 
             try
             {
-                var json = JsonSerializer.Serialize(JsonSerializer.Deserialize<JsonElement>(text), prettyPrintOptions);
-                ResponseBody = json;
+                return JsonSerializer.Serialize(JsonSerializer.Deserialize<JsonElement>(text), PrettyPrintOptions);
             }
             catch (JsonException)
             {
-                ResponseBody = text;
+                return text;
             }
-
-            if (EnableBodyLogging && !string.IsNullOrWhiteSpace(ResponseBody))
-            {
-                logger.Debug("Response Body:");
-                LogBodyAsLines(ResponseBody);
-            }
-        }
-
-        private void LogBodyAsLines(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                return;
-
-            var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-            foreach (var line in lines)
-                logger.Debug(line);
         }
     }
 }

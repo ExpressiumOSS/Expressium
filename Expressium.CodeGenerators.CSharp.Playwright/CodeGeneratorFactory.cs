@@ -34,7 +34,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             try
             {
-                return Path.Combine(configuration.SolutionPath, GetNameSpace() + ".Tests", TestFolders.Factories.ToString(), page.Name + "ModelFactory.cs");
+                return Path.Combine(configuration.SolutionPath, GetNameSpace() + ".Tests", TestFolders.Factories.ToString(), page.Name + "Factory.cs");
             }
             catch
             {
@@ -84,7 +84,7 @@ namespace Expressium.CodeGenerators.CSharp.Playwright
         {
             var listOfLines = new List<string>
             {
-                $"public class {page.Name}ModelFactory"
+                $"public class {page.Name}Factory"
             };
 
             return listOfLines;

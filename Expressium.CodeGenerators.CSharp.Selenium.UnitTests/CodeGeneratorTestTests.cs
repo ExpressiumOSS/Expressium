@@ -80,7 +80,7 @@ namespace Expressium.CodeGenerators.CSharp.Selenium.UnitTests
 
             Assert.That(listOfLines.Count, Is.EqualTo(3), "CodeGeneratorTestCSharp GeneratedDataVariables validation");
             Assert.That(listOfLines[0], Is.EqualTo("private LoginPage loginPage;"), "CodeGeneratorTestCSharp GeneratedTestDataVariables validation");
-            Assert.That(listOfLines[1], Is.EqualTo("private LoginPageModel loginPageModel = LoginPageModelFactory.Default();"), "CodeGeneratorTestCSharp GeneratedDataVariables validation");
+            Assert.That(listOfLines[1], Is.EqualTo("private LoginPageModel loginPageModel = LoginPageFactory.Default();"), "CodeGeneratorTestCSharp GeneratedDataVariables validation");
         }
 
         [Test]

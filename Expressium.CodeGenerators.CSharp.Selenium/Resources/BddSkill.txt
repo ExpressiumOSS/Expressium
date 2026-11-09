@@ -1,4 +1,4 @@
-> ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or ModelFactory.cs file.
+> ⚠️ This skill MUST be read before generating any .feature, Steps.cs, or Factory.cs file.
 > Do not rely on existing project files as a pattern source — always follow this skill.
 ---
 name: expressium-bdd-tests
@@ -8,7 +8,7 @@ description: >
   for a project built with the Expressium framework; any mention of "BDD", "Gherkin", "Reqnroll",
   "feature file", "scenario", "step definition", "page object", "model factory", or "Expressium"
   in the context of test authoring. Always use this skill before generating any .feature,
-  Steps.cs, or ModelFactory.cs file — it defines how to discover namespaces from configuration.json,
+  Steps.cs, or Factory.cs file — it defines how to discover namespaces from configuration.json,
   the folder layout, TC numbering, Gherkin conventions, factory patterns, and C# code structure
   that must be followed strictly across all Expressium projects.
 ---
@@ -69,7 +69,7 @@ From `Company = "Qnation"` and `Project = "Coffeeshop"`:
     │   ├── Features\       ← OUTPUT: .feature files
     │   ├── Steps\          ← OUTPUT: *Steps.cs files
     │   └── Hooks\          ← BaseHooks.cs — do not modify
-    ├── Factories\           ← OUTPUT: *ModelFactory.cs files
+    ├── Factories\           ← OUTPUT: *Factory.cs files
     ├── UiTests\            ← Low-level tests for inspiration only — do not replicate
     └── configuration.json  ← Source of truth for Company/Project/namespace
 ```
@@ -101,7 +101,7 @@ If the page is navigation-only — **stop here**, do not generate any files for 
 Note: all properties — needed to build the factory.
 
 **Step 6 — Check if factory already exists** at:
-`{Tests folder}\Factories\{Page}PageModelFactory.cs`
+`{Tests folder}\Factories\{Page}PageFactory.cs`
 If it exists and its content is already correct — skip writing it.
 
 **Step 7 — Identify the next available TC block** (see TC Numbering section below).
@@ -112,7 +112,7 @@ If it exists and its content is already correct — skip writing it.
 |---|---|
 | `{Page}.feature` | `{Tests folder}\BusinessTests\Features\{Page}.feature` |
 | `{Page}Steps.cs` | `{Tests folder}\BusinessTests\Steps\{Page}Steps.cs` |
-| `{Page}PageModelFactory.cs` | `{Tests folder}\Factories\{Page}PageModelFactory.cs` |
+| `{Page}PageFactory.cs` | `{Tests folder}\Factories\{Page}PageFactory.cs` |
 
 **Step 9 — Confirm** each file was written and report the saved paths.
 
@@ -164,7 +164,7 @@ presence of row data is meaningful business behaviour — it confirms the data l
 **Rules for table-based pages:**
 
 - Generate **exactly one scenario**: `View the {Page} Overview`
-- No factory is needed — do not create a `{Page}PageModelFactory.cs`
+- No factory is needed — do not create a `{Page}PageFactory.cs`
 - The `Then` step is **pending** with a scaffolded assertion (use `asserts.GreaterThan` on `GetNumberOfRows()`)
 - Navigate to the page via `MainMenuBar` inside the `When` step
 - The `Given I am logged in with valid user credentials` step is required
@@ -329,7 +329,7 @@ Scenario: [Action] [Page Name] with Invalid Details
 
 ## Model Factory Rules
 
-**Location:** `{Tests folder}\Factories\{Page}PageModelFactory.cs`
+**Location:** `{Tests folder}\Factories\{Page}PageFactory.cs`
 
 Every factory must expose **three static methods**:
 
@@ -345,7 +345,7 @@ using System;
 
 namespace {Company}.{Project}.Web.Tests.Factories
 {
-    public class {Page}PageModelFactory
+    public class {Page}PageFactory
     {
         public static {Page}PageModel Default()
         {
@@ -423,7 +423,7 @@ public async Task WhenI...WithValidDetailsIn{Page}()
     await mainMenu.Click{Page}();
 
     var {page}Page = new {Page}Page(logger, page);
-    {page}PageModel = {Page}PageModelFactory.Default();
+    {page}PageModel = {Page}PageFactory.Default();
 
     await {page}Page.FillForm({page}PageModel);
     await {page}Page.ClickSubmit();
@@ -439,7 +439,7 @@ public async Task WhenIAttemptTo...MissingDetailsIn{Page}()
     await mainMenu.Click{Page}();
 
     var {page}Page = new {Page}Page(logger, page);
-    {page}PageModel = {Page}PageModelFactory.Empty();  // or .Invalid()
+    {page}PageModel = {Page}PageFactory.Empty();  // or .Invalid()
 
     await {page}Page.FillForm({page}PageModel);
     await {page}Page.ClickSubmit();

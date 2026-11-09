@@ -1,0 +1,14 @@
+Expressium Claude Skills
+
+Here's the updated prompt, referencing the actual file paths so there's no ambiguity between the folder name and the skill's internal identifier:
+
+For API tests:
+Create API tests for {ResourceName} based on the {OpenApiSpecFileName}.yaml spec, following the skill at skills\ApiTests\SKILL.md (expressium-api-tests).
+
+For BDD tests:
+Create BDD tests for {ResourceName}Service (or {PageName}Page), following the skill at skills\BddTests\SKILL.md (expressium-bdd-tests).
+
+Combined (both in one go):
+Create API tests for {ResourceName} based on the {OpenApiSpecFileName}.yaml spec, following skills\ApiTests\SKILL.md, and then create matching BDD tests for it, following skills\BddTests\SKILL.md.
+
+Swap in the resource/page name and spec filename as needed. Naming the file path explicitly guarantees Claude reads that exact SKILL.md first, regardless of whether it recognizes the internal expressium-* skill name.
